@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-class BaseUnit
+module UsesAmenities
   def amenities_output
     0
   end
@@ -12,7 +12,9 @@ class BaseUnit
   def net_amenities
     amenities_output - amenities_upkeep
   end
+end
 
+module OutputsResources
   def output
     {}
   end
@@ -36,7 +38,9 @@ class BaseUnit
   end
 end
 
-class Pop < BaseUnit
+class Pop
+  include UsesAmenities, OutputsResources
+
   attr_reader :job
 
   def initialize(species:, colony:, job:)
@@ -69,6 +73,19 @@ class Pop < BaseUnit
   end
 
   def amenities_upkeep
+    1
+  end
+
+  def happiness
+    happiness = 50
+    happiness += 5 if @species[:living_standard] == :shared_burden
+
+    happiness += @colony.pop_happiness_modifiers
+
+    happiness.floor
+  end
+
+  def political_power
     1
   end
 
@@ -240,7 +257,9 @@ class Pop < BaseUnit
   end
 end
 
-class Colony < BaseUnit
+class Colony
+  include UsesAmenities, OutputsResources
+
   attr_reader :pops
 
   def initialize(type:, size:, empire:, species:, leader: nil, designation: nil, districts: {}, buildings: {}, jobs: {}, deposits: {}, fill_jobs: false)
@@ -327,18 +346,23 @@ class Colony < BaseUnit
     5 + @pops.reduce(0) {|sum, pop| sum + pop.amenities_upkeep}
   end
 
-  def happiness()
-    happiness = 50
-    happiness += 5 if @species[:living_standard] == :shared_burden
-    happiness += 10 if @designation == :leisure_station
+  def pop_happiness_modifiers
+    modifier = 0
+    modifier += 10 if @designation == :leisure_station
 
     if net_amenities() > 0
-     happiness += [20, (20.0 * net_amenities() / amenities_upkeep())].min
+     modifier += [20, (20.0 * net_amenities() / amenities_upkeep())].min
     elsif net_amenities() < 0
-      happiness += [-50, 100 * (2.0/3 * net_amenities() / amenities_upkeep())].max
+      modifier += [-50, 100 * (2.0/3 * net_amenities() / amenities_upkeep())].max
     end
 
-    happiness.floor
+    modifier
+  end
+
+  def approval_rating()
+    1.0 * @pops.reduce(0) do |sum, pop|
+      sum + pop.happiness * pop.political_power
+    end / @pops.reduce(0) {|sum, pop| sum + pop.political_power}
   end
 
   def stability()
@@ -349,10 +373,10 @@ class Colony < BaseUnit
       @empire[:civics].include?(:shared_burdens) ? 5 : 0,
     ].reduce(0, &:+)
 
-    if happiness() > 50
-      stability += (0.6 * (happiness() - 50)).floor()
-    elsif happiness() < 50
-      stability -= (50 - happiness()).floor()
+    if approval_rating() > 50
+      stability += (0.6 * (approval_rating() - 50)).floor()
+    elsif approval_rating() < 50
+      stability -= (50 - approval_rating()).floor()
     end
 
     stability
