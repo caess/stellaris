@@ -2,23 +2,9 @@
 
 require './stellaris/lib/stellaris'
 
-ruler = {
-  level: 2,
-  traits: [],
-}
+ruler = Leader.new(level: 2)
 
-empire = {
-  ruler: ruler,
-  ethics: [:fanatic_egalitarian, :xenophile],
-  civics: [:beacon_of_liberty, :shared_burdens],
-  technology: {
-    society: [
-      :eco_simulation,
-    ]
-  },
-}
-
-species = {
+species = Species.new(
   traits: [
     :void_dweller,
     :intelligent,
@@ -28,11 +14,21 @@ species = {
     :nonadaptive
   ],
   living_standard: :shared_burden,
-}
-governor = {
-  level: 1,
-  traits: [:resilient],
-}
+)
+
+empire = Empire.new(
+  ruler: ruler,
+  founding_species: species,
+  ethics: [:fanatic_egalitarian, :xenophile],
+  civics: [:beacon_of_liberty, :shared_burdens],
+  technology: {
+    society: [
+      :eco_simulation,
+    ]
+  }
+)
+
+governor = Leader.new(level: 1)
 
 =begin
 pandora = Colony.new(
@@ -129,7 +125,6 @@ pandora = Colony.new(
   designation: :empire_capital,
   size: 6,
   empire: empire,
-  species: species,
   leader: governor,
   districts: {
     habitation: 1,
@@ -142,7 +137,7 @@ pandora = Colony.new(
     holo_theatres: 1,
     civilian_industries: 1,
   },
-  fill_jobs: true,
+  fill_jobs_with: species,
   deposits: {
     energy: 20,
     minerals: 20,
@@ -161,7 +156,6 @@ aegle = Colony.new(
   designation: :mining_station,
   size: 4,
   empire: empire,
-  species: species,
   leader: governor,
   districts: {
     habitation: 2,
@@ -173,7 +167,7 @@ aegle = Colony.new(
     civilian_industries: 1,
     holo_theatres: 1,
   },
-  fill_jobs: true
+  fill_jobs_with: species
 )
 
 erytheis = Colony.new(
@@ -181,7 +175,6 @@ erytheis = Colony.new(
   designation: :generator_station,
   size: 4,
   empire: empire,
-  species: species,
   leader: governor,
   districts: {
     habitation: 2,
@@ -193,7 +186,7 @@ erytheis = Colony.new(
     alloy_foundries: 1,
     holo_theatres: 1,
   },
-  fill_jobs: true
+  fill_jobs_with: species
 )
 
 hesperia = Colony.new(
@@ -201,7 +194,6 @@ hesperia = Colony.new(
   designation: :generator_station,
   size: 4,
   empire: empire,
-  species: species,
   leader: governor,
   districts: {
     habitation: 2,
@@ -212,7 +204,7 @@ hesperia = Colony.new(
     alloy_foundries: 1,
     holo_theatres: 1,
   },
-  fill_jobs: true
+  fill_jobs_with: species
 )
 
 arethusa = Colony.new(
@@ -220,7 +212,6 @@ arethusa = Colony.new(
   designation: :factory_station,
   size: 4,
   empire: empire,
-  species: species,
   leader: governor,
   districts: {
     habitation: 2,
@@ -232,7 +223,7 @@ arethusa = Colony.new(
     civilian_industries: 1,
     holo_theatres: 1,
   },
-  fill_jobs: true
+  fill_jobs_with: species
 )
 
 hestia = Colony.new(
@@ -240,7 +231,6 @@ hestia = Colony.new(
   designation: :mining_station,
   size: 4,
   empire: empire,
-  species: species,
   leader: governor,
   districts: {
     habitation: 2,
@@ -251,7 +241,7 @@ hestia = Colony.new(
     alloy_foundries: 1,
     holo_theatres: 1,
   },
-  fill_jobs: true
+  fill_jobs_with: species
 )
 
 medusa = Colony.new(
@@ -259,7 +249,6 @@ medusa = Colony.new(
   designation: :foundry_station,
   size: 4,
   empire: empire,
-  species: species,
   leader: governor,
   districts: {
     habitation: 2,
@@ -271,15 +260,14 @@ medusa = Colony.new(
     civilian_industries: 1,
     holo_theatres: 1,
   },
-  fill_jobs: true
+  fill_jobs_with: species
 )
 
 aerica = Colony.new(
   type: :habitat,
-  designation: :factory_station,
+  designation: :research_station,
   size: 4,
   empire: empire,
-  species: species,
   leader: governor,
   districts: {
     habitation: 2,
@@ -290,7 +278,7 @@ aerica = Colony.new(
     alloy_foundries: 1,
     holo_theatres: 1,
   },
-  fill_jobs: true
+  fill_jobs_with: species
 )
 
 hippolyte = Colony.new(
@@ -298,7 +286,6 @@ hippolyte = Colony.new(
   designation: :mining_station,
   size: 4,
   empire: empire,
-  species: species,
   leader: governor,
   districts: {
     habitation: 2,
@@ -309,7 +296,7 @@ hippolyte = Colony.new(
     alloy_foundries: 1,
     holo_theatres: 1,
   },
-  fill_jobs: true
+  fill_jobs_with: species
 )
 
 mapsaura = Colony.new(
@@ -317,7 +304,6 @@ mapsaura = Colony.new(
   designation: :unification_station,
   size: 4,
   empire: empire,
-  species: species,
   leader: governor,
   districts: {
     habitation: 3,
@@ -327,7 +313,7 @@ mapsaura = Colony.new(
     habitat_central_control: 1,
     administrative_offices: 4,
   },
-  fill_jobs: true
+  fill_jobs_with: species
 )
 
 thetis = Colony.new(
@@ -335,7 +321,6 @@ thetis = Colony.new(
   designation: :research_station,
   size: 4,
   empire: empire,
-  species: species,
   leader: governor,
   districts: {
     habitation: 3,
@@ -345,7 +330,7 @@ thetis = Colony.new(
     habitat_central_control: 1,
     research_labs: 4,
   },
-  fill_jobs: true
+  fill_jobs_with: species
 )
 
 

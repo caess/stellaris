@@ -76,7 +76,7 @@ class Pop
 
   def happiness
     happiness = 50
-    happiness += 5 if @species[:living_standard] == :shared_burden
+    happiness += 5 if @species.living_standard == :shared_burden
 
     happiness += @colony.pop_happiness_modifiers
 
@@ -104,9 +104,9 @@ class Pop
       trade: 0,
     }
 
-    if @species[:living_standard] == :shared_burden
+    if @species.living_standard == :shared_burden
       base_output[:trade] += 0.25
-    elsif @species[:living_standard] == :utopian_abundance
+    elsif @species.living_standard == :utopian_abundance
       base_output[:trade] += 0.5
     end
 
@@ -157,19 +157,19 @@ class Pop
       trade: 1,
     }
 
-    if @species[:traits].include?(:void_dweller)
+    if @species.traits.include?(:void_dweller)
       multipliers.each_key do |good|
         multipliers[good] += 0.15 unless good == :trade
       end
     end
 
-    if @species[:traits].include?(:intelligent)
+    if @species.traits.include?(:intelligent)
       multipliers[:physics_research] += 0.1
       multipliers[:society_research] += 0.1
       multipliers[:engineering_research] += 0.1
     end
 
-    if @species[:traits].include?(:natural_engineers)
+    if @species.traits.include?(:natural_engineers)
       multipliers[:engineering_research] += 0.15
     end
 
@@ -244,9 +244,9 @@ class Pop
     end
 
     # Pop upkeep
-    if @species[:living_standard] == :shared_burden
+    if @species.living_standard == :shared_burden
       upkeep[:consumer_goods] += 0.4
-    elsif @species[:living_standard] == :utopian_abundance
+    elsif @species.living_standard == :utopian_abundance
       upkeep[:consumer_goods] += 1
     end
     upkeep[:food] += 1
@@ -260,28 +260,27 @@ class Colony
 
   attr_reader :pops
 
-  def initialize(type:, size:, empire:, species:, leader: nil, designation: nil, districts: {}, buildings: {}, jobs: {}, deposits: {}, fill_jobs: false)
+  def initialize(type:, size:, empire:, leader: nil, designation: nil, districts: {}, buildings: {}, jobs: {}, deposits: {}, fill_jobs_with: nil)
     @type = type
     @size = size
     @empire = empire
-    @species = species
     @leader = leader
     @designation = designation
     @districts = districts.dup
     @buildings = buildings.dup
     @deposits = deposits.dup
 
-    if fill_jobs
+    if fill_jobs_with
       @jobs = max_jobs()
+
+      @pops = []
+      @jobs.each do |job, num|
+        1.upto(num) do |x|
+          @pops << Pop.new(species: fill_jobs_with, colony: self, job: job)
+        end
+      end
     else
       @jobs = jobs.dup
-    end
-
-    @pops = []
-    @jobs.each do |job, num|
-      1.upto(num) do |x|
-        @pops << Pop.new(species: @species, colony: self, job: job)
-      end
     end
 
     @num_pops = @pops.length
@@ -367,7 +366,7 @@ class Colony
       50,
       1 * jobs(:enforcer),
       @designation == :empire_capital ? 5 : 0,
-      @empire[:civics].include?(:shared_burdens) ? 5 : 0,
+      @empire.civics.include?(:shared_burdens) ? 5 : 0,
     ].reduce(0, &:+)
 
     if approval_rating() > 50
@@ -428,41 +427,41 @@ class Colony
 
     if @leader
       multipliers.each_key do |good|
-        multipliers[good] += 0.02 * @leader[:level] unless good == :trade
+        multipliers[good] += 0.02 * @leader.level unless good == :trade
       end
 
-      if @leader[:traits].include?(:unifier)
+      if @leader.traits.include?(:unifier)
         if pop.job == :bureaucrat
           multipliers[:unity] += 0.1
         end
       end
     end
 
-    if @empire[:ethics].include?(:fanatic_egalitarian) and pop.specialist?
+    if @empire.ethics.include?(:fanatic_egalitarian) and pop.specialist?
       multipliers.each_key do |good|
         multipliers[good] += 0.1 unless good == :trade
       end
     end
 
-    if @empire[:ethics].include?(:xenophile)
+    if @empire.ethics.include?(:xenophile)
       multipliers[:trade] += 0.1
     end
 
-    if @empire[:civics].include?(:meritocracy) and pop.specialist?
+    if @empire.civics.include?(:meritocracy) and pop.specialist?
       multipliers.each_key do |good|
         multipliers[good] += 0.1 unless good == :trade
       end
     end
 
-    if @empire[:civics].include?(:beacon_of_liberty)
+    if @empire.civics.include?(:beacon_of_liberty)
       multipliers[:unity] += 0.15
     end
 
-    if @empire[:ruler][:traits].include?(:industrialist)
+    if @empire.ruler.traits.include?(:industrialist)
       multipliers[:minerals] += 0.1
     end
 
-    if @empire[:technology][:society].include?(:eco_simulation)
+    if @empire.technology[:society].include?(:eco_simulation)
       if pop.job == :farmer
         multipliers[:food] += 0.2
       end
@@ -574,89 +573,6 @@ class Colony
       additive: adders,
       multiplicative: multipliers,
     }
-  end
-
-  def pop_upkeep(num, job)
-    base_upkeep = {
-      food: 0,
-      minerals: 0,
-      energy: 0,
-      consumer_goods: 0,
-      alloys: 0,
-      volatile_motes: 0,
-      exotic_gases: 0,
-      rare_crystals: 0,
-      unity: 0,
-      physics_research: 0,
-      society_research: 0,
-      engineering_research: 0,
-      trade: 0,
-    }
-
-    if job == :politician or job == :science_director or job == :researcher or job == :bureaucrat
-      base_upkeep[:consumer_goods] += 2 * num
-    elsif job == :metallurgist or job == :artisan
-      base_upkeep[:minerals] += 6 * num
-    elsif job == :entertainer
-      base_upkeep[:consumer_goods] += 1 * num
-    end
-
-    multipliers = {
-      food: 1,
-      minerals: 1,
-      energy: 1,
-      consumer_goods: 1,
-      alloys: 1,
-      volatile_motes: 1,
-      exotic_gases: 1,
-      rare_crystals: 1,
-      unity: 1,
-      physics_research: 1,
-      society_research: 1,
-      engineering_research: 1,
-      trade: 1,
-    }
-
-    if @designation == :foundry_station
-      if job == :metallurgist
-        multipliers.each_key do |good|
-          multipliers[good] -= 0.2 unless good == :trade
-        end
-      end
-    elsif @designation == :factory_station
-      if job == :artisan or job == :artificer
-        multipliers.each_key do |good|
-          multipliers[good] -= 0.2 unless good == :trade
-        end
-      end
-    elsif @designation == :industrial_station
-      if job == :artisan or job == :artificer or job == :metallurgist
-        multipliers.each_key do |good|
-          multipliers[good] -= 0.1 unless good == :trade
-        end
-      end
-    elsif @designation == :unification_station
-      if job == :bureaucrat
-        multipliers.each_key do |good|
-          multipliers[good] -= 0.1 unless good == :trade
-        end
-      end
-    end
-
-    upkeep = {}
-    base_upkeep.each_key do |good|
-      upkeep[good] = base_upkeep[good] * multipliers[good]
-    end
-
-    # Pop upkeep
-    if @species[:living_standard] == :shared_burden
-      upkeep[:consumer_goods] += 0.4 * num
-    elsif @species[:living_standard] == :utopian_abundance
-      upkeep[:consumer_goods] += 1 * num
-    end
-    upkeep[:food] += 1 * num
-
-    upkeep
   end
 
   def building_output(num, building)
@@ -829,5 +745,37 @@ class Colony
     end
 
     upkeep
+  end
+end
+
+class Empire
+  attr_reader :ruler, :ethics, :civics, :technology
+  def initialize(founding_species:, ruler:, ethics: [], civics: [], technology: {})
+    @ruler = ruler
+    @ethics = ethics.dup
+    @civics = civics.dup
+    @technology = technology.dup
+
+    [:physics, :society, :engineering].each do |science|
+      @technology[science] = [] unless @technology.key?(science)
+    end
+  end
+end
+
+class Species
+  attr_reader :traits, :living_standard
+
+  def initialize(traits: [], living_standard:)
+    @living_standard = living_standard
+    @traits = traits.dup
+  end
+end
+
+class Leader
+  attr_reader :level, :traits
+
+  def initialize(level:, traits: [])
+    @level = level
+    @traits = traits.dup
   end
 end
