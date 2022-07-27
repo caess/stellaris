@@ -36,15 +36,14 @@ module OutputsResources
   end
 end
 
-class Pop
+class Job
   include UsesAmenities, OutputsResources
 
-  attr_reader :job
+  attr_reader :job, :worker
 
-  def initialize(species:, colony:, job:)
-    @species = species
-    @colony = colony
+  def initialize(job:, worker:)
     @job = job
+    @worker = worker
   end
 
   def specialist?
@@ -70,23 +69,6 @@ class Pop
     end
   end
 
-  def amenities_upkeep
-    1
-  end
-
-  def happiness
-    happiness = 50
-    happiness += 5 if @species.living_standard == :shared_burden
-
-    happiness += @colony.pop_happiness_modifiers
-
-    happiness.floor
-  end
-
-  def political_power
-    1
-  end
-
   def output
     base_output = {
       food: 0,
@@ -103,12 +85,6 @@ class Pop
       engineering_research: 0,
       trade: 0,
     }
-
-    if @species.living_standard == :shared_burden
-      base_output[:trade] += 0.25
-    elsif @species.living_standard == :utopian_abundance
-      base_output[:trade] += 0.5
-    end
 
     if @job == :politician
       base_output[:unity] += 6
@@ -157,27 +133,11 @@ class Pop
       trade: 1,
     }
 
-    if @species.traits.include?(:void_dweller)
-      multipliers.each_key do |good|
-        multipliers[good] += 0.15 unless good == :trade
-      end
-    end
-
-    if @species.traits.include?(:intelligent)
-      multipliers[:physics_research] += 0.1
-      multipliers[:society_research] += 0.1
-      multipliers[:engineering_research] += 0.1
-    end
-
-    if @species.traits.include?(:natural_engineers)
-      multipliers[:engineering_research] += 0.15
-    end
-
-    colony_modifiers = @colony.pop_output_modifiers(self)
-    colony_modifiers[:additive].each do |good, value|
+    modifiers = @worker.job_output_modifiers(self)
+    modifiers[:additive].each do |good, value|
       base_output[good] += value
     end
-    colony_modifiers[:multiplicative].each do |good, value|
+    modifiers[:multiplicative].each do |good, value|
       multipliers[good] += value
     end
 
@@ -230,6 +190,264 @@ class Pop
       trade: 1,
     }
 
+    modifiers = @worker.job_upkeep_modifiers(self)
+    modifiers[:additive].each do |good, value|
+      base_upkeep[good] += value
+    end
+    modifiers[:multiplicative].each do |good, value|
+      multipliers[good] += value
+    end
+
+    upkeep = {}
+    base_upkeep.each_key do |good|
+      upkeep[good] = base_upkeep[good] * multipliers[good]
+    end
+
+    upkeep
+  end
+end
+
+class Pop
+  include UsesAmenities, OutputsResources
+
+  attr_reader :job
+
+  def initialize(species:, colony:, job:)
+    @species = species
+    @colony = colony
+    @job = Job.new(job: job, worker: self)
+  end
+
+  def specialist?
+    @job.specialist?
+  end
+
+  def amenities_output
+    @job.amenities_output
+  end
+
+  def amenities_upkeep
+    1
+  end
+
+  def happiness
+    happiness = 50
+    happiness += 5 if @species.living_standard == :shared_burden
+
+    happiness += @colony.pop_happiness_modifiers
+
+    happiness.floor
+  end
+
+  def political_power
+    1
+  end
+
+  def job_output_modifiers(job)
+    adders = {
+      food: 0,
+      minerals: 0,
+      energy: 0,
+      consumer_goods: 0,
+      alloys: 0,
+      volatile_motes: 0,
+      exotic_gases: 0,
+      rare_crystals: 0,
+      unity: 0,
+      physics_research: 0,
+      society_research: 0,
+      engineering_research: 0,
+      trade: 0,
+    }
+
+    multipliers = {
+      food: 0,
+      minerals: 0,
+      energy: 0,
+      consumer_goods: 0,
+      alloys: 0,
+      volatile_motes: 0,
+      exotic_gases: 0,
+      rare_crystals: 0,
+      unity: 0,
+      physics_research: 0,
+      society_research: 0,
+      engineering_research: 0,
+      trade: 0,
+    }
+
+    if @species.traits.include?(:void_dweller)
+      multipliers.each_key do |good|
+        multipliers[good] += 0.15 unless good == :trade
+      end
+    end
+
+    if @species.traits.include?(:intelligent)
+      multipliers[:physics_research] += 0.1
+      multipliers[:society_research] += 0.1
+      multipliers[:engineering_research] += 0.1
+    end
+
+    if @species.traits.include?(:natural_engineers)
+      multipliers[:engineering_research] += 0.15
+    end
+
+    colony_modifiers = @colony.job_output_modifiers(job)
+    colony_modifiers[:additive].each do |good, value|
+      adders[good] += value
+    end
+    colony_modifiers[:multiplicative].each do |good, value|
+      multipliers[good] += value
+    end
+
+    return {
+      additive: adders,
+      multiplicative: multipliers
+    }
+  end
+
+  def job_upkeep_modifiers(job)
+    adders = {
+      food: 0,
+      minerals: 0,
+      energy: 0,
+      consumer_goods: 0,
+      alloys: 0,
+      volatile_motes: 0,
+      exotic_gases: 0,
+      rare_crystals: 0,
+      unity: 0,
+      physics_research: 0,
+      society_research: 0,
+      engineering_research: 0,
+      trade: 0,
+    }
+
+    multipliers = {
+      food: 0,
+      minerals: 0,
+      energy: 0,
+      consumer_goods: 0,
+      alloys: 0,
+      volatile_motes: 0,
+      exotic_gases: 0,
+      rare_crystals: 0,
+      unity: 0,
+      physics_research: 0,
+      society_research: 0,
+      engineering_research: 0,
+      trade: 0,
+    }
+
+    colony_modifiers = @colony.job_upkeep_modifiers(job)
+    colony_modifiers[:additive].each do |good, value|
+      adders[good] += value
+    end
+    colony_modifiers[:multiplicative].each do |good, value|
+      multipliers[good] += value
+    end
+
+    return {
+      additive: adders,
+      multiplicative: multipliers
+    }
+  end
+
+  def pop_output
+    base_output = {
+      food: 0,
+      minerals: 0,
+      energy: 0,
+      consumer_goods: 0,
+      alloys: 0,
+      volatile_motes: 0,
+      exotic_gases: 0,
+      rare_crystals: 0,
+      unity: 0,
+      physics_research: 0,
+      society_research: 0,
+      engineering_research: 0,
+      trade: 0,
+    }
+
+    if @species.living_standard == :shared_burden
+      base_output[:trade] += 0.25
+    elsif @species.living_standard == :utopian_abundance
+      base_output[:trade] += 0.5
+    end
+
+    multipliers = {
+      food: 1,
+      minerals: 1,
+      energy: 1,
+      consumer_goods: 1,
+      alloys: 1,
+      volatile_motes: 1,
+      exotic_gases: 1,
+      rare_crystals: 1,
+      unity: 1,
+      physics_research: 1,
+      society_research: 1,
+      engineering_research: 1,
+      trade: 1,
+    }
+
+    colony_modifiers = @colony.pop_output_modifiers(self)
+    colony_modifiers[:additive].each do |good, value|
+      base_output[good] += value
+    end
+    colony_modifiers[:multiplicative].each do |good, value|
+      multipliers[good] += value
+    end
+
+    output = {}
+    base_output.each_key do |good|
+      output[good] = base_output[good] * multipliers[good]
+    end
+
+    output
+  end
+
+  def pop_upkeep
+    base_upkeep = {
+      food: 0,
+      minerals: 0,
+      energy: 0,
+      consumer_goods: 0,
+      alloys: 0,
+      volatile_motes: 0,
+      exotic_gases: 0,
+      rare_crystals: 0,
+      unity: 0,
+      physics_research: 0,
+      society_research: 0,
+      engineering_research: 0,
+      trade: 0,
+    }
+
+    if @species.living_standard == :shared_burden
+      base_upkeep[:consumer_goods] += 0.4
+    elsif @species.living_standard == :utopian_abundance
+      base_upkeep[:consumer_goods] += 1
+    end
+    base_upkeep[:food] += 1
+
+    multipliers = {
+      food: 1,
+      minerals: 1,
+      energy: 1,
+      consumer_goods: 1,
+      alloys: 1,
+      volatile_motes: 1,
+      exotic_gases: 1,
+      rare_crystals: 1,
+      unity: 1,
+      physics_research: 1,
+      society_research: 1,
+      engineering_research: 1,
+      trade: 1,
+    }
+
     colony_modifiers = @colony.pop_upkeep_modifiers(self)
     colony_modifiers[:additive].each do |good, value|
       base_upkeep[good] += value
@@ -243,13 +461,59 @@ class Pop
       upkeep[good] = base_upkeep[good] * multipliers[good]
     end
 
-    # Pop upkeep
-    if @species.living_standard == :shared_burden
-      upkeep[:consumer_goods] += 0.4
-    elsif @species.living_standard == :utopian_abundance
-      upkeep[:consumer_goods] += 1
+    upkeep
+  end
+
+  def output
+    output = {
+      food: 0,
+      minerals: 0,
+      energy: 0,
+      consumer_goods: 0,
+      alloys: 0,
+      volatile_motes: 0,
+      exotic_gases: 0,
+      rare_crystals: 0,
+      unity: 0,
+      physics_research: 0,
+      society_research: 0,
+      engineering_research: 0,
+      trade: 0,
+    }
+
+    @job.output.each do |good, value|
+      output[good] += value
     end
-    upkeep[:food] += 1
+    pop_output.each do |good, value|
+      output[good] += value
+    end
+
+    output
+  end
+
+  def upkeep
+    upkeep = {
+      food: 0,
+      minerals: 0,
+      energy: 0,
+      consumer_goods: 0,
+      alloys: 0,
+      volatile_motes: 0,
+      exotic_gases: 0,
+      rare_crystals: 0,
+      unity: 0,
+      physics_research: 0,
+      society_research: 0,
+      engineering_research: 0,
+      trade: 0,
+    }
+
+    @job.upkeep.each do |good, value|
+      upkeep[good] += value
+    end
+    pop_upkeep.each do |good, value|
+      upkeep[good] += value
+    end
 
     upkeep
   end
@@ -260,11 +524,10 @@ class Colony
 
   attr_reader :pops
 
-  def initialize(type:, size:, empire:, leader: nil, designation: nil, districts: {}, buildings: {}, jobs: {}, deposits: {}, fill_jobs_with: nil)
+  def initialize(type:, size:, sector:, designation: nil, districts: {}, buildings: {}, jobs: {}, deposits: {}, fill_jobs_with: nil)
     @type = type
     @size = size
-    @empire = empire
-    @leader = leader
+    @sector = sector
     @designation = designation
     @districts = districts.dup
     @buildings = buildings.dup
@@ -366,7 +629,7 @@ class Colony
       50,
       1 * jobs(:enforcer),
       @designation == :empire_capital ? 5 : 0,
-      @empire.civics.include?(:shared_burdens) ? 5 : 0,
+      @sector.empire.civics.include?(:shared_burdens) ? 5 : 0,
     ].reduce(0, &:+)
 
     if approval_rating() > 50
@@ -388,7 +651,7 @@ class Colony
     end
   end
 
-  def pop_output_modifiers(pop)
+  def job_output_modifiers(job)
     adders = {
       food: 0,
       minerals: 0,
@@ -425,44 +688,44 @@ class Colony
       multipliers[good] += stability_coefficient()
     end
 
-    if @leader
+    if @sector.governor
       multipliers.each_key do |good|
-        multipliers[good] += 0.02 * @leader.level unless good == :trade
+        multipliers[good] += 0.02 * @sector.governor.level unless good == :trade
       end
 
-      if @leader.traits.include?(:unifier)
-        if pop.job == :bureaucrat
+      if @sector.governor.traits.include?(:unifier)
+        if job.job == :bureaucrat
           multipliers[:unity] += 0.1
         end
       end
     end
 
-    if @empire.ethics.include?(:fanatic_egalitarian) and pop.specialist?
+    if @sector.empire.ethics.include?(:fanatic_egalitarian) and job.worker.specialist?
       multipliers.each_key do |good|
         multipliers[good] += 0.1 unless good == :trade
       end
     end
 
-    if @empire.ethics.include?(:xenophile)
+    if @sector.empire.ethics.include?(:xenophile)
       multipliers[:trade] += 0.1
     end
 
-    if @empire.civics.include?(:meritocracy) and pop.specialist?
+    if @sector.empire.civics.include?(:meritocracy) and job.worker.specialist?
       multipliers.each_key do |good|
         multipliers[good] += 0.1 unless good == :trade
       end
     end
 
-    if @empire.civics.include?(:beacon_of_liberty)
+    if @sector.empire.civics.include?(:beacon_of_liberty)
       multipliers[:unity] += 0.15
     end
 
-    if @empire.ruler.traits.include?(:industrialist)
+    if @sector.empire.ruler.traits.include?(:industrialist)
       multipliers[:minerals] += 0.1
     end
 
-    if @empire.technology[:society].include?(:eco_simulation)
-      if pop.job == :farmer
+    if @sector.empire.technology[:society].include?(:eco_simulation)
+      if job.job == :farmer
         multipliers[:food] += 0.2
       end
     end
@@ -476,15 +739,15 @@ class Colony
       multipliers[:society_research] += 0.1
       multipliers[:engineering_research] += 0.1
     elsif @designation == :refinery_station
-      if pop.job == :chemist or
-        pop.job == :translucer or
-        pop.job == :gas_refiner
+      if job.job == :chemist or
+        job.job == :translucer or
+        job.job == :gas_refiner
         multipliers[:exotic_gases] += 0.1
         multipliers[:rare_crystals] += 0.1
         multipliers[:volatile_motes] += 0.1
       end
     elsif @designation == :unification_station
-      if pop.job == :bureaucrat
+      if job.job == :bureaucrat
         multipliers.each_key do |good|
           multipliers[good] += 0.1 unless good == :trade
         end
@@ -492,15 +755,129 @@ class Colony
     elsif @designation == :trade_station
       multipliers[:trade] += 0.2
     elsif @designation == :generator_station
-      if pop.job == :technician
+      if job.job == :technician
         multipliers[:energy] += 0.1
       end
     elsif @designation == :mining_station
-      if pop.job == :miner
+      if job.job == :miner
         multipliers[:minerals] += 0.1
         multipliers[:exotic_gases] += 0.1
         multipliers[:rare_crystals] += 0.1
         multipliers[:volatile_motes] += 0.1
+      end
+    end
+
+    {
+      additive: adders,
+      multiplicative: multipliers,
+    }
+  end
+
+  def pop_output_modifiers(pop)
+    adders = {
+      food: 0,
+      minerals: 0,
+      energy: 0,
+      consumer_goods: 0,
+      alloys: 0,
+      volatile_motes: 0,
+      exotic_gases: 0,
+      rare_crystals: 0,
+      unity: 0,
+      physics_research: 0,
+      society_research: 0,
+      engineering_research: 0,
+      trade: 0,
+    }
+
+    multipliers = {
+      food: 0,
+      minerals: 0,
+      energy: 0,
+      consumer_goods: 0,
+      alloys: 0,
+      volatile_motes: 0,
+      exotic_gases: 0,
+      rare_crystals: 0,
+      unity: 0,
+      physics_research: 0,
+      society_research: 0,
+      engineering_research: 0,
+      trade: 0,
+    }
+
+    multipliers[:trade] += stability_coefficient()
+
+    if @sector.empire.ethics.include?(:xenophile)
+      multipliers[:trade] += 0.1
+    end
+
+    if @designation == :trade_station
+      multipliers[:trade] += 0.2
+    end
+
+    {
+      additive: adders,
+      multiplicative: multipliers,
+    }
+  end
+
+  def job_upkeep_modifiers(job)
+    adders = {
+      food: 0,
+      minerals: 0,
+      energy: 0,
+      consumer_goods: 0,
+      alloys: 0,
+      volatile_motes: 0,
+      exotic_gases: 0,
+      rare_crystals: 0,
+      unity: 0,
+      physics_research: 0,
+      society_research: 0,
+      engineering_research: 0,
+      trade: 0,
+    }
+
+    multipliers = {
+      food: 0,
+      minerals: 0,
+      energy: 0,
+      consumer_goods: 0,
+      alloys: 0,
+      volatile_motes: 0,
+      exotic_gases: 0,
+      rare_crystals: 0,
+      unity: 0,
+      physics_research: 0,
+      society_research: 0,
+      engineering_research: 0,
+      trade: 0,
+    }
+
+    if @designation == :foundry_station
+      if job.job == :metallurgist
+        multipliers.each_key do |good|
+          multipliers[good] -= 0.2 unless good == :trade
+        end
+      end
+    elsif @designation == :factory_station
+      if job.job == :artisan or job.job == :artificer
+        multipliers.each_key do |good|
+          multipliers[good] -= 0.2 unless good == :trade
+        end
+      end
+    elsif @designation == :industrial_station
+      if job.job == :artisan or job.job == :artificer or job.job == :metallurgist
+        multipliers.each_key do |good|
+          multipliers[good] -= 0.1 unless good == :trade
+        end
+      end
+    elsif @designation == :unification_station
+      if job.job == :bureaucrat
+        multipliers.each_key do |good|
+          multipliers[good] -= 0.1 unless good == :trade
+        end
       end
     end
 
@@ -542,32 +919,6 @@ class Colony
       engineering_research: 0,
       trade: 0,
     }
-
-    if @designation == :foundry_station
-      if pop.job == :metallurgist
-        multipliers.each_key do |good|
-          multipliers[good] -= 0.2 unless good == :trade
-        end
-      end
-    elsif @designation == :factory_station
-      if pop.job == :artisan or pop.job == :artificer
-        multipliers.each_key do |good|
-          multipliers[good] -= 0.2 unless good == :trade
-        end
-      end
-    elsif @designation == :industrial_station
-      if pop.job == :artisan or pop.job == :artificer or pop.job == :metallurgist
-        multipliers.each_key do |good|
-          multipliers[good] -= 0.1 unless good == :trade
-        end
-      end
-    elsif @designation == :unification_station
-      if pop.job == :bureaucrat
-        multipliers.each_key do |good|
-          multipliers[good] -= 0.1 unless good == :trade
-        end
-      end
-    end
 
     {
       additive: adders,
@@ -777,5 +1128,14 @@ class Leader
   def initialize(level:, traits: [])
     @level = level
     @traits = traits.dup
+  end
+end
+
+class Sector
+  attr_reader :empire, :governor
+
+  def initialize(empire:, governor:)
+    @empire = empire
+    @governor = governor
   end
 end

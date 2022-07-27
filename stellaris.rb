@@ -30,6 +30,8 @@ empire = Empire.new(
 
 governor = Leader.new(level: 1)
 
+sector = Sector.new(empire: empire, governor: governor)
+
 =begin
 pandora = Colony.new(
   type: :habitat,
@@ -124,8 +126,7 @@ pandora = Colony.new(
   type: :habitat,
   designation: :empire_capital,
   size: 6,
-  empire: empire,
-  leader: governor,
+  sector: sector,
   districts: {
     habitation: 1,
     industrial: 2,
@@ -155,8 +156,7 @@ aegle = Colony.new(
   type: :habitat,
   designation: :mining_station,
   size: 4,
-  empire: empire,
-  leader: governor,
+  sector: sector,
   districts: {
     habitation: 2,
     mining: 2,
@@ -174,8 +174,7 @@ erytheis = Colony.new(
   type: :habitat,
   designation: :generator_station,
   size: 4,
-  empire: empire,
-  leader: governor,
+  sector: sector,
   districts: {
     habitation: 2,
     reactor: 2,
@@ -193,8 +192,7 @@ hesperia = Colony.new(
   type: :habitat,
   designation: :generator_station,
   size: 4,
-  empire: empire,
-  leader: governor,
+  sector: sector,
   districts: {
     habitation: 2,
     reactor: 2,
@@ -211,8 +209,7 @@ arethusa = Colony.new(
   type: :habitat,
   designation: :factory_station,
   size: 4,
-  empire: empire,
-  leader: governor,
+  sector: sector,
   districts: {
     habitation: 2,
     industrial: 2,
@@ -230,8 +227,7 @@ hestia = Colony.new(
   type: :habitat,
   designation: :mining_station,
   size: 4,
-  empire: empire,
-  leader: governor,
+  sector: sector,
   districts: {
     habitation: 2,
     mining: 2,
@@ -248,8 +244,7 @@ medusa = Colony.new(
   type: :habitat,
   designation: :foundry_station,
   size: 4,
-  empire: empire,
-  leader: governor,
+  sector: sector,
   districts: {
     habitation: 2,
     industrial: 2,
@@ -267,8 +262,7 @@ aerica = Colony.new(
   type: :habitat,
   designation: :research_station,
   size: 4,
-  empire: empire,
-  leader: governor,
+  sector: sector,
   districts: {
     habitation: 2,
     research: 2,
@@ -285,8 +279,7 @@ hippolyte = Colony.new(
   type: :habitat,
   designation: :mining_station,
   size: 4,
-  empire: empire,
-  leader: governor,
+  sector: sector,
   districts: {
     habitation: 2,
     mining: 2,
@@ -303,8 +296,7 @@ mapsaura = Colony.new(
   type: :habitat,
   designation: :unification_station,
   size: 4,
-  empire: empire,
-  leader: governor,
+  sector: sector,
   districts: {
     habitation: 3,
     leisure: 1,
@@ -320,8 +312,7 @@ thetis = Colony.new(
   type: :habitat,
   designation: :research_station,
   size: 4,
-  empire: empire,
-  leader: governor,
+  sector: sector,
   districts: {
     habitation: 3,
     leisure: 1,
