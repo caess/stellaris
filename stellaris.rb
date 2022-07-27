@@ -1,5 +1,7 @@
 #!/usr/bin/env ruby
 
+require './stellaris/lib/stellaris'
+
 module UsesAmenities
   def amenities_output
     0
@@ -273,7 +275,6 @@ class Colony
     @buildings = buildings.dup
     @deposits = deposits.dup
 
-    #@jobs = calculate_jobs()
     if fill_jobs
       @jobs = max_jobs()
     else
@@ -391,19 +392,6 @@ class Colony
       0
     end
   end
-
-=begin
-  def specialist?(job)
-    [
-      :metallurgist, :catalytic_technician, :artisan, :artificer,
-      :pearl_diver, :chemist, :gas_refiner, :translucer, :colonist,
-      :roboticist, :medical_worker, :entertainer, :duelist, :enforcer,
-      :telepath, :necromancer, :reassigner, :necrophyte, :researcher,
-      :bureaucrat, :manager, :priest, :death_priest, :death_chronicler,
-      :culture_worker,
-    ].include?(job)
-  end
-=end
 
   def pop_output_modifiers(pop)
     adders = {
@@ -591,185 +579,6 @@ class Colony
       multiplicative: multipliers,
     }
   end
-
-
-=begin
-  def pop_output(num, job)
-    output = {
-      food: 0,
-      minerals: 0,
-      energy: 0,
-      consumer_goods: 0,
-      alloys: 0,
-      volatile_motes: 0,
-      exotic_gases: 0,
-      rare_crystals: 0,
-      unity: 0,
-      physics_research: 0,
-      society_research: 0,
-      engineering_research: 0,
-      trade: 0,
-    }
-
-    if @species[:living_standard] == :shared_burden
-      base_output[:trade] += 0.25 * num
-    elsif @species[:living_standard] == :utopian_abundance
-      base_output[:trade] += 0.5 * num
-    end
-
-    if job == :politician
-      base_output[:unity] += 6 * num
-    elsif job == :science_director
-      base_output[:physics_research] += 6 * num
-      base_output[:society_research] += 6 * num
-      base_output[:engineering_research] += 6 * num
-      base_output[:unity] += 2 * num
-    elsif job == :metallurgist
-      base_output[:alloys] += 3 * num
-    elsif job == :artisan
-      base_output[:consumer_goods] += 6 * num
-    elsif job == :colonist
-      base_output[:food] += 1 * num
-    elsif job == :entertainer
-      base_output[:unity] += 1 * num
-    elsif job == :researcher
-      base_output[:physics_research] += 4 * num
-      base_output[:society_research] += 4 * num
-      base_output[:engineering_research] += 4 * num
-    elsif job == :bureaucrat
-      base_output[:unity] += 4 * num
-    elsif job == :clerk
-      base_output[:trade] += 4 * num
-    elsif job == :technician
-      base_output[:energy] += 6 * num
-    elsif job == :miner
-      base_output[:minerals] += 4 * num
-    elsif job == :farmer
-      base_output[:food] += 6 * num
-    end
-
-    multipliers = {
-      food: 1,
-      minerals: 1,
-      energy: 1,
-      consumer_goods: 1,
-      alloys: 1,
-      volatile_motes: 1,
-      exotic_gases: 1,
-      rare_crystals: 1,
-      unity: 1,
-      physics_research: 1,
-      society_research: 1,
-      engineering_research: 1,
-      trade: 1,
-    }
-
-    multipliers.each_key do |good|
-      multipliers[good] += stability_coefficient()
-    end
-
-    if @leader
-      multipliers.each_key do |good|
-        multipliers[good] += 0.02 * @leader[:level] unless good == :trade
-      end
-
-      if @leader[:traits].include?(:unifier)
-        if job == :bureaucrat
-          multipliers[:unity] += 0.1
-        end
-      end
-    end
-
-    if @empire[:ethics].include?(:fanatic_egalitarian) and specialist?(job)
-      multipliers.each_key do |good|
-        multipliers[good] += 0.1 unless good == :trade
-      end
-    end
-
-    if @empire[:ethics].include?(:xenophile)
-      multipliers[:trade] += 0.1
-    end
-
-    if @empire[:civics].include?(:meritocracy) and specialist?(job)
-      multipliers.each_key do |good|
-        multipliers[good] += 0.1 unless good == :trade
-      end
-    end
-
-    if @empire[:civics].include?(:beacon_of_liberty)
-      multipliers[:unity] += 0.15
-    end
-
-    if @empire[:ruler][:traits].include?(:industrialist)
-      multipliers[:minerals] += 0.1
-    end
-
-    if @empire[:technology][:society].include?(:eco_simulation)
-      if job == :farmer
-        multipliers[:food] += 0.2
-      end
-    end
-
-    if @species[:traits].include?(:void_dweller)
-      multipliers.each_key do |good|
-        multipliers[good] += 0.15 unless good == :trade
-      end
-    end
-
-    if @species[:traits].include?(:intelligent)
-      multipliers[:physics_research] += 0.1
-      multipliers[:society_research] += 0.1
-      multipliers[:engineering_research] += 0.1
-    end
-
-    if @species[:traits].include?(:natural_engineers)
-      multipliers[:engineering_research] += 0.15
-    end
-
-    if @designation == :empire_capital
-      multipliers.each_key do |good|
-        multipliers[good] += 0.1 unless good == :trade
-      end
-    elsif @designation == :research_station
-      multipliers[:physics_research] += 0.1
-      multipliers[:society_research] += 0.1
-      multipliers[:engineering_research] += 0.1
-    elsif @designation == :refinery_station
-      if job == :chemist or job == :translucer or job == :gas_refiner
-        multipliers[:exotic_gases] += 0.1
-        multipliers[:rare_crystals] += 0.1
-        multipliers[:volatile_motes] += 0.1
-      end
-    elsif @designation == :unification_station
-      if job == :bureaucrat
-        multipliers.each_key do |good|
-          multipliers[good] += 0.1 unless good == :trade
-        end
-      end
-    elsif @designation == :trade_station
-      multipliers[:trade] += 0.2
-    elsif @designation == :generator_station
-      if job == :technician
-        multipliers[:energy] += 0.1
-      end
-    elsif @designation == :mining_station
-      if job == :miner
-        multipliers[:minerals] += 0.1
-        multipliers[:exotic_gases] += 0.1
-        multipliers[:rare_crystals] += 0.1
-        multipliers[:volatile_motes] += 0.1
-      end
-    end
-
-    @pops.each do |pop|
-      pop.output.each do |good, value|
-        output[good] += value
-      end
-    end
-
-    output
-  end
-=end
 
   def pop_upkeep(num, job)
     base_upkeep = {
@@ -1025,22 +834,6 @@ class Colony
 
     upkeep
   end
-
-=begin
-  def net_output()
-    net = output().dup
-
-    upkeep().each do |good, value|
-      if net.key?(good)
-        net[good] -= value
-      else
-        net[good] = 0 - value
-      end
-    end
-
-    net
-  end
-=end
 end
 
 ruler = {
