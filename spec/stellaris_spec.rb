@@ -30,6 +30,12 @@ RSpec.describe 'match checks' do
       )
     }
     let(:governor) { Leader.new(level: 1) }
+    let(:sector) {
+      Sector.new(
+        empire: empire,
+        governor: governor
+      )
+    }
 
     describe "early game starting habitat" do
       subject {
@@ -37,8 +43,7 @@ RSpec.describe 'match checks' do
           type: :habitat,
           designation: :empire_capital,
           size: 6,
-          empire: empire,
-          leader: governor,
+          sector: sector,
           districts: {
             habitation: 1,
             industrial: 2,
@@ -89,8 +94,7 @@ RSpec.describe 'match checks' do
           type: :habitat,
           designation: :mining_station,
           size: 4,
-          empire: empire,
-          leader: governor,
+          sector: sector,
           districts: {
             habitation: 2,
             mining: 2,
@@ -129,8 +133,7 @@ RSpec.describe 'match checks' do
           type: :habitat,
           designation: :generator_station,
           size: 4,
-          empire: empire,
-          leader: governor,
+          sector: sector,
           districts: {
             habitation: 2,
             reactor: 2,
@@ -169,8 +172,7 @@ RSpec.describe 'match checks' do
           type: :habitat,
           designation: :generator_station,
           size: 4,
-          empire: empire,
-          leader: governor,
+          sector: sector,
           districts: {
             habitation: 2,
             reactor: 2,
@@ -208,8 +210,7 @@ RSpec.describe 'match checks' do
           type: :habitat,
           designation: :mining_station,
           size: 4,
-          empire: empire,
-          leader: governor,
+          sector: sector,
           districts: {
             habitation: 2,
             mining: 2,
@@ -247,8 +248,7 @@ RSpec.describe 'match checks' do
           type: :habitat,
           designation: :factory_station,
           size: 4,
-          empire: empire,
-          leader: governor,
+          sector: sector,
           districts: {
             habitation: 2,
             industrial: 2,
@@ -287,8 +287,7 @@ RSpec.describe 'match checks' do
           type: :habitat,
           designation: :foundry_station,
           size: 4,
-          empire: empire,
-          leader: governor,
+          sector: sector,
           districts: {
             habitation: 2,
             industrial: 2,
@@ -327,8 +326,7 @@ RSpec.describe 'match checks' do
           type: :habitat,
           designation: :research_station,
           size: 4,
-          empire: empire,
-          leader: governor,
+          sector: sector,
           districts: {
             habitation: 2,
             research: 2,
@@ -366,8 +364,7 @@ RSpec.describe 'match checks' do
           type: :habitat,
           designation: :research_station,
           size: 4,
-          empire: empire,
-          leader: governor,
+          sector: sector,
           districts: {
             habitation: 3,
             leisure: 1,
@@ -404,8 +401,7 @@ RSpec.describe 'match checks' do
           type: :habitat,
           designation: :unification_station,
           size: 4,
-          empire: empire,
-          leader: governor,
+          sector: sector,
           districts: {
             habitation: 3,
             leisure: 1,

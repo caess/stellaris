@@ -1,3 +1,120 @@
+class ResourceModifier
+  attr_reader :values
+
+  def initialize(values = {})
+    @values = values.dup
+  end
+
+  def +(rhs)
+    result = @values.dup
+
+    rhs.values.each_key do |resource|
+      if result.key?(resource)
+        rhs.values[resource].each do |modifier_type, value|
+          result[resource][modifier_type] ||= 0
+          result[resource][modifier_type] += value
+        end
+      else
+        result[resource] = rhs.values[resource]
+      end
+    end
+
+    return ResourceModifier.new(result)
+  end
+
+  def ==(obj)
+    @values == obj.values
+  end
+
+  NONE = ResourceModifier.new()
+end
+
+class ResourceGroup
+  PRODUCED_RESOURCES = [
+    :food, :minerals, :energy, :consumer_goods, :alloys, :volatile_motes,
+    :exotic_gases, :rare_crystals, :unity, :physics_research,
+    :society_research, :engineering_research,
+  ]
+
+  def initialize(resources = {})
+    @resources = {
+      food: 0,
+      minerals: 0,
+      energy: 0,
+      consumer_goods: 0,
+      alloys: 0,
+      volatile_motes: 0,
+      exotic_gases: 0,
+      rare_crystals: 0,
+      unity: 0,
+      physics_research: 0,
+      society_research: 0,
+      engineering_research: 0,
+      trade: 0,
+    }
+
+    resources.each do |good, value|
+      @resources[good] = value
+    end
+
+    @modifiers = []
+    @resolved = nil
+  end
+
+  def [](key)
+    return nil if !@resources.key?(key)
+
+    resolve if @resolved.nil?
+
+    return @resolved[key]
+  end
+
+  def []=(key, value)
+    return nil if !@resources.key?(key)
+
+    @resources[key] = value
+  end
+
+  def <<(modifier)
+    @modifiers << modifier
+    @resolved = nil
+  end
+
+  def resolve()
+    return @resolved.dup if !@resolved.nil?
+
+    @resolved = @resources.dup
+    total_modifiers = @modifiers.reduce(ResourceModifier::NONE, &:+)
+
+    total_modifiers.values.each do |good, modifiers|
+      @resolved[good] += (modifiers[:additive] || 0)
+      @resolved[good] *= 1 + (modifiers[:multiplicative] || 0)
+    end
+
+    return @resolved.dup
+  end
+
+  def +(rhs)
+    output = resolve().dup
+
+    rhs.resolve().each do |good, value|
+      output[good] += value
+    end
+
+    return ResourceGroup.new(output)
+  end
+
+  def -(rhs)
+    output = resolve().dup
+
+    rhs.resolve().each do |good, value|
+      output[good] -= value
+    end
+
+    return ResourceGroup.new(output)
+  end
+end
+
 module UsesAmenities
   def amenities_output
     0
@@ -22,17 +139,7 @@ module OutputsResources
   end
 
   def net_output
-    net = output().dup
-
-    upkeep().each do |good, value|
-      if net.key?(good)
-        net[good] -= value
-      else
-        net[good] = 0 - value
-      end
-    end
-
-    net
+    output() - upkeep()
   end
 end
 
@@ -70,138 +177,56 @@ class Job
   end
 
   def output
-    base_output = {
-      food: 0,
-      minerals: 0,
-      energy: 0,
-      consumer_goods: 0,
-      alloys: 0,
-      volatile_motes: 0,
-      exotic_gases: 0,
-      rare_crystals: 0,
-      unity: 0,
-      physics_research: 0,
-      society_research: 0,
-      engineering_research: 0,
-      trade: 0,
-    }
+    output = ResourceGroup.new()
 
     if @job == :politician
-      base_output[:unity] += 6
+      output[:unity] = 6
     elsif @job == :science_director
-      base_output[:physics_research] += 6
-      base_output[:society_research] += 6
-      base_output[:engineering_research] += 6
-      base_output[:unity] += 2
+      output[:physics_research] = 6
+      output[:society_research] = 6
+      output[:engineering_research] = 6
+      output[:unity] = 2
     elsif @job == :metallurgist
-      base_output[:alloys] += 3
+      output[:alloys] = 3
     elsif @job == :artisan
-      base_output[:consumer_goods] += 6
+      output[:consumer_goods] = 6
     elsif @job == :colonist
-      base_output[:food] += 1
+      output[:food] = 1
     elsif @job == :entertainer
-      base_output[:unity] += 1
+      output[:unity] = 1
     elsif @job == :researcher
-      base_output[:physics_research] += 4
-      base_output[:society_research] += 4
-      base_output[:engineering_research] += 4
+      output[:physics_research] = 4
+      output[:society_research] = 4
+      output[:engineering_research] = 4
     elsif @job == :bureaucrat
-      base_output[:unity] += 4
+      output[:unity] = 4
     elsif @job == :clerk
-      base_output[:trade] += 4
+      output[:trade] = 4
     elsif @job == :technician
-      base_output[:energy] += 6
+      output[:energy] = 6
     elsif @job == :miner
-      base_output[:minerals] += 4
+      output[:minerals] = 4
     elsif @job == :farmer
-      base_output[:food] += 6
+      output[:food] = 6
     end
 
-    multipliers = {
-      food: 1,
-      minerals: 1,
-      energy: 1,
-      consumer_goods: 1,
-      alloys: 1,
-      volatile_motes: 1,
-      exotic_gases: 1,
-      rare_crystals: 1,
-      unity: 1,
-      physics_research: 1,
-      society_research: 1,
-      engineering_research: 1,
-      trade: 1,
-    }
-
-    modifiers = @worker.job_output_modifiers(self)
-    modifiers[:additive].each do |good, value|
-      base_output[good] += value
-    end
-    modifiers[:multiplicative].each do |good, value|
-      multipliers[good] += value
-    end
-
-    output = {}
-    base_output.each_key do |good|
-      output[good] = base_output[good] * multipliers[good]
-    end
+    output << @worker.job_output_modifiers(self)
 
     output
   end
 
   def upkeep
-    base_upkeep = {
-      food: 0,
-      minerals: 0,
-      energy: 0,
-      consumer_goods: 0,
-      alloys: 0,
-      volatile_motes: 0,
-      exotic_gases: 0,
-      rare_crystals: 0,
-      unity: 0,
-      physics_research: 0,
-      society_research: 0,
-      engineering_research: 0,
-      trade: 0,
-    }
+    upkeep = ResourceGroup.new()
 
     if @job == :politician or @job == :science_director or @job == :researcher or @job == :bureaucrat
-      base_upkeep[:consumer_goods] += 2
+      upkeep[:consumer_goods] = 2
     elsif @job == :metallurgist or @job == :artisan
-      base_upkeep[:minerals] += 6
+      upkeep[:minerals] = 6
     elsif @job == :entertainer
-      base_upkeep[:consumer_goods] += 1
+      upkeep[:consumer_goods] = 1
     end
 
-    multipliers = {
-      food: 1,
-      minerals: 1,
-      energy: 1,
-      consumer_goods: 1,
-      alloys: 1,
-      volatile_motes: 1,
-      exotic_gases: 1,
-      rare_crystals: 1,
-      unity: 1,
-      physics_research: 1,
-      society_research: 1,
-      engineering_research: 1,
-      trade: 1,
-    }
-
-    modifiers = @worker.job_upkeep_modifiers(self)
-    modifiers[:additive].each do |good, value|
-      base_upkeep[good] += value
-    end
-    modifiers[:multiplicative].each do |good, value|
-      multipliers[good] += value
-    end
-
-    upkeep = {}
-    base_upkeep.each_key do |good|
-      upkeep[good] = base_upkeep[good] * multipliers[good]
-    end
+    upkeep << @worker.job_upkeep_modifiers(self)
 
     upkeep
   end
@@ -244,278 +269,79 @@ class Pop
   end
 
   def job_output_modifiers(job)
-    adders = {
-      food: 0,
-      minerals: 0,
-      energy: 0,
-      consumer_goods: 0,
-      alloys: 0,
-      volatile_motes: 0,
-      exotic_gases: 0,
-      rare_crystals: 0,
-      unity: 0,
-      physics_research: 0,
-      society_research: 0,
-      engineering_research: 0,
-      trade: 0,
-    }
-
-    multipliers = {
-      food: 0,
-      minerals: 0,
-      energy: 0,
-      consumer_goods: 0,
-      alloys: 0,
-      volatile_motes: 0,
-      exotic_gases: 0,
-      rare_crystals: 0,
-      unity: 0,
-      physics_research: 0,
-      society_research: 0,
-      engineering_research: 0,
-      trade: 0,
-    }
+    modifier = ResourceModifier::NONE
 
     if @species.traits.include?(:void_dweller)
-      multipliers.each_key do |good|
-        multipliers[good] += 0.15 unless good == :trade
+      modifiers = {}
+      ResourceGroup::PRODUCED_RESOURCES.each do |good|
+        modifiers[good] = {multiplicative: 0.15}
       end
+
+      modifier += ResourceModifier.new(modifiers)
     end
 
     if @species.traits.include?(:intelligent)
-      multipliers[:physics_research] += 0.1
-      multipliers[:society_research] += 0.1
-      multipliers[:engineering_research] += 0.1
+      modifier += ResourceModifier.new({
+        physics_research: {multiplicative: 0.1},
+        society_research: {multiplicative: 0.1},
+        engineering_research: {multiplicative: 0.1},
+      })
     end
 
     if @species.traits.include?(:natural_engineers)
-      multipliers[:engineering_research] += 0.15
+      modifier += ResourceModifier.new({
+        engineering_research: {multiplicative: 0.15},
+      })
     end
 
-    colony_modifiers = @colony.job_output_modifiers(job)
-    colony_modifiers[:additive].each do |good, value|
-      adders[good] += value
-    end
-    colony_modifiers[:multiplicative].each do |good, value|
-      multipliers[good] += value
-    end
+    modifier += @colony.job_output_modifiers(job)
 
-    return {
-      additive: adders,
-      multiplicative: multipliers
-    }
+    modifier
   end
 
   def job_upkeep_modifiers(job)
-    adders = {
-      food: 0,
-      minerals: 0,
-      energy: 0,
-      consumer_goods: 0,
-      alloys: 0,
-      volatile_motes: 0,
-      exotic_gases: 0,
-      rare_crystals: 0,
-      unity: 0,
-      physics_research: 0,
-      society_research: 0,
-      engineering_research: 0,
-      trade: 0,
-    }
+    modifier = ResourceModifier::NONE
 
-    multipliers = {
-      food: 0,
-      minerals: 0,
-      energy: 0,
-      consumer_goods: 0,
-      alloys: 0,
-      volatile_motes: 0,
-      exotic_gases: 0,
-      rare_crystals: 0,
-      unity: 0,
-      physics_research: 0,
-      society_research: 0,
-      engineering_research: 0,
-      trade: 0,
-    }
+    modifier += @colony.job_upkeep_modifiers(job)
 
-    colony_modifiers = @colony.job_upkeep_modifiers(job)
-    colony_modifiers[:additive].each do |good, value|
-      adders[good] += value
-    end
-    colony_modifiers[:multiplicative].each do |good, value|
-      multipliers[good] += value
-    end
-
-    return {
-      additive: adders,
-      multiplicative: multipliers
-    }
+    modifier
   end
 
   def pop_output
-    base_output = {
-      food: 0,
-      minerals: 0,
-      energy: 0,
-      consumer_goods: 0,
-      alloys: 0,
-      volatile_motes: 0,
-      exotic_gases: 0,
-      rare_crystals: 0,
-      unity: 0,
-      physics_research: 0,
-      society_research: 0,
-      engineering_research: 0,
-      trade: 0,
-    }
+    output = ResourceGroup.new()
 
     if @species.living_standard == :shared_burden
-      base_output[:trade] += 0.25
+      output[:trade] = 0.25
     elsif @species.living_standard == :utopian_abundance
-      base_output[:trade] += 0.5
+      output[:trade] = 0.5
     end
 
-    multipliers = {
-      food: 1,
-      minerals: 1,
-      energy: 1,
-      consumer_goods: 1,
-      alloys: 1,
-      volatile_motes: 1,
-      exotic_gases: 1,
-      rare_crystals: 1,
-      unity: 1,
-      physics_research: 1,
-      society_research: 1,
-      engineering_research: 1,
-      trade: 1,
-    }
-
-    colony_modifiers = @colony.pop_output_modifiers(self)
-    colony_modifiers[:additive].each do |good, value|
-      base_output[good] += value
-    end
-    colony_modifiers[:multiplicative].each do |good, value|
-      multipliers[good] += value
-    end
-
-    output = {}
-    base_output.each_key do |good|
-      output[good] = base_output[good] * multipliers[good]
-    end
+    output << @colony.pop_output_modifiers(self)
 
     output
   end
 
   def pop_upkeep
-    base_upkeep = {
-      food: 0,
-      minerals: 0,
-      energy: 0,
-      consumer_goods: 0,
-      alloys: 0,
-      volatile_motes: 0,
-      exotic_gases: 0,
-      rare_crystals: 0,
-      unity: 0,
-      physics_research: 0,
-      society_research: 0,
-      engineering_research: 0,
-      trade: 0,
-    }
+    upkeep = ResourceGroup.new()
 
     if @species.living_standard == :shared_burden
-      base_upkeep[:consumer_goods] += 0.4
+      upkeep[:consumer_goods] = 0.4
     elsif @species.living_standard == :utopian_abundance
-      base_upkeep[:consumer_goods] += 1
+      upkeep[:consumer_goods] = 1
     end
-    base_upkeep[:food] += 1
+    upkeep[:food] = 1
 
-    multipliers = {
-      food: 1,
-      minerals: 1,
-      energy: 1,
-      consumer_goods: 1,
-      alloys: 1,
-      volatile_motes: 1,
-      exotic_gases: 1,
-      rare_crystals: 1,
-      unity: 1,
-      physics_research: 1,
-      society_research: 1,
-      engineering_research: 1,
-      trade: 1,
-    }
-
-    colony_modifiers = @colony.pop_upkeep_modifiers(self)
-    colony_modifiers[:additive].each do |good, value|
-      base_upkeep[good] += value
-    end
-    colony_modifiers[:multiplicative].each do |good, value|
-      multipliers[good] += value
-    end
-
-    upkeep = {}
-    base_upkeep.each_key do |good|
-      upkeep[good] = base_upkeep[good] * multipliers[good]
-    end
+    upkeep << @colony.pop_upkeep_modifiers(self)
 
     upkeep
   end
 
   def output
-    output = {
-      food: 0,
-      minerals: 0,
-      energy: 0,
-      consumer_goods: 0,
-      alloys: 0,
-      volatile_motes: 0,
-      exotic_gases: 0,
-      rare_crystals: 0,
-      unity: 0,
-      physics_research: 0,
-      society_research: 0,
-      engineering_research: 0,
-      trade: 0,
-    }
-
-    @job.output.each do |good, value|
-      output[good] += value
-    end
-    pop_output.each do |good, value|
-      output[good] += value
-    end
-
-    output
+    @job.output + pop_output
   end
 
   def upkeep
-    upkeep = {
-      food: 0,
-      minerals: 0,
-      energy: 0,
-      consumer_goods: 0,
-      alloys: 0,
-      volatile_motes: 0,
-      exotic_gases: 0,
-      rare_crystals: 0,
-      unity: 0,
-      physics_research: 0,
-      society_research: 0,
-      engineering_research: 0,
-      trade: 0,
-    }
-
-    @job.upkeep.each do |good, value|
-      upkeep[good] += value
-    end
-    pop_upkeep.each do |good, value|
-      upkeep[good] += value
-    end
-
-    upkeep
+    @job.upkeep + pop_upkeep
   end
 end
 
@@ -531,7 +357,19 @@ class Colony
     @designation = designation
     @districts = districts.dup
     @buildings = buildings.dup
-    @deposits = deposits.dup
+
+    if !deposits.is_a?(Array)
+      deposits = [deposits]
+    end
+    @deposits = deposits.map do |deposit|
+      if deposit.is_a?(Hash)
+        ResourceGroup.new(deposit)
+      elsif deposit.is_a?(ResourceGroup)
+        deposit
+      else
+        nil
+      end
+    end
 
     if fill_jobs_with
       @jobs = max_jobs()
@@ -651,451 +489,247 @@ class Colony
     end
   end
 
-  def job_output_modifiers(job)
-    adders = {
-      food: 0,
-      minerals: 0,
-      energy: 0,
-      consumer_goods: 0,
-      alloys: 0,
-      volatile_motes: 0,
-      exotic_gases: 0,
-      rare_crystals: 0,
-      unity: 0,
-      physics_research: 0,
-      society_research: 0,
-      engineering_research: 0,
-      trade: 0,
-    }
-
-    multipliers = {
-      food: 0,
-      minerals: 0,
-      energy: 0,
-      consumer_goods: 0,
-      alloys: 0,
-      volatile_motes: 0,
-      exotic_gases: 0,
-      rare_crystals: 0,
-      unity: 0,
-      physics_research: 0,
-      society_research: 0,
-      engineering_research: 0,
-      trade: 0,
-    }
-
-    multipliers.each_key do |good|
-      multipliers[good] += stability_coefficient()
+  def stability_coefficient_modifier()
+    modifiers = {}
+    (ResourceGroup::PRODUCED_RESOURCES + [:trade]).each do |good|
+      modifiers[good] = {multiplicative: stability_coefficient()}
     end
 
+    ResourceModifier.new(modifiers)
+  end
+
+  def job_output_modifiers(job)
+    modifier = ResourceModifier.new()
+
+    modifier += stability_coefficient_modifier()
+
     if @sector.governor
-      multipliers.each_key do |good|
-        multipliers[good] += 0.02 * @sector.governor.level unless good == :trade
+      modifiers = {}
+      ResourceGroup::PRODUCED_RESOURCES.each do |good|
+        modifiers[good] = {multiplicative: 0.02 * @sector.governor.level}
       end
+
+      modifier += ResourceModifier.new(modifiers)
 
       if @sector.governor.traits.include?(:unifier)
         if job.job == :bureaucrat
-          multipliers[:unity] += 0.1
+          modifier += ResourceModifier.new({unity: {multiplicative: 0.1}})
         end
       end
     end
 
     if @sector.empire.ethics.include?(:fanatic_egalitarian) and job.worker.specialist?
-      multipliers.each_key do |good|
-        multipliers[good] += 0.1 unless good == :trade
+      modifiers = {}
+      ResourceGroup::PRODUCED_RESOURCES.each do |good|
+        modifiers[good] = {multiplicative: 0.1}
       end
+
+      modifier += ResourceModifier.new(modifiers)
     end
 
     if @sector.empire.ethics.include?(:xenophile)
-      multipliers[:trade] += 0.1
+      modifier += ResourceModifier.new(trade: {multiplicative: 0.1})
     end
 
     if @sector.empire.civics.include?(:meritocracy) and job.worker.specialist?
-      multipliers.each_key do |good|
-        multipliers[good] += 0.1 unless good == :trade
+      modifiers = {}
+      ResourceGroup::PRODUCED_RESOURCES.each do |good|
+        modifiers[good] = {multiplicative: 0.1}
       end
+
+      modifier += ResourceModifier.new(modifiers)
     end
 
     if @sector.empire.civics.include?(:beacon_of_liberty)
-      multipliers[:unity] += 0.15
+      modifier += ResourceModifier.new(unity: {multiplicative: 0.15})
     end
 
     if @sector.empire.ruler.traits.include?(:industrialist)
-      multipliers[:minerals] += 0.1
+      modifier += ResourceModifier.new(minerals: {multiplicative: 0.1})
     end
 
     if @sector.empire.technology[:society].include?(:eco_simulation)
       if job.job == :farmer
-        multipliers[:food] += 0.2
+        modifier += ResourceModifier.new(food: {multiplicative: 0.2})
       end
     end
 
     if @designation == :empire_capital
-      multipliers.each_key do |good|
-        multipliers[good] += 0.1 unless good == :trade
+      modifiers = {}
+      ResourceGroup::PRODUCED_RESOURCES.each do |good|
+        modifiers[good] = {multiplicative: 0.1}
       end
+
+      modifier += ResourceModifier.new(modifiers)
     elsif @designation == :research_station
-      multipliers[:physics_research] += 0.1
-      multipliers[:society_research] += 0.1
-      multipliers[:engineering_research] += 0.1
+      modifier += ResourceModifier.new({
+        physics_research: {multiplicative: 0.1},
+        society_research: {multiplicative: 0.1},
+        engineering_research: {multiplicative: 0.1},
+      })
     elsif @designation == :refinery_station
       if job.job == :chemist or
         job.job == :translucer or
         job.job == :gas_refiner
-        multipliers[:exotic_gases] += 0.1
-        multipliers[:rare_crystals] += 0.1
-        multipliers[:volatile_motes] += 0.1
+        modifier += ResourceModifier.new({
+          exotic_gases: {multiplicative: 0.1},
+          rare_crystals: {multiplicative: 0.1},
+          volatile_motes: {multiplicative: 0.1},
+        })
       end
     elsif @designation == :unification_station
       if job.job == :bureaucrat
-        multipliers.each_key do |good|
-          multipliers[good] += 0.1 unless good == :trade
+        modifiers = {}
+        ResourceGroup::PRODUCED_RESOURCES.each do |good|
+          modifiers[good] = {multiplicative: 0.1}
         end
+
+        modifier += ResourceModifier.new(modifiers)
       end
     elsif @designation == :trade_station
-      multipliers[:trade] += 0.2
+      modifier += ResourceModifier.new({trade: {multiplicative: 0.2}})
     elsif @designation == :generator_station
       if job.job == :technician
-        multipliers[:energy] += 0.1
+        modifier += ResourceModifier.new({energy: {multiplicative: 0.1}})
       end
     elsif @designation == :mining_station
       if job.job == :miner
-        multipliers[:minerals] += 0.1
-        multipliers[:exotic_gases] += 0.1
-        multipliers[:rare_crystals] += 0.1
-        multipliers[:volatile_motes] += 0.1
+        modifier += ResourceModifier.new({
+          minerals: {multiplicative: 0.1},
+          exotic_gases: {multiplicative: 0.1},
+          rare_crystals: {multiplicative: 0.1},
+          volatile_motes: {multiplicative: 0.1},
+        })
       end
     end
 
-    {
-      additive: adders,
-      multiplicative: multipliers,
-    }
+    modifier
   end
 
   def pop_output_modifiers(pop)
-    adders = {
-      food: 0,
-      minerals: 0,
-      energy: 0,
-      consumer_goods: 0,
-      alloys: 0,
-      volatile_motes: 0,
-      exotic_gases: 0,
-      rare_crystals: 0,
-      unity: 0,
-      physics_research: 0,
-      society_research: 0,
-      engineering_research: 0,
-      trade: 0,
-    }
+    modifier = ResourceModifier.new()
 
-    multipliers = {
-      food: 0,
-      minerals: 0,
-      energy: 0,
-      consumer_goods: 0,
-      alloys: 0,
-      volatile_motes: 0,
-      exotic_gases: 0,
-      rare_crystals: 0,
-      unity: 0,
-      physics_research: 0,
-      society_research: 0,
-      engineering_research: 0,
-      trade: 0,
-    }
-
-    multipliers[:trade] += stability_coefficient()
+    modifier += ResourceModifier.new({trade: {multiplicative: stability_coefficient()}})
 
     if @sector.empire.ethics.include?(:xenophile)
-      multipliers[:trade] += 0.1
+      modifier += ResourceModifier.new({trade: {multiplicative: 0.1}})
     end
 
     if @designation == :trade_station
-      multipliers[:trade] += 0.2
+      modifier += ResourceModifier.new({trade: {multiplicative: 0.2}})
     end
 
-    {
-      additive: adders,
-      multiplicative: multipliers,
-    }
+    modifier
   end
 
   def job_upkeep_modifiers(job)
-    adders = {
-      food: 0,
-      minerals: 0,
-      energy: 0,
-      consumer_goods: 0,
-      alloys: 0,
-      volatile_motes: 0,
-      exotic_gases: 0,
-      rare_crystals: 0,
-      unity: 0,
-      physics_research: 0,
-      society_research: 0,
-      engineering_research: 0,
-      trade: 0,
-    }
-
-    multipliers = {
-      food: 0,
-      minerals: 0,
-      energy: 0,
-      consumer_goods: 0,
-      alloys: 0,
-      volatile_motes: 0,
-      exotic_gases: 0,
-      rare_crystals: 0,
-      unity: 0,
-      physics_research: 0,
-      society_research: 0,
-      engineering_research: 0,
-      trade: 0,
-    }
+    modifier = ResourceModifier.new()
 
     if @designation == :foundry_station
       if job.job == :metallurgist
-        multipliers.each_key do |good|
-          multipliers[good] -= 0.2 unless good == :trade
+        modifiers = {}
+        ResourceGroup::PRODUCED_RESOURCES.each do |good|
+          modifiers[good] = {multiplicative: -0.2}
         end
+
+        modifier += ResourceModifier.new(modifiers)
       end
     elsif @designation == :factory_station
       if job.job == :artisan or job.job == :artificer
-        multipliers.each_key do |good|
-          multipliers[good] -= 0.2 unless good == :trade
+        modifiers = {}
+        ResourceGroup::PRODUCED_RESOURCES.each do |good|
+          modifiers[good] = {multiplicative: -0.2}
         end
+
+        modifier += ResourceModifier.new(modifiers)
       end
     elsif @designation == :industrial_station
       if job.job == :artisan or job.job == :artificer or job.job == :metallurgist
-        multipliers.each_key do |good|
-          multipliers[good] -= 0.1 unless good == :trade
+        modifiers = {}
+        ResourceGroup::PRODUCED_RESOURCES.each do |good|
+          modifiers[good] = {multiplicative: -0.1}
         end
+
+        modifier += ResourceModifier.new(modifiers)
       end
     elsif @designation == :unification_station
       if job.job == :bureaucrat
-        multipliers.each_key do |good|
-          multipliers[good] -= 0.1 unless good == :trade
+        modifiers = {}
+        ResourceGroup::PRODUCED_RESOURCES.each do |good|
+          modifiers[good] = {multiplicative: -0.1}
         end
+
+        modifier += ResourceModifier.new(modifiers)
       end
     end
 
-    {
-      additive: adders,
-      multiplicative: multipliers,
-    }
+    modifier
   end
 
   def pop_upkeep_modifiers(pop)
-    adders = {
-      food: 0,
-      minerals: 0,
-      energy: 0,
-      consumer_goods: 0,
-      alloys: 0,
-      volatile_motes: 0,
-      exotic_gases: 0,
-      rare_crystals: 0,
-      unity: 0,
-      physics_research: 0,
-      society_research: 0,
-      engineering_research: 0,
-      trade: 0,
-    }
-
-    multipliers = {
-      food: 0,
-      minerals: 0,
-      energy: 0,
-      consumer_goods: 0,
-      alloys: 0,
-      volatile_motes: 0,
-      exotic_gases: 0,
-      rare_crystals: 0,
-      unity: 0,
-      physics_research: 0,
-      society_research: 0,
-      engineering_research: 0,
-      trade: 0,
-    }
-
-    {
-      additive: adders,
-      multiplicative: multipliers,
-    }
+    ResourceModifier::NONE
   end
 
   def building_output(num, building)
-    base_output = {
-      food: 0,
-      minerals: 0,
-      energy: 0,
-      consumer_goods: 0,
-      alloys: 0,
-      volatile_motes: 0,
-      exotic_gases: 0,
-      rare_crystals: 0,
-      unity: 0,
-      physics_research: 0,
-      society_research: 0,
-      engineering_research: 0,
-      trade: 0,
-    }
-
-    multipliers = {
-      food: 1,
-      minerals: 1,
-      energy: 1,
-      consumer_goods: 1,
-      alloys: 1,
-      volatile_motes: 1,
-      exotic_gases: 1,
-      rare_crystals: 1,
-      unity: 1,
-      physics_research: 1,
-      society_research: 1,
-      engineering_research: 1,
-      trade: 1,
-    }
-
-    output = {}
-    base_output.each_key do |good|
-      output[good] = base_output[good] * multipliers[good]
-    end
-
-    output
+    ResourceGroup.new()
   end
 
   def building_upkeep(num, building)
-    base_upkeep = {
-      food: 0,
-      minerals: 0,
-      energy: 0,
-      consumer_goods: 0,
-      alloys: 0,
-      volatile_motes: 0,
-      exotic_gases: 0,
-      rare_crystals: 0,
-      unity: 0,
-      physics_research: 0,
-      society_research: 0,
-      engineering_research: 0,
-      trade: 0,
-    }
+    upkeep = ResourceGroup.new()
 
     if building == :habitat_central_control or building == :habitat_administration
-      base_upkeep[:energy] += 3 * num
-      base_upkeep[:alloys] += 5 * num
+      upkeep[:energy] = 3 * num
+      upkeep[:alloys] = 5 * num
     elsif building == :research_labs or building == :administrative_offices or
       building == :holo_theatres or building == :hydroponics_farms or
       building == :luxury_residences or building == :communal_housing or
       building == :energy_grid or building == :mineral_purification_plants or
       building == :food_processing_facilities or building == :alloy_foundries or
       building == :civilian_industries
-      base_upkeep[:energy] += 2 * num
-    end
-
-    multipliers = {
-      food: 1,
-      minerals: 1,
-      energy: 1,
-      consumer_goods: 1,
-      alloys: 1,
-      volatile_motes: 1,
-      exotic_gases: 1,
-      rare_crystals: 1,
-      unity: 1,
-      physics_research: 1,
-      society_research: 1,
-      engineering_research: 1,
-      trade: 1,
-    }
-
-    upkeep = {}
-    base_upkeep.each_key do |good|
-      upkeep[good] = base_upkeep[good] * multipliers[good]
+      upkeep[:energy] = 2 * num
     end
 
     upkeep
   end
 
   def output()
-    output = {
-      food: 0,
-      minerals: 0,
-      energy: 0,
-      consumer_goods: 0,
-      alloys: 0,
-      volatile_motes: 0,
-      exotic_gases: 0,
-      rare_crystals: 0,
-      unity: 0,
-      physics_research: 0,
-      society_research: 0,
-      engineering_research: 0,
-      trade: 0,
-    }
-
-    @pops.each do |pop|
-      pop.output.each do |good, value|
-        output[good] += value
-      end
+    pop_output = @pops.reduce(ResourceGroup.new()) do |sum, pop|
+      sum + pop.output
     end
 
-    @buildings.each do |building, num|
-      building_output(num, building).each do |good, value|
-        output[good] += value
-      end
+    building_output = @buildings.reduce(ResourceGroup.new()) do |sum, (building, num)|
+      sum + building_output(num, building)
     end
 
-    @deposits.each do |good, value|
-      output[good] += value
+    deposits_output = @deposits.reduce(ResourceGroup.new()) do |sum, deposit|
+      sum + deposit
     end
 
-    output
+    pop_output + building_output + deposits_output
   end
 
   def upkeep()
-    upkeep = {
-      food: 0,
-      minerals: 0,
-      energy: 0,
-      consumer_goods: 0,
-      alloys: 0,
-      volatile_motes: 0,
-      exotic_gases: 0,
-      rare_crystals: 0,
-      unity: 0,
-      physics_research: 0,
-      society_research: 0,
-      engineering_research: 0,
-      trade: 0,
-    }
-
-    @pops.each do |pop|
-      pop.upkeep.each do |good, value|
-        upkeep[good] += value
-      end
+    pop_upkeep = @pops.reduce(ResourceGroup.new()) do |sum, pop|
+      sum + pop.upkeep
     end
 
-    upkeep[:energy] += 2 * [
-      districts(:habitation),
-      districts(:industrial),
-      districts(:trade),
-      districts(:reactor),
-      districts(:leisure),
-      districts(:research),
-      districts(:mining),
-    ].reduce(0, &:+)
-
-    @buildings.each do |building, num|
-      building_upkeep(num, building).each do |good, value|
-        upkeep[good] += value
-      end
+    building_upkeep = @buildings.reduce(ResourceGroup.new()) do |sum, (building, num)|
+      sum + building_upkeep(num, building)
     end
 
-    upkeep
+    district_upkeep = ResourceGroup.new({
+      energy: 2 * [
+        districts(:habitation),
+        districts(:industrial),
+        districts(:trade),
+        districts(:reactor),
+        districts(:leisure),
+        districts(:research),
+        districts(:mining),
+      ].reduce(0, &:+)
+    })
+
+    pop_upkeep + building_upkeep + district_upkeep
   end
 end
 

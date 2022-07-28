@@ -325,6 +325,7 @@ thetis = Colony.new(
 )
 
 
+=begin
 pp pandora.net_output
 pp aegle.net_output
 pp erytheis.net_output
@@ -341,6 +342,7 @@ pp 'Research station (district)'
 pp aerica.net_output
 pp 'Research station (building)'
 pp thetis.net_output
+=end
 pp 'Admin station'
 pp mapsaura.net_output
 
