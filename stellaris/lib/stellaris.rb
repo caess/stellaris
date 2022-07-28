@@ -280,25 +280,7 @@ class Pop
   def job_output_modifiers(job)
     modifier = ResourceModifier::NONE
 
-    if @species.traits.include?(:void_dweller)
-      # FIXME - need to check planet type
-      modifier += ResourceModifier::multiplyAllProducedResources(0.15)
-    end
-
-    if @species.traits.include?(:intelligent)
-      modifier += ResourceModifier.new({
-        physics_research: {multiplicative: 0.1},
-        society_research: {multiplicative: 0.1},
-        engineering_research: {multiplicative: 0.1},
-      })
-    end
-
-    if @species.traits.include?(:natural_engineers)
-      modifier += ResourceModifier.new({
-        engineering_research: {multiplicative: 0.15},
-      })
-    end
-
+    modifier += @species.job_output_modifiers(job)
     modifier += @colony.job_output_modifiers(job)
 
     modifier
@@ -503,45 +485,7 @@ class Colony
     modifier = ResourceModifier.new()
 
     modifier += stability_coefficient_modifier()
-
-    if @sector.governor
-      modifier += ResourceModifier::multiplyAllProducedResources(
-        0.02 * @sector.governor.level
-      )
-
-      if @sector.governor.traits.include?(:unifier)
-        if job.job == :bureaucrat
-          modifier += ResourceModifier.new({unity: {multiplicative: 0.1}})
-        end
-      end
-    end
-
-
-    if @sector.empire.ethics.include?(:fanatic_egalitarian) and job.worker.specialist?
-      modifier += ResourceModifier::multiplyAllProducedResources(0.1)
-    end
-
-    if @sector.empire.ethics.include?(:xenophile)
-      modifier += ResourceModifier.new(trade: {multiplicative: 0.1})
-    end
-
-    if @sector.empire.civics.include?(:meritocracy) and job.worker.specialist?
-      modifier += ResourceModifier::multiplyAllProducedResources(0.1)
-    end
-
-    if @sector.empire.civics.include?(:beacon_of_liberty)
-      modifier += ResourceModifier.new(unity: {multiplicative: 0.15})
-    end
-
-    if @sector.empire.ruler.traits.include?(:industrialist)
-      modifier += ResourceModifier.new(minerals: {multiplicative: 0.1})
-    end
-
-    if @sector.empire.technology[:society].include?(:eco_simulation)
-      if job.job == :farmer
-        modifier += ResourceModifier.new(food: {multiplicative: 0.2})
-      end
-    end
+    modifier += @sector.job_output_modifiers(job)
 
     if @designation == :empire_capital
       modifier += ResourceModifier::multiplyAllProducedResources(0.1)
@@ -587,12 +531,8 @@ class Colony
 
   def pop_output_modifiers(pop)
     modifier = ResourceModifier.new()
-
     modifier += ResourceModifier.new({trade: {multiplicative: stability_coefficient()}})
-
-    if @sector.empire.ethics.include?(:xenophile)
-      modifier += ResourceModifier.new({trade: {multiplicative: 0.1}})
-    end
+    modifier += @sector.pop_output_modifiers(pop)
 
     if @designation == :trade_station
       modifier += ResourceModifier.new({trade: {multiplicative: 0.2}})
@@ -696,6 +636,7 @@ class Empire
   attr_reader :ruler, :ethics, :civics, :technology
   def initialize(founding_species:, ruler:, ethics: [], civics: [], technology: {})
     @ruler = ruler
+    @ruler.role = :ruler
     @ethics = ethics.dup
     @civics = civics.dup
     @technology = technology.dup
@@ -703,6 +644,45 @@ class Empire
     [:physics, :society, :engineering].each do |science|
       @technology[science] = [] unless @technology.key?(science)
     end
+  end
+
+  def job_output_modifiers(job)
+    modifier = ResourceModifier.new()
+    modifier += @ruler.job_output_modifiers(job)
+
+    if @ethics.include?(:fanatic_egalitarian) and job.worker.specialist?
+      modifier += ResourceModifier::multiplyAllProducedResources(0.1)
+    end
+
+    if @ethics.include?(:xenophile)
+      modifier += ResourceModifier.new(trade: {multiplicative: 0.1})
+    end
+
+    if @civics.include?(:meritocracy) and job.worker.specialist?
+      modifier += ResourceModifier::multiplyAllProducedResources(0.1)
+    end
+
+    if @civics.include?(:beacon_of_liberty)
+      modifier += ResourceModifier.new(unity: {multiplicative: 0.15})
+    end
+
+    if @technology[:society].include?(:eco_simulation)
+      if job.job == :farmer
+        modifier += ResourceModifier.new(food: {multiplicative: 0.2})
+      end
+    end
+
+    modifier
+  end
+
+  def pop_output_modifiers(pop)
+    modifier = ResourceModifier.new()
+
+    if @ethics.include?(:xenophile)
+      modifier += ResourceModifier.new({trade: {multiplicative: 0.1}})
+    end
+
+    modifier
   end
 end
 
@@ -713,14 +693,71 @@ class Species
     @living_standard = living_standard
     @traits = traits.dup
   end
+
+  def job_output_modifiers(job)
+    modifier = ResourceModifier.new()
+
+    if @traits.include?(:void_dweller)
+      # FIXME - need to check planet type
+      modifier += ResourceModifier::multiplyAllProducedResources(0.15)
+    end
+
+    if @traits.include?(:intelligent)
+      modifier += ResourceModifier.new({
+        physics_research: {multiplicative: 0.1},
+        society_research: {multiplicative: 0.1},
+        engineering_research: {multiplicative: 0.1},
+      })
+    end
+
+    if @traits.include?(:natural_engineers)
+      modifier += ResourceModifier.new({
+        engineering_research: {multiplicative: 0.15},
+      })
+    end
+
+    modifier
+  end
 end
 
 class Leader
   attr_reader :level, :traits
+  attr_accessor :role
 
   def initialize(level:, traits: [])
     @level = level
     @traits = traits.dup
+    @role = nil
+  end
+
+  def governor?
+    @role == :governor
+  end
+
+  def ruler?
+    @role == :ruler
+  end
+
+  def job_output_modifiers(job)
+    modifier = ResourceModifier.new()
+
+    if governor?
+      modifier += ResourceModifier::multiplyAllProducedResources(
+        0.02 * @level
+      )
+
+      if @traits.include?(:unifier)
+        if job.job == :bureaucrat
+          modifier += ResourceModifier.new({unity: {multiplicative: 0.1}})
+        end
+      end
+    elsif ruler?
+      if @traits.include?(:industrialist)
+        modifier += ResourceModifier.new(minerals: {multiplicative: 0.1})
+      end
+    end
+
+    modifier
   end
 end
 
@@ -730,5 +767,25 @@ class Sector
   def initialize(empire:, governor:)
     @empire = empire
     @governor = governor
+    @governor.role = :governor
+  end
+
+  def job_output_modifiers(job)
+    modifier = ResourceModifier.new()
+    modifier += @governor.job_output_modifiers(job)
+    modifier += @empire.job_output_modifiers(job)
+
+    if @governor
+
+    end
+
+    modifier
+  end
+
+  def pop_output_modifiers(pop)
+    modifier = ResourceModifier.new()
+    modifier += @empire.pop_output_modifiers(pop)
+
+    modifier
   end
 end
