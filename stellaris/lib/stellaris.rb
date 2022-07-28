@@ -341,6 +341,7 @@ class Colony
     @type = type
     @size = size
     @sector = sector
+    @sector.add_colony(self)
     @designation = designation
     @districts = districts.dup
     @buildings = buildings.dup
@@ -633,7 +634,10 @@ class Colony
 end
 
 class Empire
+  include OutputsResources
+
   attr_reader :ruler, :ethics, :civics, :technology
+
   def initialize(founding_species:, ruler:, ethics: [], civics: [], technology: {})
     @ruler = ruler
     @ruler.role = :ruler
@@ -641,9 +645,15 @@ class Empire
     @civics = civics.dup
     @technology = technology.dup
 
+    @sectors = []
+
     [:physics, :society, :engineering].each do |science|
       @technology[science] = [] unless @technology.key?(science)
     end
+  end
+
+  def add_sector(sector)
+    @sectors << sector
   end
 
   def job_output_modifiers(job)
@@ -683,6 +693,18 @@ class Empire
     end
 
     modifier
+  end
+
+  def output
+    @sectors.reduce(ResourceGroup.new()) do |sum, sector|
+      sum + sector.output
+    end
+  end
+
+  def upkeep
+    @sectors.reduce(ResourceGroup.new()) do |sum, sector|
+      sum + sector.upkeep
+    end
   end
 end
 
@@ -762,12 +784,21 @@ class Leader
 end
 
 class Sector
+  include OutputsResources
+
   attr_reader :empire, :governor
 
   def initialize(empire:, governor:)
     @empire = empire
+    @empire.add_sector(self)
+
     @governor = governor
     @governor.role = :governor
+    @colonies = []
+  end
+
+  def add_colony(colony)
+    @colonies << colony
   end
 
   def job_output_modifiers(job)
@@ -787,5 +818,17 @@ class Sector
     modifier += @empire.pop_output_modifiers(pop)
 
     modifier
+  end
+
+  def output
+    @colonies.reduce(ResourceGroup.new()) do |sum, colony|
+      sum + colony.output
+    end
+  end
+
+  def upkeep
+    @colonies.reduce(ResourceGroup.new()) do |sum, colony|
+      sum + colony.upkeep
+    end
   end
 end
