@@ -27,6 +27,15 @@ class ResourceModifier
   end
 
   NONE = ResourceModifier.new()
+
+  def self.multiplyAllProducedResources(value)
+    resources = {}
+    ResourceGroup::PRODUCED_RESOURCES.each do |resource|
+      resources[resource] = {multiplicative: value}
+    end
+
+    return ResourceModifier.new(resources)
+  end
 end
 
 class ResourceGroup
@@ -272,12 +281,8 @@ class Pop
     modifier = ResourceModifier::NONE
 
     if @species.traits.include?(:void_dweller)
-      modifiers = {}
-      ResourceGroup::PRODUCED_RESOURCES.each do |good|
-        modifiers[good] = {multiplicative: 0.15}
-      end
-
-      modifier += ResourceModifier.new(modifiers)
+      # FIXME - need to check planet type
+      modifier += ResourceModifier::multiplyAllProducedResources(0.15)
     end
 
     if @species.traits.include?(:intelligent)
@@ -490,12 +495,8 @@ class Colony
   end
 
   def stability_coefficient_modifier()
-    modifiers = {}
-    (ResourceGroup::PRODUCED_RESOURCES + [:trade]).each do |good|
-      modifiers[good] = {multiplicative: stability_coefficient()}
-    end
-
-    ResourceModifier.new(modifiers)
+    ResourceModifier::multiplyAllProducedResources(stability_coefficient()) +
+      ResourceModifier.new(trade: {multiplicative: stability_coefficient()})
   end
 
   def job_output_modifiers(job)
@@ -504,12 +505,9 @@ class Colony
     modifier += stability_coefficient_modifier()
 
     if @sector.governor
-      modifiers = {}
-      ResourceGroup::PRODUCED_RESOURCES.each do |good|
-        modifiers[good] = {multiplicative: 0.02 * @sector.governor.level}
-      end
-
-      modifier += ResourceModifier.new(modifiers)
+      modifier += ResourceModifier::multiplyAllProducedResources(
+        0.02 * @sector.governor.level
+      )
 
       if @sector.governor.traits.include?(:unifier)
         if job.job == :bureaucrat
@@ -518,13 +516,9 @@ class Colony
       end
     end
 
-    if @sector.empire.ethics.include?(:fanatic_egalitarian) and job.worker.specialist?
-      modifiers = {}
-      ResourceGroup::PRODUCED_RESOURCES.each do |good|
-        modifiers[good] = {multiplicative: 0.1}
-      end
 
-      modifier += ResourceModifier.new(modifiers)
+    if @sector.empire.ethics.include?(:fanatic_egalitarian) and job.worker.specialist?
+      modifier += ResourceModifier::multiplyAllProducedResources(0.1)
     end
 
     if @sector.empire.ethics.include?(:xenophile)
@@ -532,12 +526,7 @@ class Colony
     end
 
     if @sector.empire.civics.include?(:meritocracy) and job.worker.specialist?
-      modifiers = {}
-      ResourceGroup::PRODUCED_RESOURCES.each do |good|
-        modifiers[good] = {multiplicative: 0.1}
-      end
-
-      modifier += ResourceModifier.new(modifiers)
+      modifier += ResourceModifier::multiplyAllProducedResources(0.1)
     end
 
     if @sector.empire.civics.include?(:beacon_of_liberty)
@@ -555,12 +544,7 @@ class Colony
     end
 
     if @designation == :empire_capital
-      modifiers = {}
-      ResourceGroup::PRODUCED_RESOURCES.each do |good|
-        modifiers[good] = {multiplicative: 0.1}
-      end
-
-      modifier += ResourceModifier.new(modifiers)
+      modifier += ResourceModifier::multiplyAllProducedResources(0.1)
     elsif @designation == :research_station
       modifier += ResourceModifier.new({
         physics_research: {multiplicative: 0.1},
@@ -579,12 +563,7 @@ class Colony
       end
     elsif @designation == :unification_station
       if job.job == :bureaucrat
-        modifiers = {}
-        ResourceGroup::PRODUCED_RESOURCES.each do |good|
-          modifiers[good] = {multiplicative: 0.1}
-        end
-
-        modifier += ResourceModifier.new(modifiers)
+        modifier += ResourceModifier::multiplyAllProducedResources(0.1)
       end
     elsif @designation == :trade_station
       modifier += ResourceModifier.new({trade: {multiplicative: 0.2}})
@@ -627,39 +606,19 @@ class Colony
 
     if @designation == :foundry_station
       if job.job == :metallurgist
-        modifiers = {}
-        ResourceGroup::PRODUCED_RESOURCES.each do |good|
-          modifiers[good] = {multiplicative: -0.2}
-        end
-
-        modifier += ResourceModifier.new(modifiers)
+        modifier += ResourceModifier::multiplyAllProducedResources(-0.2)
       end
     elsif @designation == :factory_station
       if job.job == :artisan or job.job == :artificer
-        modifiers = {}
-        ResourceGroup::PRODUCED_RESOURCES.each do |good|
-          modifiers[good] = {multiplicative: -0.2}
-        end
-
-        modifier += ResourceModifier.new(modifiers)
+        modifier += ResourceModifier::multiplyAllProducedResources(-0.2)
       end
     elsif @designation == :industrial_station
       if job.job == :artisan or job.job == :artificer or job.job == :metallurgist
-        modifiers = {}
-        ResourceGroup::PRODUCED_RESOURCES.each do |good|
-          modifiers[good] = {multiplicative: -0.1}
-        end
-
-        modifier += ResourceModifier.new(modifiers)
+        modifier += ResourceModifier::multiplyAllProducedResources(-0.1)
       end
     elsif @designation == :unification_station
       if job.job == :bureaucrat
-        modifiers = {}
-        ResourceGroup::PRODUCED_RESOURCES.each do |good|
-          modifiers[good] = {multiplicative: -0.1}
-        end
-
-        modifier += ResourceModifier.new(modifiers)
+        modifier += ResourceModifier::multiplyAllProducedResources(-0.1)
       end
     end
 
