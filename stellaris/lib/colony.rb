@@ -3,7 +3,7 @@ require_relative './pop'
 require_relative './resource_group'
 require_relative './resource_modifier'
 
-class Planet
+class Colony
   include UsesAmenities, OutputsResources
 
   attr_reader :pops
@@ -12,7 +12,7 @@ class Planet
     @type = type
     @size = size
     @sector = sector
-    @sector.add_planet(self)
+    @sector.add_colony(self)
     @designation = designation
     @districts = districts.dup
     @buildings = buildings.dup
@@ -36,14 +36,14 @@ class Planet
 
       @jobs.each do |job, num|
         1.upto(num) do |x|
-          @pops << Pop.new(species: fill_jobs_with, planet: self, job: job)
+          @pops << Pop.new(species: fill_jobs_with, colony: self, job: job)
         end
       end
     else
       jobs.each do |job, pops|
         pops.each do |species, count|
           1.upto(count) do
-            @pops << Pop.new(species: species, planet: self, job: job)
+            @pops << Pop.new(species: species, colony: self, job: job)
           end
         end
       end

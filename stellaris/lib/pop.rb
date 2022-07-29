@@ -8,9 +8,9 @@ class Pop
 
   attr_reader :job
 
-  def initialize(species:, planet:, job:)
+  def initialize(species:, colony:, job:)
     @species = species
-    @planet = planet
+    @colony = colony
     @job = PopJob.new(job: job, worker: self)
   end
 
@@ -34,7 +34,7 @@ class Pop
     happiness = 50
     happiness += 5 if @species.living_standard == :shared_burden
 
-    happiness += @planet.pop_happiness_modifiers
+    happiness += @colony.pop_happiness_modifiers
 
     happiness.floor
   end
@@ -47,7 +47,7 @@ class Pop
     modifier = ResourceModifier::NONE
 
     modifier += @species.job_output_modifiers(job)
-    modifier += @planet.job_output_modifiers(job)
+    modifier += @colony.job_output_modifiers(job)
 
     modifier
   end
@@ -55,7 +55,7 @@ class Pop
   def job_upkeep_modifiers(job)
     modifier = ResourceModifier::NONE
 
-    modifier += @planet.job_upkeep_modifiers(job)
+    modifier += @colony.job_upkeep_modifiers(job)
 
     modifier
   end
@@ -69,7 +69,7 @@ class Pop
       output[:trade] = 0.5
     end
 
-    output << @planet.pop_output_modifiers(self)
+    output << @colony.pop_output_modifiers(self)
 
     output
   end
@@ -84,7 +84,7 @@ class Pop
     end
     upkeep[:food] = 1
 
-    upkeep << @planet.pop_upkeep_modifiers(self)
+    upkeep << @colony.pop_upkeep_modifiers(self)
 
     upkeep
   end

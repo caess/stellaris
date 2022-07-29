@@ -19,11 +19,11 @@ class Sector
       @governor = Leader::NONE
     end
 
-    @planets = []
+    @colonies = []
   end
 
-  def add_planet(planet)
-    @planets << planet
+  def add_colony(colony)
+    @colonies << colony
   end
 
   def job_output_modifiers(job)
@@ -42,14 +42,14 @@ class Sector
   end
 
   def output
-    @planets.reduce(ResourceGroup.new()) do |sum, planet|
-      sum + planet.output
+    @colonies.reduce(ResourceGroup.new()) do |sum, colony|
+      sum + colony.output
     end
   end
 
   def upkeep
-    @planets.reduce(ResourceGroup.new()) do |sum, planet|
-      sum + planet.upkeep
+    @colonies.reduce(ResourceGroup.new()) do |sum, colony|
+      sum + colony.upkeep
     end
   end
 end

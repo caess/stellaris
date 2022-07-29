@@ -1,7 +1,7 @@
+require_relative './colony'
 require_relative './empire'
 require_relative './leader'
 require_relative './mixins'
-require_relative './planet'
 require_relative './pop'
 require_relative './pop_job'
 require_relative './resource_group'
