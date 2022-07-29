@@ -65,10 +65,51 @@ class Empire
     modifier
   end
 
+  def empire_base_modifiers
+    modifier = ResourceModifier.new()
+    modifier += @ruler.empire_base_modifiers
+
+    if @civics.include?(:beacon_of_liberty)
+      modifier += ResourceModifier.new(unity: {multiplicative: 0.15})
+    end
+
+    modifier
+  end
+
+  def empire_base_modified_output
+    empire_base = ResourceGroup.new({
+      energy: 20,
+      minerals: 20,
+      food: 10,
+      physics_research: 10,
+      society_research: 10,
+      engineering_research: 10,
+      unity: 5,
+      consumer_goods: 10,
+      alloys: 5,
+    })
+
+    empire_base << ResourceModifier.new({
+      energy: {multiplicative: -1},
+      minerals: {multiplicative: -1},
+      food: {multiplicative: -1},
+      physics_research: {multiplicative: -1},
+      society_research: {multiplicative: -1},
+      engineering_research: {multiplicative: -1},
+      unity: {multiplicative: -1},
+      consumer_goods: {multiplicative: -1},
+      alloys: {multiplicative: -1},
+    })
+
+    empire_base << empire_base_modifiers()
+
+    empire_base
+  end
+
   def output
     @sectors.reduce(ResourceGroup.new()) do |sum, sector|
       sum + sector.output
-    end
+    end + empire_base_modified_output
   end
 
   def upkeep

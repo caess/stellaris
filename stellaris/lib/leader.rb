@@ -40,5 +40,17 @@ class Leader
     modifier
   end
 
+  def empire_base_modifiers()
+    modifier = ResourceModifier.new()
+
+    if ruler?
+      if @traits.include?(:industrialist)
+        modifier += ResourceModifier.new(minerals: {multiplicative: 0.1})
+      end
+    end
+
+    modifier
+  end
+
   NONE = Leader.new(level: 0)
 end
