@@ -67,4 +67,12 @@ class ResourceGroup
 
     return ResourceGroup.new(output)
   end
+
+  def ==(rhs)
+    resolve() == rhs.resolve()
+  end
+
+  def empty?
+    @resolved.reject {|key, value| value == 0}.empty?
+  end
 end
