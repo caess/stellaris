@@ -34,6 +34,14 @@ class PopJob
     end
   end
 
+  def stability_modifier
+    if @job == :enforcer
+      1
+    else
+      0
+    end
+  end
+
   def output
     output = ResourceGroup.new()
 

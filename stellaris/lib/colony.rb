@@ -97,10 +97,17 @@ class Colony
     max_jobs
   end
 
-  def amenities_output
+  def buildings_amenities_output
     5 * buildings(:habitat_central_control) +
-      3 * buildings(:habitat_administration) +
-      ((@designation == :empire_capital) ? 10 : 0) +
+      3 * buildings(:habitat_administration)
+  end
+
+  def designation_amenities_output
+    @designation == :empire_capital ? 10 : 0
+  end
+
+  def amenities_output
+    buildings_amenities_output + designation_amenities_output +
       @pops.reduce(0) {|sum, pop| sum + pop.amenities_output}
   end
 
@@ -127,12 +134,16 @@ class Colony
     end / @pops.reduce(0) {|sum, pop| sum + pop.political_power}
   end
 
+  def stability_modifier()
+    @designation == :empire_capital ? 5 : 0
+  end
+
   def stability()
     stability = [
       50,
-      1 * jobs(:enforcer),
-      @designation == :empire_capital ? 5 : 0,
-      @sector.empire.civics.include?(:shared_burdens) ? 5 : 0,
+      @pops.reduce(0) {|sum, pop| sum + pop.stability_modifier},
+      @sector.stability_modifier,
+      stability_modifier,
     ].reduce(0, &:+)
 
     if approval_rating() > 50

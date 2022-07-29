@@ -89,6 +89,10 @@ class Pop
     upkeep
   end
 
+  def stability_modifier
+    @job.stability_modifier
+  end
+
   def output
     @job.output + pop_output
   end

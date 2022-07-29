@@ -65,6 +65,16 @@ class Empire
     modifier
   end
 
+  def stability_modifier
+    modifier = 0
+
+    if @civics.include?(:shared_burdens)
+      modifier += 5
+    end
+
+    modifier
+  end
+
   def empire_base_modifiers
     modifier = ResourceModifier.new()
     modifier += @ruler.empire_base_modifiers

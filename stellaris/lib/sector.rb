@@ -41,6 +41,10 @@ class Sector
     modifier
   end
 
+  def stability_modifier
+    @empire.stability_modifier
+  end
+
   def output
     @colonies.reduce(ResourceGroup.new()) do |sum, colony|
       sum + colony.output
