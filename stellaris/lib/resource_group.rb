@@ -6,11 +6,7 @@ class ResourceGroup
   ]
 
   def initialize(resources = {})
-    @resources = Hash.new(0)
-
-    resources.each do |good, value|
-      @resources[good] = value
-    end
+    @resources = (Hash.new(0)).merge(resources)
 
     @modifiers = []
     @resolved = nil
