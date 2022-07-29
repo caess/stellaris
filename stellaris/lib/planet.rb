@@ -30,17 +30,23 @@ class Planet
       end
     end
 
+    @pops = []
     if fill_jobs_with
       @jobs = max_jobs()
 
-      @pops = []
       @jobs.each do |job, num|
         1.upto(num) do |x|
           @pops << Pop.new(species: fill_jobs_with, planet: self, job: job)
         end
       end
     else
-      @jobs = jobs.dup
+      jobs.each do |job, pops|
+        pops.each do |species, count|
+          1.upto(count) do
+            @pops << Pop.new(species: species, planet: self, job: job)
+          end
+        end
+      end
     end
 
     @num_pops = @pops.length
@@ -54,8 +60,8 @@ class Planet
     (@districts[type] || 0)
   end
 
-  def jobs(type)
-    (@jobs[type] || 0)
+  def jobs(job)
+    @pops.filter {|pop| pop.has_job?(job)}.count
   end
 
   def all_jobs

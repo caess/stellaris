@@ -14,6 +14,10 @@ class Pop
     @job = PopJob.new(job: job, worker: self)
   end
 
+  def has_job?(job)
+    @job.job == job
+  end
+
   def specialist?
     @job.specialist?
   end
