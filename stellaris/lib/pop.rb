@@ -9,7 +9,7 @@ class Pop
   include UsesAmenities, OutputsResources
   extend Forwardable
 
-  def_delegators :@job, :all_job_output_modifiers
+  def_delegators :@job, :all_job_output_modifiers, :pop_happiness_modifiers
 
   attr_reader :job
 

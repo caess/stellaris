@@ -118,6 +118,7 @@ class Colony
   def pop_happiness_modifiers
     modifier = 0
     modifier += 10 if @designation == :leisure_station
+    modifier += @pops.reduce(0) {|sum, pop| sum + pop.pop_happiness_modifiers}
 
     if net_amenities() > 0
      modifier += [20, (20.0 * net_amenities() / amenities_upkeep())].min
