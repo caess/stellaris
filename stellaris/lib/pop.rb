@@ -1,3 +1,5 @@
+require 'forwardable'
+
 require_relative './mixins'
 require_relative './pop_job'
 require_relative './resource_group'
@@ -5,6 +7,9 @@ require_relative './resource_modifier'
 
 class Pop
   include UsesAmenities, OutputsResources
+  extend Forwardable
+
+  def_delegators :@job, :all_job_output_modifiers
 
   attr_reader :job
 
@@ -15,7 +20,7 @@ class Pop
   end
 
   def has_job?(job)
-    @job.job = Job.lookup(job)
+    @job.job == Job.lookup(job)
   end
 
   def specialist?

@@ -173,6 +173,8 @@ class Colony
   def job_output_modifiers(job)
     modifier = ResourceModifier.new()
 
+    @pops.each {|pop| modifier += pop.all_job_output_modifiers(job)}
+
     modifier += stability_coefficient_modifier()
     modifier += @sector.job_output_modifiers(job)
 

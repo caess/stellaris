@@ -9,6 +9,7 @@ class PopJob
   extend Forwardable
 
   def_delegators :@job, :amenities_output, :stability_modifier,
+    :all_job_output_modifiers,
     :ruler?, :specialist?, :worker?, :slave?,
     :farmer?, :miner?, :strategic_resource_miner?, :livestock?,
     :technician?, :politician?, :executive?, :noble?, :administrator?,

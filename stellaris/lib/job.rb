@@ -11,7 +11,7 @@ class Job
     name:, strata: :none, category: :none, subcategory: :none, output: {},
     upkeep: {}, amenities_output: 0, stability_modifier: 0,
     colony_attribute_modifiers: {}, habitability_modifier: 0,
-    empire_attribute_modifiers: {}, job_output_modifiers: {},
+    empire_attribute_modifiers: {}, all_job_output_modifiers: {},
     worker_housing_modifier: {}, worker_political_power_modifier: {},
     pop_happiness_modifiers: 0
   )
@@ -25,7 +25,7 @@ class Job
     @stability_modifier = stability_modifier
     @colony_attribute_modifiers = ResourceModifier.new(colony_attribute_modifiers)
     @empire_attribute_modifiers = ResourceModifier.new(empire_attribute_modifiers)
-    @job_output_modifiers = ResourceModifier.new(job_output_modifiers)
+    @all_job_output_modifiers = ResourceModifier.new(all_job_output_modifiers)
     @worker_housing_modifier = ResourceModifier.new(worker_housing_modifier)
     @habitability_modifier = habitability_modifier
     @pop_happiness_modifiers = pop_happiness_modifiers
@@ -40,8 +40,8 @@ class Job
     @upkeep.dup
   end
 
-  def job_output_modifiers(job)
-    @job_output_modifiers
+  def all_job_output_modifiers(job)
+    @all_job_output_modifiers
   end
 
   # Strata
@@ -386,7 +386,7 @@ class Job
     subcategory: :telepaths,
     output: {unity: 6},
     colony_attribute_modifiers: {crime: {additive: -35}},
-    job_output_modifiers: ResourceModifier::multiplyAllProducedResources(0.05),
+    all_job_output_modifiers: ResourceModifier::multiplyAllProducedResources(0.05),
     upkeep: {energy: 1},
   )
 
