@@ -745,7 +745,7 @@ RSpec.describe 'specialist jobs' do
     end
 
     it 'has the correct job output modifier' do
-      expect(subject.job_output_modifiers).to eq(
+      expect(subject.job_output_modifiers(nil)).to eq(
         ResourceModifier::multiplyAllProducedResources(0.05)
       )
     end

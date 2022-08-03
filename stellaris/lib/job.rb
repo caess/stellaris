@@ -4,9 +4,8 @@ require_relative './resource_modifier'
 class Job
   attr_reader :name, :amenities_output,
     :stability_modifier, :colony_attribute_modifiers, :habitability_modifier,
-    :empire_attribute_modifiers, :job_output_modifiers,
-    :worker_housing_modifier, :pop_happiness_modifiers,
-    :worker_political_power_modifier
+    :empire_attribute_modifiers, :worker_housing_modifier,
+    :pop_happiness_modifiers, :worker_political_power_modifier
 
   def initialize(
     name:, strata: :none, category: :none, subcategory: :none, output: {},
@@ -39,6 +38,10 @@ class Job
 
   def upkeep
     @upkeep.dup
+  end
+
+  def job_output_modifiers(job)
+    @job_output_modifiers
   end
 
   # Strata
