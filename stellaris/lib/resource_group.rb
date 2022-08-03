@@ -65,7 +65,7 @@ class ResourceGroup
   end
 
   def ==(rhs)
-    resolve() == rhs.resolve()
+    resolve().reject {|k, v| v == 0} == rhs.resolve().reject {|k, v| v == 0}
   end
 
   def dup

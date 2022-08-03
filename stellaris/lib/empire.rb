@@ -16,6 +16,7 @@ class Empire
     @technology = technology.dup
 
     @sectors = []
+    @stations = []
 
     [:physics, :society, :engineering].each do |science|
       @technology[science] = [] unless @technology.key?(science)
@@ -24,6 +25,10 @@ class Empire
 
   def add_sector(sector)
     @sectors << sector
+  end
+
+  def add_station(station)
+    @stations << station
   end
 
   def job_output_modifiers(job)
@@ -117,14 +122,26 @@ class Empire
   end
 
   def output
-    @sectors.reduce(ResourceGroup.new()) do |sum, sector|
+    sector_output = @sectors.reduce(ResourceGroup.new()) do |sum, sector|
       sum + sector.output
-    end + empire_base_modified_output
+    end
+
+    station_output = @stations.reduce(ResourceGroup.new()) do |sum, station|
+      sum + station.output
+    end
+
+    sector_output + station_output + empire_base_modified_output
   end
 
   def upkeep
-    @sectors.reduce(ResourceGroup.new()) do |sum, sector|
+    sector_upkeep = @sectors.reduce(ResourceGroup.new()) do |sum, sector|
       sum + sector.upkeep
     end
+
+    station_upkeep = @stations.reduce(ResourceGroup.new()) do |sum, station|
+      sum + station.upkeep
+    end
+
+    sector_upkeep + station_upkeep
   end
 end
