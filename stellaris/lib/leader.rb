@@ -27,7 +27,7 @@ class Leader
       )
 
       if @traits.include?(:unifier)
-        if job.job.administrator?
+        if job.administrator?
           modifier += ResourceModifier.new({unity: {multiplicative: 0.1}})
         end
       end

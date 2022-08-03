@@ -15,7 +15,7 @@ class Pop
   end
 
   def has_job?(job)
-    @job.job == job
+    @job.job = Job.lookup(job)
   end
 
   def specialist?

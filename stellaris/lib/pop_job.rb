@@ -1,27 +1,27 @@
+require 'forwardable'
+
 require_relative './job'
 require_relative './mixins'
 require_relative './resource_group'
 
 class PopJob
   include UsesAmenities, OutputsResources
+  extend Forwardable
+
+  def_delegators :@job, :amenities_output, :stability_modifier,
+    :ruler?, :specialist?, :worker?, :slave?,
+    :farmer?, :miner?, :strategic_resource_miner?, :livestock?,
+    :technician?, :politician?, :executive?, :noble?, :administrator?,
+    :manager?, :priest?, :telepath?, :researcher?, :metallurgist?,
+    :culture_worker?, :evaluator?, :refiner?, :translucer?, :chemist?,
+    :artisan?, :bio_trophy?, :pop_assembler?, :necro_apprentice?,
+    :merchant?, :entertainer?, :soldier?, :enforcer?, :doctor?
 
   attr_reader :job, :worker
 
   def initialize(job:, worker:)
     @job = Job.lookup(job)
     @worker = worker
-  end
-
-  def specialist?
-    @job.specialist?
-  end
-
-  def amenities_output
-    @job.amenities_output
-  end
-
-  def stability_modifier
-    @job.stability_modifier
   end
 
   def output

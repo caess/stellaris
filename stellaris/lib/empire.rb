@@ -47,7 +47,7 @@ class Empire
     end
 
     if @technology[:society].include?(:eco_simulation)
-      if job.job.farmer?
+      if job.farmer?
         modifier += ResourceModifier.new(food: {multiplicative: 0.2})
       end
     end

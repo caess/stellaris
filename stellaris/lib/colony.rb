@@ -185,7 +185,7 @@ class Colony
         engineering_research: {multiplicative: 0.1},
       })
     elsif @designation == :refinery_station
-      if job.job.chemist? or job.job.translucer? or job.job.refiner?
+      if job.chemist? or job.translucer? or job.refiner?
         modifier += ResourceModifier.new({
           exotic_gases: {multiplicative: 0.1},
           rare_crystals: {multiplicative: 0.1},
@@ -193,17 +193,17 @@ class Colony
         })
       end
     elsif @designation == :unification_station
-      if job.job.administrator?
+      if job.administrator?
         modifier += ResourceModifier::multiplyAllProducedResources(0.1)
       end
     elsif @designation == :trade_station
       modifier += ResourceModifier.new({trade: {multiplicative: 0.2}})
     elsif @designation == :generator_station
-      if job.job.technician?
+      if job.technician?
         modifier += ResourceModifier.new({energy: {multiplicative: 0.1}})
       end
     elsif @designation == :mining_station
-      if job.job.miner?
+      if job.miner?
         modifier += ResourceModifier.new({
           minerals: {multiplicative: 0.1},
           exotic_gases: {multiplicative: 0.1},
@@ -232,19 +232,19 @@ class Colony
     modifier = ResourceModifier.new()
 
     if @designation == :foundry_station
-      if job.job.metallurgist?
+      if job.metallurgist?
         modifier += ResourceModifier::multiplyAllProducedResources(-0.2)
       end
     elsif @designation == :factory_station
-      if job.job.artisan?
+      if job.artisan?
         modifier += ResourceModifier::multiplyAllProducedResources(-0.2)
       end
     elsif @designation == :industrial_station
-      if job.job.artisan? or job.job.metallurgist?
+      if job.artisan? or job.metallurgist?
         modifier += ResourceModifier::multiplyAllProducedResources(-0.1)
       end
     elsif @designation == :unification_station
-      if job.job.administrator?
+      if job.administrator?
         modifier += ResourceModifier::multiplyAllProducedResources(-0.1)
       end
     end
