@@ -68,7 +68,17 @@ class ResourceGroup
     resolve() == rhs.resolve()
   end
 
+  def dup
+    output = ResourceGroup.new(@resources)
+
+    @modifiers.each {|modifier| output << modifier}
+
+    output
+  end
+
   def empty?
-    @resolved.reject {|key, value| value == 0}.empty?
+    resolve if @resolved.nil?
+
+    @resolved.values.reject {|value| value == 0}.empty?
   end
 end

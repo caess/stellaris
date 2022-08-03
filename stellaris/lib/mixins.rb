@@ -14,11 +14,11 @@ end
 
 module OutputsResources
   def output
-    {}
+    ResourceGroup.new({})
   end
 
   def upkeep
-    {}
+    ResourceGroup.new({})
   end
 
   def net_output

@@ -4,7 +4,11 @@ class ResourceModifier
   attr_reader :values
 
   def initialize(values = {})
-    @values = values.dup
+    if values.is_a?(ResourceModifier)
+      @values = values.values.dup
+    else
+      @values = values.dup
+    end
   end
 
   def +(rhs)
