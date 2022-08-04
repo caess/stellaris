@@ -37,4 +37,18 @@ RSpec.describe Empire do
       expect(subject.upkeep).to eq(ResourceGroup.new({energy: 1}))
     end
   end
+
+  describe 'trade deals' do
+    let(:deal) {TradeDeal.new(us: {consumer_goods: 10}, them: {minerals: 20})}
+
+    it 'includes trade deals in its output' do
+      subject.add_trade_deal(deal)
+      expect(subject.output).to eq(ResourceGroup.new({minerals: 20}))
+    end
+
+    it 'includes trade deals in its upkeep' do
+      subject.add_trade_deal(deal)
+      expect(subject.upkeep).to eq(ResourceGroup.new({consumer_goods: 10}))
+    end
+  end
 end

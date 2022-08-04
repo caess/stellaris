@@ -17,6 +17,7 @@ class Empire
 
     @sectors = []
     @stations = []
+    @trade_deals = []
 
     [:physics, :society, :engineering].each do |science|
       @technology[science] = [] unless @technology.key?(science)
@@ -29,6 +30,10 @@ class Empire
 
   def add_station(station)
     @stations << station
+  end
+
+  def add_trade_deal(deal)
+    @trade_deals << deal
   end
 
   def job_output_modifiers(job)
@@ -130,7 +135,12 @@ class Empire
       sum + station.output
     end
 
-    sector_output + station_output + empire_base_modified_output
+    trade_deal_output = @trade_deals.reduce(ResourceGroup.new()) do |sum, deal|
+      sum + deal.output
+    end
+
+    sector_output + station_output + trade_deal_output +
+      empire_base_modified_output
   end
 
   def upkeep
@@ -142,6 +152,10 @@ class Empire
       sum + station.upkeep
     end
 
-    sector_upkeep + station_upkeep
+    trade_deal_upkeep = @trade_deals.reduce(ResourceGroup.new()) do |sum, deal|
+      sum + deal.upkeep
+    end
+
+    sector_upkeep + station_upkeep + trade_deal_upkeep
   end
 end
