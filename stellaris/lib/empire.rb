@@ -30,6 +30,7 @@ class Empire
 
   def add_station(station)
     @stations << station
+    station.empire = self
   end
 
   def add_trade_deal(deal)
@@ -61,6 +62,19 @@ class Empire
         modifier += ResourceModifier.new(food: {multiplicative: 0.2})
       end
     end
+
+    modifier
+  end
+
+  def mining_station_modifiers
+    modifier = ResourceModifier.new()
+    modifier += @ruler.mining_station_modifiers if @ruler
+
+    modifier
+  end
+
+  def research_station_modifiers
+    modifier = ResourceModifier.new()
 
     modifier
   end
