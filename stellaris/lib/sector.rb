@@ -1,7 +1,7 @@
-require_relative './leader'
-require_relative './mixins'
-require_relative './resource_group'
-require_relative './resource_modifier'
+require_relative "./leader"
+require_relative "./mixins"
+require_relative "./resource_group"
+require_relative "./resource_modifier"
 
 class Sector
   include OutputsResources

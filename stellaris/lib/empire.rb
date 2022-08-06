@@ -1,7 +1,7 @@
-require_relative './mixins'
-require_relative './resource_group'
-require_relative './resource_modifier'
-require_relative './sector'
+require_relative "./mixins"
+require_relative "./resource_group"
+require_relative "./resource_modifier"
+require_relative "./sector"
 
 class Empire
   include OutputsResources
@@ -46,7 +46,7 @@ class Empire
     end
 
     if @ethics.include?(:xenophile)
-      modifier += ResourceModifier.new(trade: {multiplicative: 0.1})
+      modifier += ResourceModifier.new(trade: { multiplicative: 0.1 })
     end
 
     if @civics.include?(:meritocracy) and job.worker.specialist?
@@ -54,12 +54,12 @@ class Empire
     end
 
     if @civics.include?(:beacon_of_liberty)
-      modifier += ResourceModifier.new(unity: {multiplicative: 0.15})
+      modifier += ResourceModifier.new(unity: { multiplicative: 0.15 })
     end
 
     if @technology[:society].include?(:eco_simulation)
       if job.farmer?
-        modifier += ResourceModifier.new(food: {multiplicative: 0.2})
+        modifier += ResourceModifier.new(food: { multiplicative: 0.2 })
       end
     end
 
@@ -83,7 +83,7 @@ class Empire
     modifier = ResourceModifier.new()
 
     if @ethics.include?(:xenophile)
-      modifier += ResourceModifier.new({trade: {multiplicative: 0.1}})
+      modifier += ResourceModifier.new({ trade: { multiplicative: 0.1 } })
     end
 
     modifier
@@ -104,7 +104,7 @@ class Empire
     modifier += @ruler.empire_base_modifiers
 
     if @civics.include?(:beacon_of_liberty)
-      modifier += ResourceModifier.new(unity: {multiplicative: 0.15})
+      modifier += ResourceModifier.new(unity: { multiplicative: 0.15 })
     end
 
     modifier
@@ -124,15 +124,15 @@ class Empire
     })
 
     empire_base << ResourceModifier.new({
-      energy: {multiplicative: -1},
-      minerals: {multiplicative: -1},
-      food: {multiplicative: -1},
-      physics_research: {multiplicative: -1},
-      society_research: {multiplicative: -1},
-      engineering_research: {multiplicative: -1},
-      unity: {multiplicative: -1},
-      consumer_goods: {multiplicative: -1},
-      alloys: {multiplicative: -1},
+      energy: { multiplicative: -1 },
+      minerals: { multiplicative: -1 },
+      food: { multiplicative: -1 },
+      physics_research: { multiplicative: -1 },
+      society_research: { multiplicative: -1 },
+      engineering_research: { multiplicative: -1 },
+      unity: { multiplicative: -1 },
+      consumer_goods: { multiplicative: -1 },
+      alloys: { multiplicative: -1 },
     })
 
     empire_base << empire_base_modifiers()

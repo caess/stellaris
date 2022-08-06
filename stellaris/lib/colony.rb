@@ -1,7 +1,7 @@
-require_relative './mixins'
-require_relative './pop'
-require_relative './resource_group'
-require_relative './resource_modifier'
+require_relative "./mixins"
+require_relative "./pop"
+require_relative "./resource_group"
+require_relative "./resource_modifier"
 
 class Colony
   include UsesAmenities, OutputsResources
@@ -61,7 +61,7 @@ class Colony
   end
 
   def jobs(job)
-    @pops.filter {|pop| pop.has_job?(job)}.count
+    @pops.filter { |pop| pop.has_job?(job) }.count
   end
 
   def all_jobs
@@ -108,22 +108,22 @@ class Colony
 
   def amenities_output
     buildings_amenities_output + designation_amenities_output +
-      @pops.reduce(0) {|sum, pop| sum + pop.amenities_output}
+      @pops.reduce(0) { |sum, pop| sum + pop.amenities_output }
   end
 
   def amenities_upkeep
-    5 + @pops.reduce(0) {|sum, pop| sum + pop.amenities_upkeep}
+    5 + @pops.reduce(0) { |sum, pop| sum + pop.amenities_upkeep }
   end
 
   def pop_happiness_modifiers
     modifier = 0
     modifier += 10 if @designation == :leisure_station
-    modifier += @pops.reduce(0) {|sum, pop| sum + pop.pop_happiness_modifiers}
+    modifier += @pops.reduce(0) { |sum, pop| sum + pop.pop_happiness_modifiers }
 
     if net_amenities() > 0
-     modifier += [20, (20.0 * net_amenities() / amenities_upkeep())].min
+      modifier += [20, (20.0 * net_amenities() / amenities_upkeep())].min
     elsif net_amenities() < 0
-      modifier += [-50, 100 * (2.0/3 * net_amenities() / amenities_upkeep())].max
+      modifier += [-50, 100 * (2.0 / 3 * net_amenities() / amenities_upkeep())].max
     end
 
     modifier
@@ -132,7 +132,7 @@ class Colony
   def approval_rating()
     1.0 * @pops.reduce(0) do |sum, pop|
       sum + pop.happiness * pop.political_power
-    end / @pops.reduce(0) {|sum, pop| sum + pop.political_power}
+    end / @pops.reduce(0) { |sum, pop| sum + pop.political_power }
   end
 
   def stability_modifier()
@@ -142,7 +142,7 @@ class Colony
   def stability()
     stability = [
       50,
-      @pops.reduce(0) {|sum, pop| sum + pop.stability_modifier},
+      @pops.reduce(0) { |sum, pop| sum + pop.stability_modifier },
       @sector.stability_modifier,
       stability_modifier,
     ].reduce(0, &:+)
@@ -168,13 +168,13 @@ class Colony
 
   def stability_coefficient_modifier()
     ResourceModifier::multiplyAllProducedResources(stability_coefficient()) +
-      ResourceModifier.new(trade: {multiplicative: stability_coefficient()})
+      ResourceModifier.new(trade: { multiplicative: stability_coefficient() })
   end
 
   def job_output_modifiers(job)
     modifier = ResourceModifier.new()
 
-    @pops.each {|pop| modifier += pop.all_job_output_modifiers(job)}
+    @pops.each { |pop| modifier += pop.all_job_output_modifiers(job) }
 
     modifier += stability_coefficient_modifier()
     modifier += @sector.job_output_modifiers(job)
@@ -183,16 +183,16 @@ class Colony
       modifier += ResourceModifier::multiplyAllProducedResources(0.1)
     elsif @designation == :research_station
       modifier += ResourceModifier.new({
-        physics_research: {multiplicative: 0.1},
-        society_research: {multiplicative: 0.1},
-        engineering_research: {multiplicative: 0.1},
+        physics_research: { multiplicative: 0.1 },
+        society_research: { multiplicative: 0.1 },
+        engineering_research: { multiplicative: 0.1 },
       })
     elsif @designation == :refinery_station
       if job.chemist? or job.translucer? or job.refiner?
         modifier += ResourceModifier.new({
-          exotic_gases: {multiplicative: 0.1},
-          rare_crystals: {multiplicative: 0.1},
-          volatile_motes: {multiplicative: 0.1},
+          exotic_gases: { multiplicative: 0.1 },
+          rare_crystals: { multiplicative: 0.1 },
+          volatile_motes: { multiplicative: 0.1 },
         })
       end
     elsif @designation == :unification_station
@@ -200,18 +200,18 @@ class Colony
         modifier += ResourceModifier::multiplyAllProducedResources(0.1)
       end
     elsif @designation == :trade_station
-      modifier += ResourceModifier.new({trade: {multiplicative: 0.2}})
+      modifier += ResourceModifier.new({ trade: { multiplicative: 0.2 } })
     elsif @designation == :generator_station
       if job.technician?
-        modifier += ResourceModifier.new({energy: {multiplicative: 0.1}})
+        modifier += ResourceModifier.new({ energy: { multiplicative: 0.1 } })
       end
     elsif @designation == :mining_station
       if job.miner?
         modifier += ResourceModifier.new({
-          minerals: {multiplicative: 0.1},
-          exotic_gases: {multiplicative: 0.1},
-          rare_crystals: {multiplicative: 0.1},
-          volatile_motes: {multiplicative: 0.1},
+          minerals: { multiplicative: 0.1 },
+          exotic_gases: { multiplicative: 0.1 },
+          rare_crystals: { multiplicative: 0.1 },
+          volatile_motes: { multiplicative: 0.1 },
         })
       end
     end
@@ -221,11 +221,11 @@ class Colony
 
   def pop_output_modifiers(pop)
     modifier = ResourceModifier.new()
-    modifier += ResourceModifier.new({trade: {multiplicative: stability_coefficient()}})
+    modifier += ResourceModifier.new({ trade: { multiplicative: stability_coefficient() } })
     modifier += @sector.pop_output_modifiers(pop)
 
     if @designation == :trade_station
-      modifier += ResourceModifier.new({trade: {multiplicative: 0.2}})
+      modifier += ResourceModifier.new({ trade: { multiplicative: 0.2 } })
     end
 
     modifier
@@ -270,11 +270,11 @@ class Colony
       upkeep[:energy] = 3 * num
       upkeep[:alloys] = 5 * num
     elsif building == :research_labs or building == :administrative_offices or
-      building == :holo_theatres or building == :hydroponics_farms or
-      building == :luxury_residences or building == :communal_housing or
-      building == :energy_grid or building == :mineral_purification_plants or
-      building == :food_processing_facilities or building == :alloy_foundries or
-      building == :civilian_industries
+          building == :holo_theatres or building == :hydroponics_farms or
+          building == :luxury_residences or building == :communal_housing or
+          building == :energy_grid or building == :mineral_purification_plants or
+          building == :food_processing_facilities or building == :alloy_foundries or
+          building == :civilian_industries
       upkeep[:energy] = 2 * num
     end
 
@@ -315,7 +315,7 @@ class Colony
         districts(:leisure),
         districts(:research),
         districts(:mining),
-      ].reduce(0, &:+)
+      ].reduce(0, &:+),
     })
 
     pop_upkeep + building_upkeep + district_upkeep

@@ -1,4 +1,4 @@
-require_relative './resource_group'
+require_relative "./resource_group"
 
 class ResourceModifier
   attr_reader :values
@@ -37,7 +37,7 @@ class ResourceModifier
   def self.multiplyAllProducedResources(value)
     resources = {}
     ResourceGroup::PRODUCED_RESOURCES.each do |resource|
-      resources[resource] = {multiplicative: value}
+      resources[resource] = { multiplicative: value }
     end
 
     return ResourceModifier.new(resources)

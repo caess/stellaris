@@ -1,4 +1,4 @@
-require_relative './resource_modifier'
+require_relative "./resource_modifier"
 
 class Leader
   attr_reader :level, :traits
@@ -28,12 +28,12 @@ class Leader
 
       if @traits.include?(:unifier)
         if job.administrator?
-          modifier += ResourceModifier.new({unity: {multiplicative: 0.1}})
+          modifier += ResourceModifier.new({ unity: { multiplicative: 0.1 } })
         end
       end
     elsif ruler?
       if @traits.include?(:industrialist)
-        modifier += ResourceModifier.new(minerals: {multiplicative: 0.1})
+        modifier += ResourceModifier.new(minerals: { multiplicative: 0.1 })
       end
     end
 
@@ -45,7 +45,7 @@ class Leader
 
     if ruler?
       if @traits.include?(:industrialist)
-        modifier += ResourceModifier.new(minerals: {multiplicative: 0.1})
+        modifier += ResourceModifier.new(minerals: { multiplicative: 0.1 })
       end
     end
 
@@ -57,7 +57,7 @@ class Leader
 
     if ruler?
       if @traits.include?(:industrialist)
-        modifier += ResourceModifier.new(minerals: {multiplicative: 0.1})
+        modifier += ResourceModifier.new(minerals: { multiplicative: 0.1 })
       end
     end
 

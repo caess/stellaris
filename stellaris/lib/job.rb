@@ -1,5 +1,5 @@
-require_relative './resource_group'
-require_relative './resource_modifier'
+require_relative "./resource_group"
+require_relative "./resource_modifier"
 
 class Job
   attr_reader :name, :amenities_output,
@@ -176,16 +176,16 @@ class Job
 
   # ruler jobs
   Politician = Job.new(
-    name: 'Politician',
+    name: "Politician",
     strata: :ruler,
     category: :politicians,
-    output: {unity: 6},
+    output: { unity: 6 },
     amenities_output: 3,
-    upkeep: {consumer_goods: 2}
+    upkeep: { consumer_goods: 2 },
   )
 
   Executive = Job.new(
-    name: 'Executive',
+    name: "Executive",
     strata: :ruler,
     category: :politicians,
     subcategory: :executives,
@@ -194,20 +194,20 @@ class Job
       trade: 4,
     },
     amenities_output: 3,
-    upkeep: {consumer_goods: 2},
+    upkeep: { consumer_goods: 2 },
   )
 
   Merchant = Job.new(
-    name: 'Merchant',
+    name: "Merchant",
     strata: :ruler,
     category: :merchants,
-    output: {trade: 12},
+    output: { trade: 12 },
     amenities_output: 3,
-    upkeep: {consumer_goods: 2},
+    upkeep: { consumer_goods: 2 },
   )
 
   ScienceDirector = Job.new(
-    name: 'Science Director',
+    name: "Science Director",
     strata: :ruler,
     category: :researchers,
     output: {
@@ -217,57 +217,57 @@ class Job
       unity: 2,
     },
     amenities_output: 3,
-    upkeep: {consumer_goods: 2},
+    upkeep: { consumer_goods: 2 },
   )
 
   HighPriest = Job.new(
-    name: 'High Priest',
+    name: "High Priest",
     strata: :ruler,
     category: :administrators,
     subcategory: :priests,
-    output: {unity: 6},
+    output: { unity: 6 },
     amenities_output: 5,
-    upkeep: {consumer_goods: 2},
+    upkeep: { consumer_goods: 2 },
   )
 
   Noble = Job.new(
-    name: 'Noble',
+    name: "Noble",
     strata: :ruler,
     category: :politicians,
     subcategory: :nobles,
-    output: {unity: 6},
+    output: { unity: 6 },
     amenities_output: 3,
     stability_modifier: 2,
-    upkeep: {consumer_goods: 2},
+    upkeep: { consumer_goods: 2 },
   )
 
   # specialist jobs
   Metallurgist = Job.new(
-    name: 'Metallurgist',
+    name: "Metallurgist",
     strata: :specialist,
     category: :metallurgists,
-    output: {alloys: 3},
-    upkeep: {minerals: 6},
+    output: { alloys: 3 },
+    upkeep: { minerals: 6 },
   )
 
   CatalyticTechnician = Job.new(
-    name: 'Catalytic Technician',
+    name: "Catalytic Technician",
     strata: :specialist,
     category: :metallurgists,
-    output: {alloys: 3},
-    upkeep: {food: 9},
+    output: { alloys: 3 },
+    upkeep: { food: 9 },
   )
 
   Artisan = Job.new(
-    name: 'Artisan',
+    name: "Artisan",
     strata: :specialist,
     category: :artisans,
-    output: {consumer_goods: 6},
-    upkeep: {minerals: 6},
+    output: { consumer_goods: 6 },
+    upkeep: { minerals: 6 },
   )
 
   Artificier = Job.new(
-    name: 'Artificier',
+    name: "Artificier",
     strata: :specialist,
     category: :artisans,
     output: {
@@ -275,11 +275,11 @@ class Job
       trade: 2,
       engineering_research: 1.1,
     },
-    upkeep: {minerals: 6},
+    upkeep: { minerals: 6 },
   )
 
   PearlDiver = Job.new(
-    name: 'Pearl Diver',
+    name: "Pearl Diver",
     strata: :specialist,
     category: :artisans,
     output: {
@@ -289,125 +289,125 @@ class Job
     upkeep: {
       food: 2,
       minerals: 2,
-    }
+    },
   )
 
   Chemist = Job.new(
-    name: 'Chemist',
+    name: "Chemist",
     strata: :specialist,
     category: :chemists,
-    output: {volatile_motes: 2},
-    upkeep: {minerals: 10},
+    output: { volatile_motes: 2 },
+    upkeep: { minerals: 10 },
   )
 
   GasRefiner = Job.new(
-    name: 'Gas Refiner',
+    name: "Gas Refiner",
     strata: :specialist,
     category: :refiners,
-    output: {exotic_gases: 2},
-    upkeep: {minerals: 10},
+    output: { exotic_gases: 2 },
+    upkeep: { minerals: 10 },
   )
 
   Translucer = Job.new(
-    name: 'Translucer',
+    name: "Translucer",
     strata: :specialist,
     category: :translucers,
-    output: {rare_crystals: 2},
-    upkeep: {minerals: 10},
+    output: { rare_crystals: 2 },
+    upkeep: { minerals: 10 },
   )
 
   Colonist = Job.new(
-    name: 'Colonist',
+    name: "Colonist",
     strata: :specialist,
-    output: {food: 1},
+    output: { food: 1 },
     amenities_output: 3,
     colony_attribute_modifiers: {
-      defense_armies: {additive: 1},
-    }
+      defense_armies: { additive: 1 },
+    },
   )
 
   Roboticist = Job.new(
-    name: 'Roboticist',
+    name: "Roboticist",
     strata: :specialist,
     category: :pop_assemblers,
     colony_attribute_modifiers: {
-      monthly_mechanical_pop_assembly: {additive: 2},
+      monthly_mechanical_pop_assembly: { additive: 2 },
     },
-    upkeep: {alloys: 2},
+    upkeep: { alloys: 2 },
   )
 
   MedicalWorker = Job.new(
-    name: 'Medical Worker',
+    name: "Medical Worker",
     strata: :specialist,
     category: :doctors,
     amenities_output: 5,
     colony_attribute_modifiers: {
-      pop_growth_speed_percent: {additive: 5},
-      organic_pop_assembly_speed_percent: {additive: 5},
+      pop_growth_speed_percent: { additive: 5 },
+      organic_pop_assembly_speed_percent: { additive: 5 },
     },
     habitability_modifier: 2.5,
-    upkeep: {consumer_goods: 1},
+    upkeep: { consumer_goods: 1 },
   )
 
   Entertainer = Job.new(
-    name: 'Entertainer',
+    name: "Entertainer",
     strata: :specialist,
     category: :entertainers,
-    output: {unity: 1},
+    output: { unity: 1 },
     amenities_output: 10,
-    upkeep: {consumer_goods: 1},
+    upkeep: { consumer_goods: 1 },
   )
 
   Duelist = Job.new(
-    name: 'Duelist',
+    name: "Duelist",
     strata: :specialist,
     category: :entertainers,
-    output: {unity: 2},
+    output: { unity: 2 },
     amenities_output: 10,
-    empire_attribute_modifiers: {naval_capacity: {additive: 2}},
-    upkeep: {alloys: 1},
+    empire_attribute_modifiers: { naval_capacity: { additive: 2 } },
+    upkeep: { alloys: 1 },
   )
 
   Enforcer = Job.new(
-    name: 'Enforcer',
+    name: "Enforcer",
     strata: :specialist,
     category: :enforcers,
     stability_modifier: 1,
     colony_attribute_modifiers: {
-      crime: {additive: -25},
-      defense_armies: {additive: 2},
+      crime: { additive: -25 },
+      defense_armies: { additive: 2 },
     },
   )
 
   Telepath = Job.new(
-    name: 'Telepath',
+    name: "Telepath",
     strata: :specialist,
     category: :administrators,
     subcategory: :telepaths,
-    output: {unity: 6},
-    colony_attribute_modifiers: {crime: {additive: -35}},
+    output: { unity: 6 },
+    colony_attribute_modifiers: { crime: { additive: -35 } },
     all_job_output_modifiers: ResourceModifier::multiplyAllProducedResources(0.05),
-    upkeep: {energy: 1},
+    upkeep: { energy: 1 },
   )
 
   Necromancer = Job.new(
-    name: 'Necromancer',
+    name: "Necromancer",
     strata: :specialist,
     category: :researchers,
     output: {
       physics_research: 6,
       society_research: 6,
     },
-    colony_attribute_modifiers: {defense_armies: {additive: 3}},
-    empire_attribute_modifiers: {naval_capacity: {additive: 2}},
-    upkeep: {consumer_goods: 2},
+    colony_attribute_modifiers: { defense_armies: { additive: 3 } },
+    empire_attribute_modifiers: { naval_capacity: { additive: 2 } },
+    upkeep: { consumer_goods: 2 },
   )
 
   Reassigner = Job.new(
-    name: 'Reassigner',
+    name: "Reassigner",
     strata: :specialist,
     colony_attribute_modifiers: {
-      monthly_organic_pop_assembly: {additive: 2},
+      monthly_organic_pop_assembly: { additive: 2 },
     },
     upkeep: {
       consumer_goods: 2,
@@ -416,20 +416,20 @@ class Job
   )
 
   Necrophyte = Job.new(
-    name: 'Necrophyte',
+    name: "Necrophyte",
     strata: :specialist,
     category: :pop_assemblers,
     subcategory: :necro_apprentices,
-    output: {unity: 1.5},
+    output: { unity: 1.5 },
     amenities_output: 5,
     upkeep: {
       consumer_goods: 1,
       food: 1,
-    }
+    },
   )
 
   Researcher = Job.new(
-    name: 'Researcher',
+    name: "Researcher",
     strata: :specialist,
     category: :researchers,
     output: {
@@ -437,19 +437,19 @@ class Job
       society_research: 4,
       engineering_research: 4,
     },
-    upkeep: {consumer_goods: 2},
+    upkeep: { consumer_goods: 2 },
   )
 
   Bureaucrat = Job.new(
-    name: 'Bureaucrat',
+    name: "Bureaucrat",
     strata: :specialist,
     category: :administrators,
-    output: {unity: 4},
-    upkeep: {consumer_goods: 2},
+    output: { unity: 4 },
+    upkeep: { consumer_goods: 2 },
   )
 
   Manager = Job.new(
-    name: 'Manager',
+    name: "Manager",
     strata: :specialist,
     category: :administrators,
     subcategory: :managers,
@@ -457,21 +457,21 @@ class Job
       unity: 4,
       trade: 2,
     },
-    upkeep: {consumer_goods: 2},
+    upkeep: { consumer_goods: 2 },
   )
 
   Priest = Job.new(
-    name: 'Priest',
+    name: "Priest",
     strata: :specialist,
     category: :administrators,
     subcategory: :priests,
-    output: {unity: 4},
+    output: { unity: 4 },
     amenities_output: 2,
-    upkeep: {consumer_goods: 2},
+    upkeep: { consumer_goods: 2 },
   )
 
   DeathPriest = Job.new(
-    name: 'Death Priest',
+    name: "Death Priest",
     strata: :specialist,
     category: :administrators,
     subcategory: :priests,
@@ -480,11 +480,11 @@ class Job
       society_research: 1,
     },
     amenities_output: 2,
-    upkeep: {consumer_goods: 2},
+    upkeep: { consumer_goods: 2 },
   )
 
   DeathChronicler = Job.new(
-    name: 'Death Chronicler',
+    name: "Death Chronicler",
     strata: :specialist,
     category: :administrators,
     output: {
@@ -493,44 +493,44 @@ class Job
     },
     amenities_output: 2,
     stability_modifier: 2,
-    upkeep: {consumer_goods: 2},
+    upkeep: { consumer_goods: 2 },
   )
 
   CultureWorker = Job.new(
-    name: 'Culture Worker',
+    name: "Culture Worker",
     strata: :specialist,
     category: :culture_workers,
     output: {
       unity: 3,
       society_research: 3,
     },
-    upkeep: {consumer_goods: 2},
+    upkeep: { consumer_goods: 2 },
   )
 
   # Worker jobs
   Clerk = Job.new(
-    name: 'Clerk',
+    name: "Clerk",
     strata: :worker,
-    output: {trade: 4},
+    output: { trade: 4 },
     amenities_output: 2,
   )
 
   Technician = Job.new(
-    name: 'Technician',
+    name: "Technician",
     strata: :worker,
     category: :technicians,
-    output: {energy: 6},
+    output: { energy: 6 },
   )
 
   Miner = Job.new(
-    name: 'Miner',
+    name: "Miner",
     strata: :worker,
     category: :miners,
-    output: {minerals: 4},
+    output: { minerals: 4 },
   )
 
   ScrapMiner = Job.new(
-    name: 'Scrap Miner',
+    name: "Scrap Miner",
     strata: :worker,
     category: :miners,
     output: {
@@ -540,14 +540,14 @@ class Job
   )
 
   Farmer = Job.new(
-    name: 'Farmer',
+    name: "Farmer",
     strata: :worker,
     category: :farmers,
-    output: {food: 6},
+    output: { food: 6 },
   )
 
   Angler = Job.new(
-    name: 'Angler',
+    name: "Angler",
     strata: :worker,
     category: :farmers,
     output: {
@@ -557,43 +557,43 @@ class Job
   )
 
   Soldier = Job.new(
-    name: 'Soldier',
+    name: "Soldier",
     strata: :worker,
     category: :soldiers,
     colony_attribute_modifiers: {
-      defense_armies: {additive: 3},
+      defense_armies: { additive: 3 },
     },
     empire_attribute_modifiers: {
-      naval_capacity: {additive: 4},
+      naval_capacity: { additive: 4 },
     },
   )
 
   CrystalMiner = Job.new(
-    name: 'Crystal Miner',
+    name: "Crystal Miner",
     strata: :worker,
     category: :miners,
     subcategory: :strategic_resource_miners,
-    output: {rare_crystals: 2},
+    output: { rare_crystals: 2 },
   )
 
   GasExtractor = Job.new(
-    name: 'Gas Extractor',
+    name: "Gas Extractor",
     strata: :worker,
     category: :miners,
     subcategory: :strategic_resource_miners,
-    output: {exotic_gases: 2},
+    output: { exotic_gases: 2 },
   )
 
   MoteHarvester = Job.new(
-    name: 'Mote Harvester',
+    name: "Mote Harvester",
     strata: :worker,
     category: :miners,
     subcategory: :strategic_resource_miners,
-    output: {volatile_motes: 2},
+    output: { volatile_motes: 2 },
   )
 
   MortalInitiate = Job.new(
-    name: 'Mortal Initiate',
+    name: "Mortal Initiate",
     strata: :worker,
     category: :administrators,
     output: {
@@ -604,7 +604,7 @@ class Job
   )
 
   ProsperityPreacher = Job.new(
-    name: 'Prosperity Preacher',
+    name: "Prosperity Preacher",
     strata: :worker,
     category: :administrators,
     subcategory: :priests,
@@ -617,40 +617,40 @@ class Job
 
   # slave jobs
   GridAmalgamated = Job.new(
-    name: 'Grid Amalgamated',
+    name: "Grid Amalgamated",
     strata: :slave,
-    output: {energy: 4},
-    worker_housing_modifier: {housing: {additive: -0.5}},
+    output: { energy: 4 },
+    worker_housing_modifier: { housing: { additive: -0.5 } },
   )
 
   Livestock = Job.new(
-    name: 'Livestock',
+    name: "Livestock",
     strata: :slave,
-    output: {food: 4},
-    worker_housing_modifier: {housing: {additive: -0.5}},
-    worker_political_power_modifier: {political_power: {additive: -0.1}},
+    output: { food: 4 },
+    worker_housing_modifier: { housing: { additive: -0.5 } },
+    worker_political_power_modifier: { political_power: { additive: -0.1 } },
   )
 
   Servant = Job.new(
-    name: 'Servant',
+    name: "Servant",
     strata: :slave,
     amenities_output: 4,
-    worker_housing_modifier: {housing: {additive: -0.5}},
+    worker_housing_modifier: { housing: { additive: -0.5 } },
   )
 
   Overseer = Job.new(
-    name: 'Overseer',
+    name: "Overseer",
     strata: :slave,
     category: :enforcers,
     colony_attribute_modifiers: {
-      crime: {additive: -25},
-      defense_armies: {additive: 2},
+      crime: { additive: -25 },
+      defense_armies: { additive: 2 },
     },
     pop_happiness_modifiers: 25,
   )
 
   Toiler = Job.new(
-    name: 'Toiler',
+    name: "Toiler",
     strata: :slave,
     amenities_output: 2,
   )
@@ -659,9 +659,9 @@ class Job
     if name.is_a?(Job)
       return name
     elsif name.is_a?(Symbol)
-      self::const_get(name.to_s.split('_').map(&:capitalize).join('').to_sym)
+      self::const_get(name.to_s.split("_").map(&:capitalize).join("").to_sym)
     else
-      self.constants.find {|x| x.is_a?(Job) and x.name == name}
+      self.constants.find { |x| x.is_a?(Job) and x.name == name }
     end
   end
 end

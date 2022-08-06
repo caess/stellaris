@@ -1,7 +1,7 @@
-require_relative '../stellaris/lib/stellaris'
+require_relative "../stellaris/lib/stellaris"
 
-RSpec.describe 'match checks' do
-  context 'void dwellers tests' do
+RSpec.describe "match checks" do
+  context "void dwellers tests" do
     let(:ruler) { Leader.new(level: 2) }
     let(:species) {
       Species.new(
@@ -11,7 +11,7 @@ RSpec.describe 'match checks' do
           :natural_engineers,
           :rapid_breeders,
           :deviants,
-          :nonadaptive
+          :nonadaptive,
         ],
         living_standard: :shared_burden,
       )
@@ -25,7 +25,7 @@ RSpec.describe 'match checks' do
         technology: {
           society: [
             :eco_simulation,
-          ]
+          ],
         },
       )
     }
@@ -33,7 +33,7 @@ RSpec.describe 'match checks' do
     let(:sector) {
       Sector.new(
         empire: empire,
-        governor: governor
+        governor: governor,
       )
     }
 
@@ -66,7 +66,7 @@ RSpec.describe 'match checks' do
             unity: 5,
             consumer_goods: 10 + 4,
             alloys: 5 + 12,
-          }
+          },
         )
       }
 
@@ -105,7 +105,7 @@ RSpec.describe 'match checks' do
             civilian_industries: 1,
             holo_theatres: 1,
           },
-          fill_jobs_with: species
+          fill_jobs_with: species,
         )
       }
 
@@ -144,7 +144,7 @@ RSpec.describe 'match checks' do
             alloy_foundries: 1,
             holo_theatres: 1,
           },
-          fill_jobs_with: species
+          fill_jobs_with: species,
         )
       }
 
@@ -182,7 +182,7 @@ RSpec.describe 'match checks' do
             alloy_foundries: 1,
             holo_theatres: 1,
           },
-          fill_jobs_with: species
+          fill_jobs_with: species,
         )
       }
 
@@ -220,7 +220,7 @@ RSpec.describe 'match checks' do
             alloy_foundries: 1,
             holo_theatres: 1,
           },
-          fill_jobs_with: species
+          fill_jobs_with: species,
         )
       }
 
@@ -259,7 +259,7 @@ RSpec.describe 'match checks' do
             civilian_industries: 1,
             holo_theatres: 1,
           },
-          fill_jobs_with: species
+          fill_jobs_with: species,
         )
       }
 
@@ -298,7 +298,7 @@ RSpec.describe 'match checks' do
             civilian_industries: 1,
             holo_theatres: 1,
           },
-          fill_jobs_with: species
+          fill_jobs_with: species,
         )
       }
 
@@ -336,7 +336,7 @@ RSpec.describe 'match checks' do
             alloy_foundries: 1,
             holo_theatres: 1,
           },
-          fill_jobs_with: species
+          fill_jobs_with: species,
         )
       }
 
@@ -373,7 +373,7 @@ RSpec.describe 'match checks' do
             habitat_central_control: 1,
             research_labs: 4,
           },
-          fill_jobs_with: species
+          fill_jobs_with: species,
         )
       }
 
@@ -410,7 +410,7 @@ RSpec.describe 'match checks' do
             habitat_central_control: 1,
             administrative_offices: 4,
           },
-          fill_jobs_with: species
+          fill_jobs_with: species,
         )
       }
 
@@ -433,7 +433,7 @@ RSpec.describe 'match checks' do
     end
   end
 
-  context 'empire base tests' do
+  context "empire base tests" do
     let(:ruler) { Leader.new(level: 2, traits: [:explorer, :industrialist]) }
     let(:species) {
       Species.new(
@@ -443,7 +443,7 @@ RSpec.describe 'match checks' do
           :natural_engineers,
           :rapid_breeders,
           :deviants,
-          :nonadaptive
+          :nonadaptive,
         ],
         living_standard: :shared_burden,
       )
@@ -457,7 +457,7 @@ RSpec.describe 'match checks' do
         technology: {
           society: [
             :eco_simulation,
-          ]
+          ],
         },
       )
     }
@@ -465,7 +465,7 @@ RSpec.describe 'match checks' do
     let(:sector) {
       Sector.new(
         empire: empire,
-        governor: governor
+        governor: governor,
       )
     }
     let!(:homeworld) do
@@ -486,13 +486,13 @@ RSpec.describe 'match checks' do
           alloy_foundries: 0,
         },
         jobs: {
-          politician: {species => 2},
-          researcher: {species => 0},
-          enforcer: {species => 1},
-          entertainer: {species => 1},
-          bureaucrat: {species => 2},
-          metallurgist: {species => 2},
-          artisan: {species => 2},
+          politician: { species => 2 },
+          researcher: { species => 0 },
+          enforcer: { species => 1 },
+          entertainer: { species => 1 },
+          bureaucrat: { species => 2 },
+          metallurgist: { species => 2 },
+          artisan: { species => 2 },
         },
         deposits: {
           energy: 20,
@@ -504,7 +504,7 @@ RSpec.describe 'match checks' do
           unity: 5,
           consumer_goods: 10 + 4,
           alloys: 5 + 12,
-        }
+        },
       )
     end
 
@@ -524,10 +524,10 @@ RSpec.describe 'match checks' do
           hydroponics_farms: 1,
         },
         jobs: {
-          colonist: {species => 2},
-          clerk: {species => 1},
-          miner: {species => 3},
-          farmer: {species => 3},
+          colonist: { species => 2 },
+          clerk: { species => 1 },
+          miner: { species => 3 },
+          farmer: { species => 3 },
         },
       )
     end
@@ -548,66 +548,66 @@ RSpec.describe 'match checks' do
           hydroponics_farms: 1,
         },
         jobs: {
-          colonist: {species => 2},
-          clerk: {species => 1},
-          technician: {species => 3},
-          farmer: {species => 3},
+          colonist: { species => 2 },
+          clerk: { species => 1 },
+          technician: { species => 3 },
+          farmer: { species => 3 },
         },
       )
     end
 
-    describe 'empire output' do
+    describe "empire output" do
       subject { empire.output }
 
-      it 'should produce 40.54 unity' do
+      it "should produce 40.54 unity" do
         expect(subject[:unity]).to be_within(0.01).of(40.54)
       end
 
-      it 'should produce 62.4 food' do
+      it "should produce 62.4 food" do
         expect(subject[:food]).to be_within(0.01).of(62.4)
       end
 
-      it 'should produce 37.84 minerals' do
+      it "should produce 37.84 minerals" do
         expect(subject[:minerals]).to be_within(0.01).of(37.84)
       end
 
-      it 'should produce 41.96 energy' do
+      it "should produce 41.96 energy" do
         expect(subject[:energy]).to be_within(0.01).of(41.96)
       end
 
-      it 'should produce 32.31 consumer goods' do
+      it "should produce 32.31 consumer goods" do
         expect(subject[:consumer_goods]).to be_within(0.01).of(32.31)
       end
 
-      it 'should produce 26.15 alloys' do
+      it "should produce 26.15 alloys" do
         expect(subject[:alloys]).to be_within(0.01).of(26.15)
       end
 
-      it 'should produce 0 volatile motes' do
+      it "should produce 0 volatile motes" do
         expect(subject[:volatile_motes]).to eq(0)
       end
 
-      it 'should produce 0 exotic gases' do
+      it "should produce 0 exotic gases" do
         expect(subject[:exotic_gases]).to eq(0)
       end
 
-      it 'should produce 0 rare crystals' do
+      it "should produce 0 rare crystals" do
         expect(subject[:rare_crystals]).to eq(0)
       end
 
-      it 'should produce 10 physics research' do
+      it "should produce 10 physics research" do
         expect(subject[:physics_research]).to eq(10)
       end
 
-      it 'should produce 10 society research' do
+      it "should produce 10 society research" do
         expect(subject[:society_research]).to eq(10)
       end
 
-      it 'should produce 10 engineering research' do
+      it "should produce 10 engineering research" do
         expect(subject[:engineering_research]).to eq(10)
       end
 
-      it 'should produce 16.26 trade' do
+      it "should produce 16.26 trade" do
         expect(subject[:trade]).to be_within(0.01).of(16.26)
       end
     end

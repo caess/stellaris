@@ -1,9 +1,9 @@
-require 'forwardable'
+require "forwardable"
 
-require_relative './mixins'
-require_relative './pop_job'
-require_relative './resource_group'
-require_relative './resource_modifier'
+require_relative "./mixins"
+require_relative "./pop_job"
+require_relative "./resource_group"
+require_relative "./resource_modifier"
 
 class Pop
   include UsesAmenities, OutputsResources

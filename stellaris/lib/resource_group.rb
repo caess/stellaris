@@ -65,13 +65,13 @@ class ResourceGroup
   end
 
   def ==(rhs)
-    resolve().reject {|k, v| v == 0} == rhs.resolve().reject {|k, v| v == 0}
+    resolve().reject { |k, v| v == 0 } == rhs.resolve().reject { |k, v| v == 0 }
   end
 
   def dup
     output = ResourceGroup.new(@resources)
 
-    @modifiers.each {|modifier| output << modifier}
+    @modifiers.each { |modifier| output << modifier }
 
     output
   end
@@ -79,6 +79,6 @@ class ResourceGroup
   def empty?
     resolve if @resolved.nil?
 
-    @resolved.values.reject {|value| value == 0}.empty?
+    @resolved.values.reject { |value| value == 0 }.empty?
   end
 end

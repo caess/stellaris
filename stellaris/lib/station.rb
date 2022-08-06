@@ -1,11 +1,11 @@
-require_relative './mixins'
-require_relative './resource_group'
-require_relative './resource_modifier'
+require_relative "./mixins"
+require_relative "./resource_group"
+require_relative "./resource_modifier"
 
 class Station
   attr_accessor :empire
 
-  def initialize(output={})
+  def initialize(output = {})
     @empire = nil
     @output = ResourceGroup.new(output)
   end
@@ -15,7 +15,7 @@ class Station
   end
 
   def upkeep
-    ResourceGroup.new({energy: 1})
+    ResourceGroup.new({ energy: 1 })
   end
 end
 
@@ -32,7 +32,7 @@ class MiningStation < Station
 
     # Energy mining stations have no upkeep
     if (@output[:energy] || 0) > 0
-      upkeep << ResourceModifier.new({energy: {additive: -1}})
+      upkeep << ResourceModifier.new({ energy: { additive: -1 } })
     end
 
     upkeep
