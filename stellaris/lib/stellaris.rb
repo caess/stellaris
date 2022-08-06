@@ -1,4 +1,5 @@
 require_relative './colony'
+require_relative './district'
 require_relative './empire'
 require_relative './job'
 require_relative './leader'
