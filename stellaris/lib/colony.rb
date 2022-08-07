@@ -1,3 +1,5 @@
+require_relative "./district"
+require_relative "./job"
 require_relative "./mixins"
 require_relative "./pop"
 require_relative "./resource_group"
@@ -6,7 +8,7 @@ require_relative "./resource_modifier"
 class Colony
   include UsesAmenities, OutputsResources
 
-  attr_reader :pops
+  attr_reader :pops, :districts
 
   def initialize(type:, size:, sector:, designation: nil, districts: {}, buildings: {}, jobs: {}, deposits: {}, fill_jobs_with: nil)
     @type = type
@@ -16,6 +18,27 @@ class Colony
     @designation = designation
     @districts = districts.dup
     @buildings = buildings.dup
+
+    @districts = []
+    districts.each do |type, number|
+      if type == :habitation
+        district = District::HabitationDistrict
+      elsif type == :industrial
+        district = District::HabitatIndustrialDistrict
+      elsif type == :mining
+        district = District::AstroMiningBay
+      elsif type == :reactor
+        district = District::ReactorDistrict
+      elsif type == :research
+        district = District::ResearchDistrict
+      elsif type == :trade
+        district = District::HabitatTradeDistrict
+      elsif type == :leisure
+        district = District::LeisureDistrict
+      end
+
+      1.upto(number) {|x| @districts << district}
+    end
 
     if !deposits.is_a?(Array)
       deposits = [deposits]
@@ -56,8 +79,8 @@ class Colony
     (@buildings[type] || 0)
   end
 
-  def districts(type)
-    (@districts[type] || 0)
+  def num_districts(type)
+    @districts.find_all {|d| d == type }.count
   end
 
   def jobs(job)
@@ -69,29 +92,27 @@ class Colony
   end
 
   def max_jobs()
-    max_jobs = {
-      politician: 2 * buildings(:habitat_central_control),
-      enforcer: 1 * buildings(:habitat_central_control),
-      artisan: 1 * districts(:industrial) + 2 * buildings(:civilian_industries),
-      metallurgist: 1 * districts(:industrial) + 2 * buildings(:alloy_foundries),
-      colonist: 2 * buildings(:habitat_administration),
-      researcher: 3 * districts(:research) + 2 * buildings(:research_labs),
-      bureaucrat: 2 * buildings(:administrative_offices),
-      entertainer: 2 * buildings(:holo_theatres) + 3 * districts(:leisure),
-      clerk: 4 * districts(:trade),
-      technician: 3 * districts(:reactor),
-      miner: 3 * districts(:mining),
-      farmer: 3 * buildings(:hydroponics_farms),
-    }
+    max_jobs = @districts.reduce({}) {|sum, x| sum.merge(x.max_jobs) {|k, v1, v2| v1 + v2}}
+    max_jobs = max_jobs.merge({
+      Job::Politician => 2 * buildings(:habitat_central_control),
+      Job::Enforcer => 1 * buildings(:habitat_central_control),
+      Job::Artisan => 2 * buildings(:civilian_industries),
+      Job::Metallurgist => 2 * buildings(:alloy_foundries),
+      Job::Colonist => 2 * buildings(:habitat_administration),
+      Job::Researcher => 2 * buildings(:research_labs),
+      Job::Bureaucrat => 2 * buildings(:administrative_offices),
+      Job::Entertainer => 2 * buildings(:holo_theatres),
+      Job::Farmer => 3 * buildings(:hydroponics_farms),
+    }) {|k, v1, v2| v1 + v2}
 
     if @designation == :factory_station
-      max_jobs[:artisan] += 1 * districts(:industrial)
-      max_jobs[:metallurgist] -= 1 * districts(:industrial)
+      max_jobs[Job::Artisan] += 1 * num_districts(District::HabitatIndustrialDistrict)
+      max_jobs[Job::Metallurgist] -= 1 * num_districts(District::HabitatIndustrialDistrict)
     elsif @designation == :foundry_station
-      max_jobs[:artisan] -= 1 * districts(:industrial)
-      max_jobs[:metallurgist] += 1 * districts(:industrial)
+      max_jobs[Job::Artisan] -= 1 * num_districts(District::HabitatIndustrialDistrict)
+      max_jobs[Job::Metallurgist] += 1 * num_districts(District::HabitatIndustrialDistrict)
     elsif @designation == :hydroponics_station
-      max_jobs[:farmer] += 1 * districts(:habitation)
+      max_jobs[Job::Farmer] += 1 * num_districts(District::HabitationDistrict)
     end
 
     max_jobs
@@ -306,17 +327,9 @@ class Colony
       sum + building_upkeep(num, building)
     end
 
-    district_upkeep = ResourceGroup.new({
-      energy: 2 * [
-        districts(:habitation),
-        districts(:industrial),
-        districts(:trade),
-        districts(:reactor),
-        districts(:leisure),
-        districts(:research),
-        districts(:mining),
-      ].reduce(0, &:+),
-    })
+    district_upkeep = @districts.reduce(ResourceGroup.new({})) do |sum, d|
+      sum + d.upkeep
+    end
 
     pop_upkeep + building_upkeep + district_upkeep
   end
