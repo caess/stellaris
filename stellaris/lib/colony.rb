@@ -37,7 +37,7 @@ class Colony
         district = District::LeisureDistrict
       end
 
-      1.upto(number) {|x| @districts << district}
+      1.upto(number) { |x| @districts << district }
     end
 
     if !deposits.is_a?(Array)
@@ -80,7 +80,7 @@ class Colony
   end
 
   def num_districts(type)
-    @districts.find_all {|d| d == type }.count
+    @districts.find_all { |d| d == type }.count
   end
 
   def jobs(job)
@@ -92,7 +92,7 @@ class Colony
   end
 
   def max_jobs()
-    max_jobs = @districts.reduce({}) {|sum, x| sum.merge(x.max_jobs) {|k, v1, v2| v1 + v2}}
+    max_jobs = @districts.reduce({}) { |sum, x| sum.merge(x.max_jobs) { |k, v1, v2| v1 + v2 } }
     max_jobs = max_jobs.merge({
       Job::Politician => 2 * buildings(:habitat_central_control),
       Job::Enforcer => 1 * buildings(:habitat_central_control),
@@ -103,7 +103,7 @@ class Colony
       Job::Bureaucrat => 2 * buildings(:administrative_offices),
       Job::Entertainer => 2 * buildings(:holo_theatres),
       Job::Farmer => 3 * buildings(:hydroponics_farms),
-    }) {|k, v1, v2| v1 + v2}
+    }) { |k, v1, v2| v1 + v2 }
 
     if @designation == :factory_station
       max_jobs[Job::Artisan] += 1 * num_districts(District::HabitatIndustrialDistrict)
