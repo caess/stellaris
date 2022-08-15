@@ -81,4 +81,6 @@ class ResourceGroup
 
     @resolved.values.reject { |value| value == 0 }.empty?
   end
+
+  EMPTY = ResourceGroup.new({})
 end
