@@ -57,13 +57,17 @@ class Colony
     if fill_jobs_with
       @jobs = max_jobs()
 
-      @jobs.each do |job, num|
+      @jobs.each do |job_id, num|
+        job = Job::lookup(job_id)
+
         1.upto(num) do |x|
           @pops << Pop.new(species: fill_jobs_with, colony: self, job: job)
         end
       end
     else
-      jobs.each do |job, pops|
+      jobs.each do |job_id, pops|
+        job = Job::lookup(job_id)
+
         pops.each do |species, count|
           1.upto(count) do
             @pops << Pop.new(species: species, colony: self, job: job)

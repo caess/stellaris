@@ -21,7 +21,7 @@ class PopJob
   attr_reader :job, :worker
 
   def initialize(job:, worker:)
-    @job = Job.lookup(job)
+    @job = job
     @worker = worker
   end
 
