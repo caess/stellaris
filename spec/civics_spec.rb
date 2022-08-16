@@ -1,18 +1,6 @@
 require_relative "../stellaris/lib/stellaris"
 
 RSpec.describe 'civics' do
-  describe "default" do
-    subject { Civic.new() }
-
-    it "has no default job output modifiers" do
-      expect(subject.job_output_modifiers(nil)).to eq(ResourceModifier::NONE)
-    end
-
-    it "has no default job upkeep modifiers" do
-      expect(subject.job_upkeep_modifiers(nil)).to eq(ResourceModifier::NONE)
-    end
-  end
-
   describe "Exalted Priesthood" do
     subject { Civic::ExaltedPriesthood }
 
@@ -41,7 +29,6 @@ RSpec.describe 'end-to-end tests' do
   let(:species) do
     Species.new(
       living_standard: nil,
-      traits: [ SpeciesTrait::Lithoid ],
     )
   end
   let(:ruler) { Leader.new(level: 0) }

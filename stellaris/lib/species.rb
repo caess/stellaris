@@ -32,7 +32,7 @@ class Species
       })
     end
 
-    @traits.filter {|x| x.is_a?(SpeciesTrait)}.each do |trait|
+    @traits.filter {|x| x.is_a?(Modifier)}.each do |trait|
       modifier += trait.job_output_modifiers(job)
     end
 

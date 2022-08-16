@@ -1,14 +1,6 @@
 require_relative "../stellaris/lib/stellaris"
 
 RSpec.describe "species traits" do
-  describe "default" do
-    subject { SpeciesTrait.new() }
-
-    it "has no default job output modifier" do
-      expect(subject.job_output_modifiers(nil)).to eq(ResourceModifier::NONE)
-    end
-  end
-
   describe "Lithoid" do
     subject { SpeciesTrait::Lithoid }
 

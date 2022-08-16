@@ -69,7 +69,7 @@ class Empire
       modifier += edict.job_output_modifiers(job)
     end
 
-    @civics.filter {|c| c.is_a?(Civic)}.each do |civic|
+    @civics.filter {|c| c.is_a?(Modifier)}.each do |civic|
       modifier += civic.job_output_modifiers(job)
     end
 
