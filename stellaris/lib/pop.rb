@@ -51,8 +51,8 @@ class Pop
   def job_output_modifiers(job)
     modifier = ResourceModifier::NONE
 
-    modifier += @species.job_output_modifiers(job)
-    modifier += @colony.job_output_modifiers(job)
+    modifier += @species.job_output_modifiers(job) unless @species.nil?
+    modifier += @colony.job_output_modifiers(job) unless @colony.nil?
 
     modifier
   end
@@ -74,7 +74,7 @@ class Pop
       output[:trade] = 0.5
     end
 
-    output << @colony.pop_output_modifiers(self)
+    output << @colony.pop_output_modifiers(self) unless @colony.nil?
 
     output
   end
@@ -89,7 +89,7 @@ class Pop
     end
     upkeep[:food] = 1
 
-    upkeep << @colony.pop_upkeep_modifiers(self)
+    upkeep << @colony.pop_upkeep_modifiers(self) unless @colony.nil?
 
     upkeep
   end
