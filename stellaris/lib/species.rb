@@ -1,5 +1,6 @@
 require_relative "./resource_group"
 require_relative "./resource_modifier"
+require_relative "./species_trait"
 
 class Species
   attr_reader :traits, :living_standard
@@ -29,6 +30,10 @@ class Species
       modifier += ResourceModifier.new({
         engineering_research: { multiplicative: 0.15 },
       })
+    end
+
+    @traits.filter {|x| x.is_a?(SpeciesTrait)}.each do |trait|
+      modifier += trait.job_output_modifiers(job)
     end
 
     modifier

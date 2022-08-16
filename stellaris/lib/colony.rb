@@ -277,6 +277,8 @@ class Colony
       end
     end
 
+    modifier += @sector.job_upkeep_modifiers(job)
+
     modifier
   end
 

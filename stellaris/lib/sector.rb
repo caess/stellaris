@@ -34,6 +34,13 @@ class Sector
     modifier
   end
 
+  def job_upkeep_modifiers(job)
+    modifier = ResourceModifier.new()
+    modifier += @empire.job_upkeep_modifiers(job)
+
+    modifier
+  end
+
   def pop_output_modifiers(pop)
     modifier = ResourceModifier.new()
     modifier += @empire.pop_output_modifiers(pop)
