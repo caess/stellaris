@@ -1,3 +1,4 @@
+require_relative "./building"
 require_relative "./colony"
 require_relative "./district"
 require_relative "./empire"
