@@ -19,5 +19,8 @@ module ColonyDecision
     job_colony_attribute_modifiers: {
       Job::Necromancer => { defense_armies: { additive: 2 } },
     },
+    job_stability_modifier: {
+      Job::Soldier => 5,
+    },
   )
 end

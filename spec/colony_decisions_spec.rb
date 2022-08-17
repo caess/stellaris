@@ -70,6 +70,12 @@ RSpec.describe "colony decisions" do
         defense_armies: { additive: 2 },
       }))
     end
+
+    it "modifies the stability for Soldiers" do
+      pop_job = PopJob.new(worker: nil, job: Job::Soldier)
+
+      expect(subject.job_stability_modifier(pop_job)).to eq(5)
+    end
   end
 end
 
@@ -98,7 +104,7 @@ RSpec.describe "end-to-end tests" do
       )
     end
 
-    it "modifies the coony attribute modifiers of enforcers" do
+    it "modifies the colony attribute modifiers of enforcers" do
       pop = Pop.new(
         species: species,
         colony: colony,
@@ -158,7 +164,7 @@ RSpec.describe "end-to-end tests" do
       )
     end
 
-    it "modifies the coony attribute modifiers of enforcers" do
+    it "modifies the colony attribute modifiers of Necromancers" do
       pop = Pop.new(
         species: species,
         colony: colony,
@@ -168,6 +174,16 @@ RSpec.describe "end-to-end tests" do
       expect(pop.job.colony_attribute_modifiers).to eq(ResourceModifier.new({
         defense_armies: { additive: 5 },
       }))
+    end
+
+    it "modifies the stability modifier of Soldiers" do
+      pop = Pop.new(
+        species: species,
+        colony: colony,
+        job: Job::Soldier,
+      )
+
+      expect(pop.job.stability_modifier).to eq(5)
     end
   end
 end
