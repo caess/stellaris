@@ -12,4 +12,11 @@ module Government
       },
     },
   )
+
+  MachineIntelligence = Modifier.new(
+    name: "Machine Intelligence",
+    job_output_modifiers: {
+      Job::AgriDrone => { food: { additive: -1 } },
+    },
+  )
 end
