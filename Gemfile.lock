@@ -18,11 +18,11 @@ GEM
     rufo (0.13.0)
 
 PLATFORMS
-  arm64-darwin-20
+  arm64-darwin-21
 
 DEPENDENCIES
   rspec
   rufo
 
 BUNDLED WITH
-   2.2.3
+   2.3.7
