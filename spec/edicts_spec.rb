@@ -54,6 +54,14 @@ RSpec.describe "edicts" do
         energy: { additive: 0.5 },
       }))
     end
+
+    it "increases the upkeep for Agri-Drones" do
+      pop_job = PopJob.new(worker: nil, job: Job::AgriDrone)
+
+      expect(subject.job_upkeep_modifiers(pop_job)).to eq(ResourceModifier.new({
+        energy: { additive: 0.5 },
+      }))
+    end
   end
 
   describe "Industrial Subsidies" do
@@ -238,6 +246,18 @@ RSpec.describe "end-to-end tests" do
         species: species,
         colony: colony,
         job: Job::Farmer,
+      )
+
+      expect(pop.job.upkeep).to eq(ResourceGroup.new({
+        energy: 0.5,
+      }))
+    end
+
+    it "modifies the upkeep of Agri-Drones" do
+      pop = Pop.new(
+        species: species,
+        colony: colony,
+        job: Job::AgriDrone,
       )
 
       expect(pop.job.upkeep).to eq(ResourceGroup.new({

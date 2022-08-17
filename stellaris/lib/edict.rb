@@ -13,6 +13,7 @@ module Edict
     name: "Farming Subsidies",
     job_upkeep_modifiers: {
       Job::Farmer => { energy: { additive: 0.5 } },
+      Job::AgriDrone => { energy: { additive: 0.5 } },
     },
   )
 
