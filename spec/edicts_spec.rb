@@ -63,6 +63,26 @@ RSpec.describe "edicts" do
     end
   end
 
+  describe "Mining Subsidies" do
+    subject { Edict::MiningSubsidies }
+
+    it "has the correct name" do
+      expect(subject.name).to eq("Mining Subsidies")
+    end
+
+    it "increases the upkeep for miners" do
+      job = instance_double("Job")
+
+      expect(job).to receive(:miner?).and_return(true)
+
+      pop_job = PopJob.new(worker: nil, job: job)
+
+      expect(subject.job_upkeep_modifiers(pop_job)).to eq(ResourceModifier.new({
+        energy: { additive: 0.5 },
+      }))
+    end
+  end
+
   describe "Research Subsidies" do
     subject { Edict::ResearchSubsidies }
 
@@ -275,6 +295,41 @@ RSpec.describe "end-to-end tests" do
       }))
     end
   end
+
+  describe "Mining Subsidies" do
+    let(:empire) do
+      Empire.new(
+        founder_species: species,
+        ruler: ruler,
+        edicts: [Edict::MiningSubsidies],
+      )
+    end
+    let(:sector) { Sector.new(empire: empire) }
+    let(:colony) { Colony.new(type: nil, size: nil, sector: sector) }
+
+    it "modifies the upkeep of Miners" do
+      pop = Pop.new(
+        species: species,
+        colony: colony,
+        job: Job::Miner,
+      )
+
+      expect(pop.job.upkeep).to eq(ResourceGroup.new({
+        energy: 0.5,
+      }))
+    end
+
+    it "modifies the upkeep of Scrap Miners" do
+      pop = Pop.new(
+        species: species,
+        colony: colony,
+        job: Job::ScrapMiner,
+      )
+
+      expect(pop.job.upkeep).to eq(ResourceGroup.new({
+        energy: 0.5,
+      }))
+    end  end
 
   describe "Research Subsidies" do
     let(:empire) do

@@ -23,6 +23,13 @@ module Edict
     }
   )
 
+  MiningSubsidies = Modifier.new(
+    name: "Mining Subsidies",
+    job_upkeep_modifiers: {
+      :miner? => { energy: { additive: 0.5 } },
+    }
+  )
+
   ResearchSubsidies = Modifier.new(
     name: "Research Subsidies",
     job_upkeep_modifiers: {
