@@ -15,5 +15,9 @@ RSpec.describe 'modifier' do
     it "has no default job upkeep modifiers" do
       expect(subject.job_upkeep_modifiers(nil)).to eq(ResourceModifier::NONE)
     end
+
+    it "has no default job colony attribute modifiers" do
+      expect(subject.job_colony_attribute_modifiers(nil)).to eq(ResourceModifier::NONE)
+    end
   end
 end

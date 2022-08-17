@@ -1,3 +1,4 @@
+require_relative "./job"
 require_relative "./modifier"
 
 module Edict
@@ -12,6 +13,13 @@ module Edict
     name: "Industrial Subsidies",
     job_upkeep_modifiers: {
       :artisan? => { energy: { additive: 1 } },
+    }
+  )
+
+  ThoughtEnforcement = Modifier.new(
+    name: "Thought Enforcement",
+    job_colony_attribute_modifiers: {
+      Job::Telepath => { crime: { additive: -5 } },
     }
   )
 end

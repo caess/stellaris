@@ -9,13 +9,14 @@ class Empire
   attr_reader :ruler, :ethics, :civics, :technology
 
   def initialize(founding_species:, ruler:, ethics: [], civics: [],
-    technology: {}, edicts: [])
+    technology: {}, edicts: [], traditions: [])
     @ruler = ruler
     @ruler.role = :ruler
     @ethics = ethics.dup
     @civics = civics.dup
     @technology = technology.dup
     @edicts = edicts.dup
+    @traditions = traditions.dup
 
     @sectors = []
     @stations = []
@@ -73,6 +74,8 @@ class Empire
       modifier += civic.job_output_modifiers(job)
     end
 
+    @traditions.each { |t| modifier += t.job_output_modifiers(job) }
+
     modifier
   end
 
@@ -82,6 +85,24 @@ class Empire
     @edicts.each do |edict|
       modifier += edict.job_upkeep_modifiers(job)
     end
+
+    @traditions.each { |t| modifier += t.job_upkeep_modifiers(job) }
+
+    modifier
+  end
+
+  def job_colony_attribute_modifiers(job)
+    modifier = ResourceModifier.new()
+
+    @edicts.each do |edict|
+      modifier += edict.job_colony_attribute_modifiers(job)
+    end
+
+    @civics.filter {|c| c.is_a?(Modifier) }.each do |civic|
+      modifier += civic.job_colony_attribute_modifiers(job)
+    end
+
+    @traditions.each { |t| modifier += t.job_colony_attribute_modifiers(job) }
 
     modifier
   end

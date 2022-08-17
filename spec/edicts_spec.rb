@@ -46,6 +46,24 @@ RSpec.describe "edicts" do
       }))
     end
   end
+
+  describe 'THought Enforcement' do
+    subject { Edict::ThoughtEnforcement }
+
+    it "has the correct name" do
+      expect(subject.name).to eq("Thought Enforcement")
+    end
+
+    it "modifies the colony attribute modifiers for telepaths" do
+      pop_job = PopJob.new(job: Job::Telepath, worker: nil)
+
+      expect(subject.job_colony_attribute_modifiers(pop_job)).to eq(
+        ResourceModifier.new({
+          crime: { additive: -5 },
+        })
+      )
+    end
+  end
 end
 
 RSpec.describe "end-to-end tests" do
@@ -143,6 +161,32 @@ RSpec.describe "end-to-end tests" do
         minerals: 2,
         energy: 1,
       }))
+    end
+  end
+
+  describe "Thought Enforcement" do
+    let(:empire) do
+      Empire.new(
+        founding_species: species,
+        ruler: ruler,
+        edicts: [Edict::ThoughtEnforcement],
+      )
+    end
+    let(:sector) { Sector.new(empire: empire) }
+    let(:colony) { Colony.new(type: nil, size: nil, sector: sector) }
+
+    it "modifies the colony attribute modifiers of Telepaths" do
+      pop = Pop.new(
+        species: species,
+        colony: colony,
+        job: Job::Telepath
+      )
+
+      expect(pop.job.colony_attribute_modifiers).to eq(
+        ResourceModifier.new({
+          crime: { additive: -40 },
+        })
+      )
     end
   end
 end

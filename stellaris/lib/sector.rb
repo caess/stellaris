@@ -48,6 +48,13 @@ class Sector
     modifier
   end
 
+  def job_colony_attribute_modifiers(job)
+    modifier = ResourceModifier.new()
+    modifier += @empire.job_colony_attribute_modifiers(job)
+
+    modifier
+  end
+
   def stability_modifier
     @empire.stability_modifier
   end

@@ -65,6 +65,14 @@ class Pop
     modifier
   end
 
+  def job_colony_attribute_modifiers(job)
+    modifier = ResourceModifier::NONE
+
+    modifier += @colony.job_colony_attribute_modifiers(job)
+
+    modifier
+  end
+
   def pop_output
     output = ResourceGroup.new()
 

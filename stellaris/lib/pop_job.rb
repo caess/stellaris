@@ -40,4 +40,12 @@ class PopJob
 
     upkeep
   end
+
+  def colony_attribute_modifiers
+    modifiers = ResourceModifier.new()
+    modifiers += @job.colony_attribute_modifiers
+    modifiers += @worker.job_colony_attribute_modifiers(self)
+
+    modifiers
+  end
 end

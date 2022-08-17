@@ -10,7 +10,10 @@ class Colony
 
   attr_reader :pops, :districts
 
-  def initialize(type:, size:, sector:, designation: nil, districts: {}, buildings: {}, jobs: {}, deposits: {}, fill_jobs_with: nil)
+  def initialize(
+    type:, size:, sector:, designation: nil, districts: {}, buildings: {},
+    decisions: {}, jobs: {}, deposits: {}, fill_jobs_with: nil
+  )
     @type = type
     @size = size
     @sector = sector
@@ -18,6 +21,7 @@ class Colony
     @designation = designation
     @districts = districts.dup
     @buildings = buildings.dup
+    @decisions = decisions.dup
 
     @districts = []
     districts.each do |type, number|
@@ -204,6 +208,8 @@ class Colony
     modifier += stability_coefficient_modifier()
     modifier += @sector.job_output_modifiers(job)
 
+    @decisions.each { |d| modifier += d.job_output_modifiers(job) }
+
     if @designation == :empire_capital
       modifier += ResourceModifier::multiplyAllProducedResources(0.1)
     elsif @designation == :research_station
@@ -259,6 +265,8 @@ class Colony
   def job_upkeep_modifiers(job)
     modifier = ResourceModifier.new()
 
+    @decisions.each { |d| modifier += d.job_upkeep_modifiers(job) }
+
     if @designation == :foundry_station
       if job.metallurgist?
         modifier += ResourceModifier::multiplyAllProducedResources(-0.2)
@@ -284,6 +292,16 @@ class Colony
 
   def pop_upkeep_modifiers(pop)
     ResourceModifier::NONE
+  end
+
+  def job_colony_attribute_modifiers(job)
+    modifier = ResourceModifier::NONE
+
+    modifier += @sector.job_colony_attribute_modifiers(job) unless @sector.nil?
+
+    @decisions.each { |d| modifier += d.job_colony_attribute_modifiers(job) }
+
+    modifier
   end
 
   def building_output(num, building)

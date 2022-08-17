@@ -3,9 +3,10 @@ require_relative "./resource_modifier"
 
 class Job
   attr_reader :name, :amenities_output,
-    :stability_modifier, :colony_attribute_modifiers, :habitability_modifier,
-    :empire_attribute_modifiers, :worker_housing_modifier,
-    :pop_happiness_modifiers, :worker_political_power_modifier
+    :stability_modifier, :habitability_modifier,
+    :colony_attribute_modifiers, :empire_attribute_modifiers,
+    :worker_housing_modifier, :pop_happiness_modifiers,
+    :worker_political_power_modifier
 
   def initialize(
     name:, strata: :none, category: :none, subcategory: :none, output: {},
@@ -59,6 +60,14 @@ class Job
 
   def slave?
     @strata == :slave
+  end
+
+  def complex_drone?
+    @strata == :complex_drone
+  end
+
+  def menial_drone?
+    @strata == :menial_drone
   end
 
   # Categories
@@ -266,8 +275,8 @@ class Job
     upkeep: { minerals: 6 },
   )
 
-  Artificier = Job.new(
-    name: "Artificier",
+  Artificer = Job.new(
+    name: "Artificer",
     strata: :specialist,
     category: :artisans,
     output: {
@@ -653,6 +662,14 @@ class Job
     name: "Toiler",
     strata: :slave,
     amenities_output: 2,
+  )
+
+  # Menial drone jobs
+  AgriDrone = Job.new(
+    name: "Agri-Drone",
+    strata: :menial_drone,
+    category: :farmers,
+    output: { food: 6 },
   )
 
   def self.lookup(name)

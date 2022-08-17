@@ -40,6 +40,14 @@ RSpec.describe(Job) do
     expect(subject.slave?).to be_falsey
   end
 
+  it "is not a menial drone" do
+    expect(subject.menial_drone?).to be_falsey
+  end
+
+  it "is not a complex drone" do
+    expect(subject.complex_drone?).to be_falsey
+  end
+
   # Categories
   it "is not a farmer" do
     expect(subject.farmer?).to be_falsey
@@ -421,11 +429,11 @@ RSpec.describe "specialist jobs" do
     end
   end
 
-  describe "Job::Artificier" do
-    subject { Job::Artificier }
+  describe "Job::Artificer" do
+    subject { Job::Artificer }
 
     it "has the correct name" do
-      expect(subject.name).to eq("Artificier")
+      expect(subject.name).to eq("Artificer")
     end
 
     it "has the correct output" do
@@ -1483,6 +1491,26 @@ RSpec.describe "slave jobs" do
 
     it "is a slave" do
       expect(subject.slave?).to be_truthy
+    end
+  end
+
+  describe 'Job::AgriDrone' do
+    subject { Job::AgriDrone }
+
+    it "has the correct name" do
+      expect(subject.name).to eq("Agri-Drone")
+    end
+
+    it "has the correct output" do
+      expect(subject.output).to eq(ResourceGroup.new({ food: 6 }))
+    end
+
+    it "is a menial drone" do
+      expect(subject.menial_drone?).to be_truthy
+    end
+
+    it "is a farmer" do
+      expect(subject.farmer?).to be_truthy
     end
   end
 end
