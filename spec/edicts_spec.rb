@@ -370,6 +370,42 @@ RSpec.describe "end-to-end tests" do
         energy: 0.5,
       }))
     end
+
+    it "modifies the upkeep of Crystal Miners" do
+      pop = Pop.new(
+        species: species,
+        colony: colony,
+        job: Job::CrystalMiner,
+      )
+
+      expect(pop.job.upkeep).to eq(ResourceGroup.new({
+        energy: 0.5,
+      }))
+    end
+
+    it "modifies the upkeep of Gas Extractors" do
+      pop = Pop.new(
+        species: species,
+        colony: colony,
+        job: Job::GasExtractor,
+      )
+
+      expect(pop.job.upkeep).to eq(ResourceGroup.new({
+        energy: 0.5,
+      }))
+    end
+
+    it "modifies the upkeep of Mote Harvesters" do
+      pop = Pop.new(
+        species: species,
+        colony: colony,
+        job: Job::MoteHarvester,
+      )
+
+      expect(pop.job.upkeep).to eq(ResourceGroup.new({
+        energy: 0.5,
+      }))
+    end
   end
 
   describe "Research Subsidies" do
