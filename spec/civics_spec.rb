@@ -59,6 +59,40 @@ RSpec.describe 'civics' do
       end
     end
 
+    describe "Mining Guilds" do
+      subject { Civic::MiningGuilds }
+
+      it "has the correct name" do
+        expect(subject.name).to eq("Mining Guilds")
+      end
+
+      it "add minerals to miner output" do
+        job = instance_double("Job")
+
+        expect(job).to receive(:miner?).and_return(true)
+        expect(job).to receive(:strategic_resource_miner?).and_return(false)
+
+        pop_job = PopJob.new(worker: nil, job: job)
+
+        expect(subject.job_output_modifiers(pop_job)).to eq(
+          ResourceModifier.new({minerals: { additive: 1 }})
+        )
+      end
+
+      it "does not add minerals to strategic resource miner output" do
+        job = instance_double("Job")
+
+        expect(job).to receive(:miner?).and_return(true)
+        expect(job).to receive(:strategic_resource_miner?).and_return(true)
+
+        pop_job = PopJob.new(worker: nil, job: job)
+
+        expect(subject.job_output_modifiers(pop_job)).to eq(
+          ResourceModifier::NONE
+        )
+      end
+    end
+
     describe "Pleasure Seekers" do
       subject { Civic::PleasureSeekers }
 
@@ -210,6 +244,43 @@ RSpec.describe 'end-to-end tests' do
         expect(pop.job.output).to eq(ResourceGroup.new({
           unity: 4,
           society_research: 1,
+        }))
+      end
+    end
+
+    describe "Mining Guilds" do
+      let(:empire) do
+        Empire.new(
+          founder_species: species,
+          ruler: ruler,
+          civics: [Civic::MiningGuilds],
+        )
+      end
+      let(:sector) { Sector.new(empire: empire) }
+      let(:colony) { Colony.new(type: nil, size: nil, sector: sector) }
+
+      it "modifies the output of Miners" do
+        pop = Pop.new(
+          species: species,
+          colony: colony,
+          job: Job::Miner
+        )
+
+        expect(pop.job.output).to eq(ResourceGroup.new({
+          minerals: 5,
+        }))
+      end
+
+      it "modifies the output of Scrap Miners" do
+        pop = Pop.new(
+          species: species,
+          colony: colony,
+          job: Job::ScrapMiner
+        )
+
+        expect(pop.job.output).to eq(ResourceGroup.new({
+          minerals: 3,
+          alloys: 1,
         }))
       end
     end
