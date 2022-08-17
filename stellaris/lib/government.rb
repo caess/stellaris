@@ -17,6 +17,7 @@ module Government
     name: "Machine Intelligence",
     job_output_modifiers: {
       Job::AgriDrone => { food: { additive: -1 } },
+      Job::TechDrone => { energy: { additive: 2 } },
     },
   )
 end

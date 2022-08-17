@@ -35,6 +35,14 @@ RSpec.describe "governments" do
         ResourceModifier.new({ food: { additive: -1 } })
       )
     end
+
+    it "modifies the Tech-Drone job output" do
+      pop_job = PopJob.new(worker: nil, job: Job::TechDrone)
+
+      expect(subject.job_output_modifiers(pop_job)).to eq(
+        ResourceModifier.new({ energy: { additive: 2 } })
+      )
+    end
   end
 end
 
@@ -112,6 +120,18 @@ RSpec.describe "end-to-end tests" do
 
       expect(pop.job.output).to eq(ResourceGroup.new(
         food: 5,
+      ))
+    end
+
+    it "modifies the output of Tech-Drones" do
+      pop = Pop.new(
+        species: species,
+        colony: colony,
+        job: Job::TechDrone,
+      )
+
+      expect(pop.job.output).to eq(ResourceGroup.new(
+        energy: 8,
       ))
     end
   end

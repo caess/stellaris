@@ -6,6 +6,7 @@ module Edict
     name: "Capacity Subsidies",
     job_upkeep_modifiers: {
       Job::Technician => { energy: { additive: 0.5 } },
+      Job::TechDrone => { energy: { additive: 0.5 } },
     },
   )
 
