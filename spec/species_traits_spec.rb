@@ -43,6 +43,15 @@ RSpec.describe "species traits" do
         minerals: { additive: 1 },
       }))
     end
+
+    it "modifies the output of Livestock jobs" do
+      pop_job = PopJob.new(worker: nil, job: Job::Livestock)
+
+      expect(subject.job_output_modifiers(pop_job)).to eq(ResourceModifier.new({
+        food: { additive: -4 },
+        minerals: { additive: 2 },
+      }))
+    end
   end
 
   describe "Mechanical" do
@@ -119,6 +128,16 @@ RSpec.describe "end-to-end tests" do
         consumer_goods: 1,
         minerals: 1,
       }))
+    end
+
+    it "modifies the output of Livestock jobs" do
+      pop = Pop.new(
+        species: species,
+        colony: nil,
+        job: Job::Livestock,
+      )
+
+      expect(pop.output).to eq(ResourceGroup.new({ minerals: 2 }))
     end
   end
 

@@ -8,6 +8,10 @@ module SpeciesTrait
         food: { additive: -1 },
         minerals: { additive: 1 },
       },
+      Job::Livestock => {
+        food: { additive: -4 },
+        minerals: { additive: 2 },
+      },
     },
     job_upkeep_modifiers: {
       Job::Necrophyte => {
