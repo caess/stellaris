@@ -10,4 +10,12 @@ module Tradition
       Job::Telepath => { unity: { additive: 1 } },
     },
   )
+
+  # Mercantile
+  TrickleUpEconomics = Modifier.new(
+    name: "Trickle Up Economics",
+    job_output_modifiers: {
+      Job::Clerk => { trade: { additive: 1 } },
+    },
+  )
 end

@@ -1,6 +1,6 @@
 require_relative "./modifier"
 
-class SpeciesTrait
+module SpeciesTrait
   Lithoid = Modifier.new(
     name: "Lithoid",
     job_output_modifiers: {
@@ -8,6 +8,23 @@ class SpeciesTrait
         food: { additive: -1 },
         minerals: { additive: 1 },
       }
-    }
+    },
+    job_upkeep_modifiers: {
+      Job::Necrophyte => {
+        food: { additive: -1 },
+        minerals: { additive: 1 },
+      },
+      Job::Reassigner => {
+        food: { additive: -2 },
+        minerals: { additive: 2 },
+      }
+    },
+  )
+
+  Mechanical = Modifier.new(
+    name: "Mechanical",
+    founder_species_job_output_modifiers: {
+      Job::Technician => { energy: { additive: 2 } },
+    },
   )
 end

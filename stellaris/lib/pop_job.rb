@@ -48,4 +48,19 @@ class PopJob
 
     modifiers
   end
+
+  def empire_attribute_modifiers
+    modifiers = ResourceModifier.new()
+    modifiers += @job.empire_attribute_modifiers
+    modifiers += @worker.job_empire_attribute_modifiers(self)
+
+    modifiers
+  end
+
+  def stability_modifier
+    modifier = @job.stability_modifier
+    modifier += @worker.job_stability_modifier(self)
+
+    modifier
+  end
 end

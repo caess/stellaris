@@ -52,6 +52,25 @@ RSpec.describe "colony decisions" do
       }))
     end
   end
+
+  describe 'Martial Law' do
+    subject { ColonyDecision::MartialLaw }
+
+    it "has the correct name" do
+      expect(subject.name).to eq('Martial Law')
+    end
+
+    it "modifies the colony attribute modifiers for necromancers" do
+      pop_job = PopJob.new(
+        worker: nil,
+        job: Job::Necromancer
+      )
+
+      expect(subject.job_colony_attribute_modifiers(pop_job)).to eq(ResourceModifier.new({
+        defense_armies: { additive: 2 },
+      }))
+    end
+  end
 end
 
 RSpec.describe "end-to-end tests" do
@@ -63,7 +82,7 @@ RSpec.describe "end-to-end tests" do
   let(:ruler) { Leader.new(level: 0) }
   let(:empire) do
     Empire.new(
-      founding_species: species,
+      founder_species: species,
       ruler: ruler,
     )
   end
@@ -125,6 +144,29 @@ RSpec.describe "end-to-end tests" do
 
       expect(pop.job.upkeep).to eq(ResourceGroup.new({
         energy: 3,
+      }))
+    end
+  end
+
+  describe "Martial Law" do
+    let(:colony) do
+      Colony.new(
+        type: nil,
+        size: nil,
+        sector: sector,
+        decisions: [ColonyDecision::MartialLaw]
+      )
+    end
+
+    it "modifies the coony attribute modifiers of enforcers" do
+      pop = Pop.new(
+        species: species,
+        colony: colony,
+        job: Job::Necromancer
+      )
+
+      expect(pop.job.colony_attribute_modifiers).to eq(ResourceModifier.new({
+        defense_armies: { additive: 5 },
       }))
     end
   end

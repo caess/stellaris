@@ -304,6 +304,26 @@ class Colony
     modifier
   end
 
+  def job_empire_attribute_modifiers(job)
+    modifier = ResourceModifier::NONE
+
+    modifier += @sector.job_empire_attribute_modifiers(job) unless @sector.nil?
+
+    @decisions.each { |d| modifier += d.job_empire_attribute_modifiers(job) }
+
+    modifier
+  end
+
+  def job_stability_modifier(job)
+    modifier = 0
+
+    modifier += @sector.job_stability_modifier(job) unless @sector.nil?
+
+    @decisions.each { |d| modifier += d.job_stability_modifier(job) }
+
+    modifier
+  end
+
   def building_output(num, building)
     ResourceGroup.new()
   end

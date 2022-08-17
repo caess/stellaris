@@ -60,7 +60,8 @@ class Pop
   def job_upkeep_modifiers(job)
     modifier = ResourceModifier::NONE
 
-    modifier += @colony.job_upkeep_modifiers(job)
+    modifier += @species.job_upkeep_modifiers(job) unless @species.nil?
+    modifier += @colony.job_upkeep_modifiers(job) unless @colony.nil?
 
     modifier
   end
@@ -68,7 +69,22 @@ class Pop
   def job_colony_attribute_modifiers(job)
     modifier = ResourceModifier::NONE
 
-    modifier += @colony.job_colony_attribute_modifiers(job)
+    modifier += @colony.job_colony_attribute_modifiers(job) unless @colony.nil?
+
+    modifier
+  end
+
+  def job_empire_attribute_modifiers(job)
+    modifier = ResourceModifier::NONE
+
+    modifier += @colony.job_empire_attribute_modifiers(job) unless @colony.nil?
+
+    modifier
+  end
+
+  def job_stability_modifier(job)
+    modifier = 0
+    modifier += @colony.job_stability_modifier(job) unless @colony.nil?
 
     modifier
   end

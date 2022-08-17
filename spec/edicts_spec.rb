@@ -24,6 +24,22 @@ RSpec.describe "edicts" do
     end
   end
 
+  describe "Capacity Subsidies" do
+    subject { Edict::CapacitySubsidies }
+
+    it "has the correct name" do
+      expect(subject.name).to eq("Capacity Subsidies")
+    end
+
+    it "increases the upkeep for Technicians" do
+      pop_job = PopJob.new(worker: nil, job: Job::Technician)
+
+      expect(subject.job_upkeep_modifiers(pop_job)).to eq(ResourceModifier.new({
+        energy: { additive: 0.5 },
+      }))
+    end
+  end
+
   describe "Industrial Subsidies" do
     subject { Edict::IndustrialSubsidies }
 
@@ -47,7 +63,23 @@ RSpec.describe "edicts" do
     end
   end
 
-  describe 'THought Enforcement' do
+  describe "Research Subsidies" do
+    subject { Edict::ResearchSubsidies }
+
+    it "has the correct name" do
+      expect(subject.name).to eq("Research Subsidies")
+    end
+
+    it "increases the upkeep for Researchers" do
+      pop_job = PopJob.new(worker: nil, job: Job::Researcher)
+
+      expect(subject.job_upkeep_modifiers(pop_job)).to eq(ResourceModifier.new({
+        energy: { additive: 1 },
+      }))
+    end
+  end
+
+  describe 'Thought Enforcement' do
     subject { Edict::ThoughtEnforcement }
 
     it "has the correct name" do
@@ -64,6 +96,62 @@ RSpec.describe "edicts" do
       )
     end
   end
+
+  describe "sacrifice edicts" do
+    describe "Harmony Sacrifice Edict" do
+      subject { Edict::HarmonySacrificeEdict }
+
+      it "has the correct name" do
+        expect(subject.name).to eq("Harmony Sacrifice Edict")
+      end
+
+      it "modifies the output for death priests" do
+        pop_job = PopJob.new(worker: nil, job: Job::DeathPriest)
+
+        expect(subject.job_output_modifiers(pop_job)).to eq(
+          ResourceModifier.new({
+            unity: { additive: 3 },
+          })
+        )
+      end
+    end
+
+    describe "Togetherness Sacrifice Edict" do
+      subject { Edict::TogethernessSacrificeEdict }
+
+      it "has the correct name" do
+        expect(subject.name).to eq("Togetherness Sacrifice Edict")
+      end
+
+      it "modifies the output for death priests" do
+        pop_job = PopJob.new(worker: nil, job: Job::DeathPriest)
+
+        expect(subject.job_output_modifiers(pop_job)).to eq(
+          ResourceModifier.new({
+            unity: { additive: 3 },
+          })
+        )
+      end
+    end
+
+    describe "Bounty Sacrifice Edict" do
+      subject { Edict::BountySacrificeEdict }
+
+      it "has the correct name" do
+        expect(subject.name).to eq("Bounty Sacrifice Edict")
+      end
+
+      it "modifies the output for death priests" do
+        pop_job = PopJob.new(worker: nil, job: Job::DeathPriest)
+
+        expect(subject.job_output_modifiers(pop_job)).to eq(
+          ResourceModifier.new({
+            unity: { additive: 3 },
+          })
+        )
+      end
+    end
+  end
 end
 
 RSpec.describe "end-to-end tests" do
@@ -74,10 +162,34 @@ RSpec.describe "end-to-end tests" do
   end
   let(:ruler) { Leader.new(level: 0) }
 
+  describe "Capacity Subsidies" do
+    let(:empire) do
+      Empire.new(
+        founder_species: species,
+        ruler: ruler,
+        edicts: [Edict::CapacitySubsidies],
+      )
+    end
+    let(:sector) { Sector.new(empire: empire) }
+    let(:colony) { Colony.new(type: nil, size: nil, sector: sector) }
+
+    it "modifies the upkeep of Technicians" do
+      pop = Pop.new(
+        species: species,
+        colony: colony,
+        job: Job::Technician,
+      )
+
+      expect(pop.job.upkeep).to eq(ResourceGroup.new({
+        energy: 0.5,
+      }))
+    end
+  end
+
   describe "Forge Subsidies" do
     let(:empire) do
       Empire.new(
-        founding_species: species,
+        founder_species: species,
         ruler: ruler,
         edicts: [Edict::ForgeSubsidies],
       )
@@ -115,7 +227,7 @@ RSpec.describe "end-to-end tests" do
   describe "Industrial Subsidies" do
     let(:empire) do
       Empire.new(
-        founding_species: species,
+        founder_species: species,
         ruler: ruler,
         edicts: [Edict::IndustrialSubsidies],
       )
@@ -164,10 +276,35 @@ RSpec.describe "end-to-end tests" do
     end
   end
 
+  describe "Research Subsidies" do
+    let(:empire) do
+      Empire.new(
+        founder_species: species,
+        ruler: ruler,
+        edicts: [Edict::ResearchSubsidies],
+      )
+    end
+    let(:sector) { Sector.new(empire: empire) }
+    let(:colony) { Colony.new(type: nil, size: nil, sector: sector) }
+
+    it "modifies the upkeep of Researchers" do
+      pop = Pop.new(
+        species: species,
+        colony: colony,
+        job: Job::Researcher
+      )
+
+      expect(pop.job.upkeep).to eq(ResourceGroup.new({
+        consumer_goods: 2,
+        energy: 1,
+      }))
+    end
+  end
+
   describe "Thought Enforcement" do
     let(:empire) do
       Empire.new(
-        founding_species: species,
+        founder_species: species,
         ruler: ruler,
         edicts: [Edict::ThoughtEnforcement],
       )
@@ -187,6 +324,83 @@ RSpec.describe "end-to-end tests" do
           crime: { additive: -40 },
         })
       )
+    end
+  end
+
+  describe "sacrifice edicts" do
+    describe "Harmony Sacrifice Edict" do
+      let(:empire) do
+        Empire.new(
+          founder_species: species,
+          ruler: ruler,
+          edicts: [Edict::HarmonySacrificeEdict],
+        )
+      end
+      let(:sector) { Sector.new(empire: empire) }
+      let(:colony) { Colony.new(type: nil, size: nil, sector: sector) }
+
+      it "modifies the output of Death Priests" do
+        pop = Pop.new(
+          species: species,
+          colony: colony,
+          job: Job::DeathPriest
+        )
+
+        expect(pop.job.output).to eq(ResourceGroup.new({
+          unity: 6,
+          society_research: 1,
+        }))
+      end
+    end
+
+    describe "Togetherness Sacrifice Edict" do
+      let(:empire) do
+        Empire.new(
+          founder_species: species,
+          ruler: ruler,
+          edicts: [Edict::TogethernessSacrificeEdict],
+        )
+      end
+      let(:sector) { Sector.new(empire: empire) }
+      let(:colony) { Colony.new(type: nil, size: nil, sector: sector) }
+
+      it "modifies the output of Death Priests" do
+        pop = Pop.new(
+          species: species,
+          colony: colony,
+          job: Job::DeathPriest
+        )
+
+        expect(pop.job.output).to eq(ResourceGroup.new({
+          unity: 6,
+          society_research: 1,
+        }))
+      end
+    end
+
+    describe "Bounty Sacrifice Edict" do
+      let(:empire) do
+        Empire.new(
+          founder_species: species,
+          ruler: ruler,
+          edicts: [Edict::BountySacrificeEdict],
+        )
+      end
+      let(:sector) { Sector.new(empire: empire) }
+      let(:colony) { Colony.new(type: nil, size: nil, sector: sector) }
+
+      it "modifies the output of Death Priests" do
+        pop = Pop.new(
+          species: species,
+          colony: colony,
+          job: Job::DeathPriest
+        )
+
+        expect(pop.job.output).to eq(ResourceGroup.new({
+          unity: 6,
+          society_research: 1,
+        }))
+      end
     end
   end
 end

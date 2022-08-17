@@ -18,7 +18,7 @@ RSpec.describe "match checks" do
     }
     let(:empire) {
       Empire.new(
-        founding_species: species,
+        founder_species: species,
         ruler: ruler,
         ethics: [:fanatic_egalitarian, :xenophile],
         civics: [:beacon_of_liberty, :shared_burdens],
@@ -450,7 +450,7 @@ RSpec.describe "match checks" do
     }
     let(:empire) {
       Empire.new(
-        founding_species: species,
+        founder_species: species,
         ruler: ruler,
         ethics: [:fanatic_egalitarian, :xenophile],
         civics: [:beacon_of_liberty, :shared_burdens],

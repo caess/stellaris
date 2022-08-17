@@ -5,7 +5,7 @@ RSpec.describe Empire do
   let(:species) { Species.new(traits: [], living_standard: :decent_conditions) }
   subject {
     Empire.new(
-      founding_species: species,
+      founder_species: species,
       ruler: ruler,
       ethics: [],
       civics: [],

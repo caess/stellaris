@@ -2,6 +2,40 @@ require_relative "../stellaris/lib/stellaris"
 
 RSpec.describe 'civics' do
   context "standard civics" do
+    describe 'Byzantine Bureaucracy' do
+      subject { Civic::ByzantineBureaucracy }
+
+      it "has the correct name" do
+        expect(subject.name).to eq("Byzantine Bureaucracy")
+      end
+
+      it "adds unity to Bureaucrat output" do
+        pop_job = PopJob.new(worker: nil, job: Job::Bureaucrat)
+
+        expect(subject.job_output_modifiers(pop_job)).to eq(
+          ResourceModifier.new({
+            unity: { additive: 1 },
+          })
+        )
+      end
+
+      it "adds unity to Death Chronicler output" do
+        pop_job = PopJob.new(worker: nil, job: Job::DeathChronicler)
+
+        expect(subject.job_output_modifiers(pop_job)).to eq(
+          ResourceModifier.new({
+            unity: { additive: 1 },
+          })
+        )
+      end
+
+      it "adds stability to Bureaucrats" do
+        pop_job = PopJob.new(worker: nil, job: Job::Bureaucrat)
+
+        expect(subject.job_stability_modifier(pop_job)).to eq(1)
+      end
+    end
+
     describe "Exalted Priesthood" do
       subject { Civic::ExaltedPriesthood }
 
@@ -84,10 +118,57 @@ RSpec.describe 'end-to-end tests' do
   let(:ruler) { Leader.new(level: 0) }
 
   context "standard civics" do
+    describe "Byzantine Bureaucracy" do
+      let(:empire) do
+        Empire.new(
+          founder_species: species,
+          ruler: ruler,
+          civics: [Civic::ByzantineBureaucracy],
+        )
+      end
+      let(:sector) { Sector.new(empire: empire) }
+      let(:colony) { Colony.new(type: nil, size: nil, sector: sector) }
+
+      it "modifies the output of Bureaucrats" do
+        pop = Pop.new(
+          species: species,
+          colony: colony,
+          job: Job::Bureaucrat,
+        )
+
+        expect(pop.job.output).to eq(ResourceGroup.new({
+          unity: 5,
+        }))
+      end
+
+      it "modifies the stability modifier of Bureaucrats" do
+        pop = Pop.new(
+          species: species,
+          colony: colony,
+          job: Job::Bureaucrat,
+        )
+
+        expect(pop.job.stability_modifier).to eq(1)
+      end
+
+      it "modifies the output of Death Chroniclers" do
+        pop = Pop.new(
+          species: species,
+          colony: colony,
+          job: Job::DeathChronicler,
+        )
+
+        expect(pop.job.output).to eq(ResourceGroup.new({
+          unity: 3,
+          society_research: 2,
+        }))
+      end
+    end
+
     describe "Exalted Priesthood" do
       let(:empire) do
         Empire.new(
-          founding_species: species,
+          founder_species: species,
           ruler: ruler,
           civics: [Civic::ExaltedPriesthood],
         )
@@ -106,12 +187,37 @@ RSpec.describe 'end-to-end tests' do
           unity: 7,
         }))
       end
+
+      it "modifies the output of Priests" do
+        pop = Pop.new(
+          species: species,
+          colony: colony,
+          job: Job::Priest
+        )
+
+        expect(pop.job.output).to eq(ResourceGroup.new({
+          unity: 5,
+        }))
+      end
+
+      it "modifies the output of Death Priests" do
+        pop = Pop.new(
+          species: species,
+          colony: colony,
+          job: Job::DeathPriest
+        )
+
+        expect(pop.job.output).to eq(ResourceGroup.new({
+          unity: 4,
+          society_research: 1,
+        }))
+      end
     end
 
     describe "Pleasure Seekers" do
       let(:empire) do
         Empire.new(
-          founding_species: species,
+          founder_species: species,
           ruler: ruler,
           civics: [Civic::PleasureSeekers],
         )
@@ -135,7 +241,7 @@ RSpec.describe 'end-to-end tests' do
     describe "Police State" do
       let(:empire) do
         Empire.new(
-          founding_species: species,
+          founder_species: species,
           ruler: ruler,
           civics: [Civic::PoliceState],
         )
@@ -173,7 +279,7 @@ RSpec.describe 'end-to-end tests' do
     describe "Corporate Hedonism" do
       let(:empire) do
         Empire.new(
-          founding_species: species,
+          founder_species: species,
           ruler: ruler,
           civics: [Civic::CorporateHedonism],
         )

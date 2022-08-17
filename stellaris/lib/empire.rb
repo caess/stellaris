@@ -8,13 +8,18 @@ class Empire
 
   attr_reader :ruler, :ethics, :civics, :technology
 
-  def initialize(founding_species:, ruler:, ethics: [], civics: [],
-    technology: {}, edicts: [], traditions: [])
+  def initialize(founder_species:, ruler:, government: nil, ethics: [],
+    civics: [], technology: {}, technologies: [], edicts: [],
+    traditions: []
+  )
+    @founder_species = founder_species
     @ruler = ruler
     @ruler.role = :ruler
+    @government = government
     @ethics = ethics.dup
     @civics = civics.dup
     @technology = technology.dup
+    @technologies = technologies.dup
     @edicts = edicts.dup
     @traditions = traditions.dup
 
@@ -43,6 +48,8 @@ class Empire
   def job_output_modifiers(job)
     modifier = ResourceModifier.new()
     modifier += @ruler.job_output_modifiers(job)
+    modifier += @government.job_output_modifiers(job) unless @government.nil?
+    modifier += @founder_species.founder_species_job_output_modifiers(job) unless @founder_species.nil?
 
     if @ethics.include?(:fanatic_egalitarian) and job.worker.specialist?
       modifier += ResourceModifier::multiplyAllProducedResources(0.1)
@@ -74,6 +81,7 @@ class Empire
       modifier += civic.job_output_modifiers(job)
     end
 
+    @technologies.each { |t| modifier += t.job_output_modifiers(job) }
     @traditions.each { |t| modifier += t.job_output_modifiers(job) }
 
     modifier
@@ -82,10 +90,13 @@ class Empire
   def job_upkeep_modifiers(job)
     modifier = ResourceModifier.new()
 
+    modifier += @government.job_upkeep_modifiers(job) unless @government.nil?
+
     @edicts.each do |edict|
       modifier += edict.job_upkeep_modifiers(job)
     end
 
+    @technologies.each { |t| modifier += t.job_upkeep_modifiers(job) }
     @traditions.each { |t| modifier += t.job_upkeep_modifiers(job) }
 
     modifier
@@ -93,6 +104,8 @@ class Empire
 
   def job_colony_attribute_modifiers(job)
     modifier = ResourceModifier.new()
+
+    modifier += @government.job_colony_attribute_modifiers(job) unless @government.nil?
 
     @edicts.each do |edict|
       modifier += edict.job_colony_attribute_modifiers(job)
@@ -102,7 +115,46 @@ class Empire
       modifier += civic.job_colony_attribute_modifiers(job)
     end
 
+    @technologies.each { |t| modifier += t.job_colony_attribute_modifiers(job) }
     @traditions.each { |t| modifier += t.job_colony_attribute_modifiers(job) }
+
+    modifier
+  end
+
+  def job_empire_attribute_modifiers(job)
+    modifier = ResourceModifier.new()
+
+    modifier += @government.job_empire_attribute_modifiers(job) unless @government.nil?
+
+    @edicts.each do |edict|
+      modifier += edict.job_empire_attribute_modifiers(job)
+    end
+
+    @civics.filter {|c| c.is_a?(Modifier) }.each do |civic|
+      modifier += civic.job_empire_attribute_modifiers(job)
+    end
+
+    @technologies.each { |t| modifier += t.job_empire_attribute_modifiers(job) }
+    @traditions.each { |t| modifier += t.job_empire_attribute_modifiers(job) }
+
+    modifier
+  end
+
+  def job_stability_modifier(job)
+    modifier = 0
+
+    modifier += @government.job_stability_modifier(job) unless @government.nil?
+
+    @edicts.each do |edict|
+      modifier += edict.job_stability_modifier(job)
+    end
+
+    @civics.filter {|c| c.is_a?(Modifier) }.each do |civic|
+      modifier += civic.job_stability_modifier(job)
+    end
+
+    @technologies.each { |t| modifier += t.job_stability_modifier(job) }
+    @traditions.each { |t| modifier += t.job_stability_modifier(job) }
 
     modifier
   end

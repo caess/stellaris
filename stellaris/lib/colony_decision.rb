@@ -13,4 +13,11 @@ module ColonyDecision
       Job::Telepath => { crime: { additive: -10 } },
     }
   )
+
+  MartialLaw = Modifier.new(
+    name: "Martial Law",
+    job_colony_attribute_modifiers: {
+      Job::Necromancer => { defense_armies: { additive: 2 } },
+    },
+  )
 end

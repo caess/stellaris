@@ -38,4 +38,25 @@ class Species
 
     modifier
   end
+
+  def job_upkeep_modifiers(job)
+    modifier = ResourceModifier.new()
+
+    @traits.filter {|x| x.is_a?(Modifier)}.each do |trait|
+      modifier += trait.job_upkeep_modifiers(job)
+    end
+
+    modifier
+  end
+
+
+  def founder_species_job_output_modifiers(job)
+    modifier = ResourceModifier.new()
+
+    @traits.filter {|x| x.is_a?(Modifier)}.each do |trait|
+      modifier += trait.founder_species_job_output_modifiers(job)
+    end
+
+    modifier
+  end
 end

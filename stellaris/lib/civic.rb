@@ -3,6 +3,17 @@ require_relative './modifier'
 
 module Civic
   # Standard civics
+  ByzantineBureaucracy = Modifier.new(
+    name: "Byzantine Bureaucracy",
+    job_output_modifiers: {
+      Job::Bureaucrat => {unity: { additive: 1 } },
+      Job::DeathChronicler => {unity: { additive: 1 } },
+    },
+    job_stability_modifier: {
+      Job::Bureaucrat => 1,
+    },
+  )
+
   ExaltedPriesthood = Modifier.new(
     name: "Exalted Priesthood",
     job_output_modifiers: {
