@@ -65,7 +65,7 @@ RSpec.describe "species traits" do
       pop_job = PopJob.new(worker: nil, job: Job::Servant)
 
       expect(subject.job_worker_housing_modifier(pop_job)).to eq(
-        ResourceModifier.new({housing: {additive: 0.5}})
+        ResourceModifier.new({ housing: { additive: 0.5 } })
       )
     end
   end
@@ -81,7 +81,7 @@ RSpec.describe "species traits" do
       pop_job = PopJob.new(worker: nil, job: Job::Servant)
 
       expect(subject.job_worker_housing_modifier(pop_job)).to eq(
-        ResourceModifier.new({housing: {additive: 0.5}})
+        ResourceModifier.new({ housing: { additive: 0.5 } })
       )
     end
 
@@ -181,7 +181,7 @@ RSpec.describe "end-to-end tests" do
       )
 
       expect(pop.job.worker_housing_modifier).to eq(
-        ResourceModifier.new({housing: { additive: 0 }})
+        ResourceModifier.new({ housing: { additive: 0 } })
       )
     end
   end
@@ -202,7 +202,7 @@ RSpec.describe "end-to-end tests" do
       )
 
       expect(pop.job.worker_housing_modifier).to eq(
-        ResourceModifier.new({housing: { additive: 0 }})
+        ResourceModifier.new({ housing: { additive: 0 } })
       )
     end
 
