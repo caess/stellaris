@@ -62,6 +62,16 @@ RSpec.describe "species traits" do
           })
         )
       end
+
+      it "modifies the Farmer job output" do
+        pop_job = PopJob.new(worker: nil, job: Job::Farmer)
+
+        expect(subject.founder_species_job_output_modifiers(pop_job)).to eq(
+          ResourceModifier.new({
+            food: { additive: -1 },
+          })
+        )
+      end
     end
   end
 end
@@ -139,6 +149,16 @@ RSpec.describe "end-to-end tests" do
         )
 
         expect(pop.output).to eq(ResourceGroup.new({ energy: 8 }))
+      end
+
+      it "modifies the output of Farmer jobs" do
+        pop = Pop.new(
+          species: species,
+          colony: colony,
+          job: Job::Farmer,
+        )
+
+        expect(pop.output).to eq(ResourceGroup.new({ food: 5 }))
       end
     end
   end

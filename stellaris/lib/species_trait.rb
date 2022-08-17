@@ -25,6 +25,7 @@ module SpeciesTrait
     name: "Mechanical",
     founder_species_job_output_modifiers: {
       Job::Technician => { energy: { additive: 2 } },
+      Job::Farmer => { food: { additive: -1 } },
     },
   )
 end
