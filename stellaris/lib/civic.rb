@@ -21,6 +21,13 @@ module Civic
     },
   )
 
+  CitizenService = Modifier.new(
+    name: "Citizen Service",
+    job_output_modifiers: {
+      Job::Soldier => { unity: { additive: 2 } },
+    },
+  )
+
   ExaltedPriesthood = Modifier.new(
     name: "Exalted Priesthood",
     job_output_modifiers: {

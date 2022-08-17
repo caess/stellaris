@@ -50,6 +50,24 @@ RSpec.describe "civics" do
       end
     end
 
+    describe "Citizen Service" do
+      subject { Civic::CitizenService }
+
+      it "has the correct name" do
+        expect(subject.name).to eq("Citizen Service")
+      end
+
+      it "adds unity to Soldier output" do
+        pop_job = PopJob.new(worker: nil, job: Job::Soldier)
+
+        expect(subject.job_output_modifiers(pop_job)).to eq(
+          ResourceModifier.new({
+            unity: { additive: 2 },
+          })
+        )
+      end
+    end
+
     describe "Exalted Priesthood" do
       subject { Civic::ExaltedPriesthood }
 
@@ -231,6 +249,30 @@ RSpec.describe "end-to-end tests" do
         expect(pop.job.output).to eq(ResourceGroup.new({
           unity: 3,
           society_research: 2,
+        }))
+      end
+    end
+
+    describe "Citizen Service" do
+      let(:empire) do
+        Empire.new(
+          founder_species: species,
+          ruler: ruler,
+          civics: [Civic::CitizenService],
+        )
+      end
+      let(:sector) { Sector.new(empire: empire) }
+      let(:colony) { Colony.new(type: nil, size: nil, sector: sector) }
+
+      it "modifies the output of Soldiers" do
+        pop = Pop.new(
+          species: species,
+          colony: colony,
+          job: Job::Soldier,
+        )
+
+        expect(pop.job.output).to eq(ResourceGroup.new({
+          unity: 2,
         }))
       end
     end
