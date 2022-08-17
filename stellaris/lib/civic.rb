@@ -7,7 +7,7 @@ module Civic
     name: "Agrarian Idyll",
     job_amenities_output_modifier: {
       Job::Farmer => 2,
-    }
+    },
   )
 
   ByzantineBureaucracy = Modifier.new(
