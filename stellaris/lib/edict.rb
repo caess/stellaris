@@ -9,6 +9,13 @@ module Edict
     },
   )
 
+  FarmingSubsidies = Modifier.new(
+    name: "Farming Subsidies",
+    job_upkeep_modifiers: {
+      Job::Farmer => { energy: { additive: 0.5 } },
+    },
+  )
+
   ForgeSubsidies = Modifier.new(
     name: "Forge Subsidies",
     job_upkeep_modifiers: {
