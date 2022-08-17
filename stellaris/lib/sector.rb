@@ -76,6 +76,13 @@ class Sector
     modifier
   end
 
+  def job_worker_housing_modifier(job)
+    modifier = ResourceModifier.new()
+    modifier += @empire.job_worker_housing_modifier(job)
+
+    modifier
+  end
+
   def stability_modifier
     @empire.stability_modifier
   end

@@ -177,6 +177,25 @@ class Empire
     modifier
   end
 
+  def job_worker_housing_modifier(job)
+    modifier = ResourceModifier.new()
+
+    modifier += @government.job_worker_housing_modifier(job) unless @government.nil?
+
+    @edicts.each do |edict|
+      modifier += edict.job_worker_housing_modifier(job)
+    end
+
+    @civics.filter { |c| c.is_a?(Modifier) }.each do |civic|
+      modifier += civic.job_worker_housing_modifier(job)
+    end
+
+    @technologies.each { |t| modifier += t.job_worker_housing_modifier(job) }
+    @traditions.each { |t| modifier += t.job_worker_housing_modifier(job) }
+
+    modifier
+  end
+
   def mining_station_modifiers
     modifier = ResourceModifier.new()
     modifier += @ruler.mining_station_modifiers if @ruler

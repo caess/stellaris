@@ -96,6 +96,15 @@ class Pop
     modifier
   end
 
+  def job_worker_housing_modifier(job)
+    modifier = ResourceModifier::NONE
+
+    modifier += @species.job_worker_housing_modifier(job) unless @species.nil?
+    modifier += @colony.job_worker_housing_modifier(job) unless @colony.nil?
+
+    modifier
+  end
+
   def pop_output
     output = ResourceGroup.new()
 

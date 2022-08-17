@@ -32,6 +32,10 @@ RSpec.describe "modifier" do
       expect(subject.job_stability_modifier(nil)).to eq(0)
     end
 
+    it "has no default job worker housing modifier" do
+      expect(subject.job_worker_housing_modifier(nil)).to eq(ResourceModifier::NONE)
+    end
+
     it "has no default founding species job output modifiers" do
       expect(subject.founder_species_job_output_modifiers(nil)).to eq(
         ResourceModifier::NONE

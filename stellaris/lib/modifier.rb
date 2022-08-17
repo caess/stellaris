@@ -9,6 +9,7 @@ class Modifier
                  job_empire_attribute_modifiers: {},
                  job_amenities_output_modifier: {},
                  job_stability_modifier: {},
+                 job_worker_housing_modifier: {},
                  founder_species_job_output_modifiers: {})
     @name = name
     @job_output_modifiers = job_output_modifiers.dup
@@ -17,6 +18,7 @@ class Modifier
     @job_empire_attribute_modifiers = job_empire_attribute_modifiers.dup
     @job_amenities_output_modifier = job_amenities_output_modifier.dup
     @job_stability_modifier = job_stability_modifier.dup
+    @job_worker_housing_modifier = job_worker_housing_modifier.dup
     @founder_species_job_output_modifiers = founder_species_job_output_modifiers.dup
   end
 
@@ -102,6 +104,20 @@ class Modifier
     end
 
     0
+  end
+
+  def job_worker_housing_modifier(job)
+    return ResourceModifier::NONE if job.nil?
+
+    @job_worker_housing_modifier.each do |key, modifier|
+      if key == job.job or
+         (key.is_a?(Symbol) and job.respond_to?(key) and job.send(key)) or
+         (key.is_a?(Proc) and key.lambda? and key.call(job))
+        return ResourceModifier.new(modifier)
+      end
+    end
+
+    ResourceModifier::NONE
   end
 
   def founder_species_job_output_modifiers(job)

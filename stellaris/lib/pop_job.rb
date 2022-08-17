@@ -69,4 +69,12 @@ class PopJob
 
     modifier
   end
+
+  def worker_housing_modifier
+    modifiers = ResourceModifier.new()
+    modifiers += @job.worker_housing_modifier
+    modifiers += @worker.job_worker_housing_modifier(self)
+
+    modifiers
+  end
 end

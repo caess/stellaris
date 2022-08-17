@@ -54,11 +54,35 @@ RSpec.describe "species traits" do
     end
   end
 
+  describe "Machine" do
+    subject { SpeciesTrait::Machine }
+
+    it "has the correct name" do
+      expect(subject.name).to eq("Machine")
+    end
+
+    it "modifies the worker housing modifier for Servants" do
+      pop_job = PopJob.new(worker: nil, job: Job::Servant)
+
+      expect(subject.job_worker_housing_modifier(pop_job)).to eq(
+        ResourceModifier.new({housing: {additive: 0.5}})
+      )
+    end
+  end
+
   describe "Mechanical" do
     subject { SpeciesTrait::Mechanical }
 
     it "has the correct name" do
       expect(subject.name).to eq("Mechanical")
+    end
+
+    it "modifies the worker housing modifier for Servants" do
+      pop_job = PopJob.new(worker: nil, job: Job::Servant)
+
+      expect(subject.job_worker_housing_modifier(pop_job)).to eq(
+        ResourceModifier.new({housing: {additive: 0.5}})
+      )
     end
 
     context "as founder species" do
@@ -141,11 +165,44 @@ RSpec.describe "end-to-end tests" do
     end
   end
 
+  describe "Machine" do
+    let(:species) do
+      Species.new(
+        living_standard: nil,
+        traits: [SpeciesTrait::Machine],
+      )
+    end
+
+    it "modifies the worker housing modifier of Servant jobs" do
+      pop = Pop.new(
+        species: species,
+        colony: nil,
+        job: Job::Servant,
+      )
+
+      expect(pop.job.worker_housing_modifier).to eq(
+        ResourceModifier.new({housing: { additive: 0 }})
+      )
+    end
+  end
+
   describe "Mechanical" do
     let(:species) do
       Species.new(
         living_standard: nil,
         traits: [SpeciesTrait::Mechanical],
+      )
+    end
+
+    it "modifies the worker housing modifier of Servant jobs" do
+      pop = Pop.new(
+        species: species,
+        colony: nil,
+        job: Job::Servant,
+      )
+
+      expect(pop.job.worker_housing_modifier).to eq(
+        ResourceModifier.new({housing: { additive: 0 }})
       )
     end
 

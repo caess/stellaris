@@ -334,6 +334,16 @@ class Colony
     modifier
   end
 
+  def job_worker_housing_modifier(job)
+    modifier = ResourceModifier::NONE
+
+    modifier += @sector.job_worker_housing_modifier(job) unless @sector.nil?
+
+    @decisions.each { |d| modifier += d.job_worker_housing_modifier(job) }
+
+    modifier
+  end
+
   def building_output(num, building)
     ResourceGroup.new()
   end
