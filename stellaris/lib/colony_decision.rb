@@ -7,6 +7,7 @@ module ColonyDecision
     job_upkeep_modifiers: {
       Job::Enforcer => { energy: { additive: 2 } },
       Job::Telepath => { energy: { additive: 2 } },
+      Job::Overseer => { energy: { additive: 2 } },
     },
     job_colony_attribute_modifiers: {
       Job::Enforcer => { crime: { additive: -10 } },

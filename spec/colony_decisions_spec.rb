@@ -51,6 +51,17 @@ RSpec.describe "colony decisions" do
         crime: { additive: -10 },
       }))
     end
+
+    it "modifies the upkeep for Overseers" do
+      pop_job = PopJob.new(
+        worker: nil,
+        job: Job::Overseer,
+      )
+
+      expect(subject.job_upkeep_modifiers(pop_job)).to eq(ResourceModifier.new({
+        energy: { additive: 2 },
+      }))
+    end
   end
 
   describe "Martial Law" do
@@ -129,7 +140,7 @@ RSpec.describe "end-to-end tests" do
       }))
     end
 
-    it "modifies the coony attribute modifiers of telepaths" do
+    it "modifies the colony attribute modifiers of telepaths" do
       pop = Pop.new(
         species: species,
         colony: colony,
@@ -150,6 +161,18 @@ RSpec.describe "end-to-end tests" do
 
       expect(pop.job.upkeep).to eq(ResourceGroup.new({
         energy: 3,
+      }))
+    end
+
+    it "modifies the upkeep of Overseers" do
+      pop = Pop.new(
+        species: species,
+        colony: colony,
+        job: Job::Overseer,
+      )
+
+      expect(pop.job.upkeep).to eq(ResourceGroup.new({
+        energy: 2,
       }))
     end
   end
