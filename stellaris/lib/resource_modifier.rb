@@ -4,10 +4,17 @@ class ResourceModifier
   attr_reader :values
 
   def initialize(values = {})
+    @values = {}
+
+    source = {}
     if values.is_a?(ResourceModifier)
-      @values = values.values.dup
+      source = values.values.dup
     else
-      @values = values.dup
+      source = values.dup
+    end
+
+    source.each do |key, value|
+      @values[key] = value.dup
     end
   end
 
@@ -41,5 +48,9 @@ class ResourceModifier
     end
 
     return ResourceModifier.new(resources)
+  end
+
+  def dup
+    ResourceModifier.new(self)
   end
 end
