@@ -3,6 +3,13 @@ require_relative "./modifier"
 
 module Civic
   # Standard civics
+  AgrarianIdyll = Modifier.new(
+    name: "Agrarian Idyll",
+    job_amenities_output_modifier: {
+      Job::Farmer => 2,
+    }
+  )
+
   ByzantineBureaucracy = Modifier.new(
     name: "Byzantine Bureaucracy",
     job_output_modifiers: {

@@ -2,6 +2,20 @@ require_relative "../stellaris/lib/stellaris"
 
 RSpec.describe "civics" do
   context "standard civics" do
+    describe "Agrarian Idyll" do
+      subject { Civic::AgrarianIdyll }
+
+      it "has the correct name" do
+        expect(subject.name).to eq("Agrarian Idyll")
+      end
+
+      it "adds amenities to Farmer output" do
+        pop_job = PopJob.new(worker: nil, job: Job::Farmer)
+
+        expect(subject.job_amenities_output_modifier(pop_job)).to eq(2)
+      end
+    end
+
     describe "Byzantine Bureaucracy" do
       subject { Civic::ByzantineBureaucracy }
 
@@ -152,6 +166,28 @@ RSpec.describe "end-to-end tests" do
   let(:ruler) { Leader.new(level: 0) }
 
   context "standard civics" do
+    describe "Agrarian Idyll" do
+      let(:empire) do
+        Empire.new(
+          founder_species: species,
+          ruler: ruler,
+          civics: [Civic::AgrarianIdyll],
+        )
+      end
+      let(:sector) { Sector.new(empire: empire) }
+      let(:colony) { Colony.new(type: nil, size: nil, sector: sector) }
+
+      it "modifies the amenities output of Farmers" do
+        pop = Pop.new(
+          species: species,
+          colony: colony,
+          job: Job::Farmer,
+        )
+
+        expect(pop.job.amenities_output).to eq(2)
+      end
+    end
+
     describe "Byzantine Bureaucracy" do
       let(:empire) do
         Empire.new(

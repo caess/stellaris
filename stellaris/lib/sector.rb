@@ -62,6 +62,13 @@ class Sector
     modifier
   end
 
+  def job_amenities_output_modifier(job)
+    modifier = 0
+    modifier += @empire.job_amenities_output_modifier(job)
+
+    modifier
+  end
+
   def job_stability_modifier(job)
     modifier = 0
     modifier += @empire.job_stability_modifier(job)

@@ -139,6 +139,25 @@ class Empire
     modifier
   end
 
+  def job_amenities_output_modifier(job)
+    modifier = 0
+
+    modifier += @government.job_amenities_output_modifier(job) unless @government.nil?
+
+    @edicts.each do |edict|
+      modifier += edict.job_stability_modifier(job)
+    end
+
+    @civics.filter { |c| c.is_a?(Modifier) }.each do |civic|
+      modifier += civic.job_amenities_output_modifier(job)
+    end
+
+    @technologies.each { |t| modifier += t.job_amenities_output_modifier(job) }
+    @traditions.each { |t| modifier += t.job_amenities_output_modifier(job) }
+
+    modifier
+  end
+
   def job_stability_modifier(job)
     modifier = 0
 

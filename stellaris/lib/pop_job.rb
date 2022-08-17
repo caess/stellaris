@@ -8,8 +8,7 @@ class PopJob
   include UsesAmenities, OutputsResources
   extend Forwardable
 
-  def_delegators :@job, :amenities_output, :stability_modifier,
-    :all_job_output_modifiers, :pop_happiness_modifiers,
+  def_delegators :@job, :all_job_output_modifiers, :pop_happiness_modifiers,
     :ruler?, :specialist?, :worker?, :slave?,
     :farmer?, :miner?, :strategic_resource_miner?, :livestock?,
     :technician?, :politician?, :executive?, :noble?, :administrator?,
@@ -55,6 +54,13 @@ class PopJob
     modifiers += @worker.job_empire_attribute_modifiers(self)
 
     modifiers
+  end
+
+  def amenities_output
+    output = @job.amenities_output
+    output += @worker.job_amenities_output_modifier(self)
+
+    output
   end
 
   def stability_modifier

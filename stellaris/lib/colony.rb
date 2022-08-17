@@ -314,6 +314,16 @@ class Colony
     modifier
   end
 
+  def job_amenities_output_modifier(job)
+    modifier = 0
+
+    modifier += @sector.job_amenities_output_modifier(job) unless @sector.nil?
+
+    @decisions.each { |d| modifier += d.job_amenities_output_modifier(job) }
+
+    modifier
+  end
+
   def job_stability_modifier(job)
     modifier = 0
 

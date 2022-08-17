@@ -82,6 +82,13 @@ class Pop
     modifier
   end
 
+  def job_amenities_output_modifier(job)
+    modifier = 0
+    modifier += @colony.job_amenities_output_modifier(job) unless @colony.nil?
+
+    modifier
+  end
+
   def job_stability_modifier(job)
     modifier = 0
     modifier += @colony.job_stability_modifier(job) unless @colony.nil?

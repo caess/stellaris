@@ -24,6 +24,10 @@ RSpec.describe "modifier" do
       expect(subject.job_empire_attribute_modifiers(nil)).to eq(ResourceModifier::NONE)
     end
 
+    it "has no default job amenities output modifier" do
+      expect(subject.job_amenities_output_modifier(nil)).to eq(0)
+    end
+
     it "has no default job stability modifier" do
       expect(subject.job_stability_modifier(nil)).to eq(0)
     end
