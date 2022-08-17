@@ -71,7 +71,7 @@ RSpec.describe "end-to-end tests" do
     let(:species) do
       Species.new(
         living_standard: nil,
-        traits: [ SpeciesTrait::Lithoid ],
+        traits: [SpeciesTrait::Lithoid],
       )
     end
 
@@ -82,7 +82,7 @@ RSpec.describe "end-to-end tests" do
         job: Job::Colonist,
       )
 
-      expect(pop.output).to eq(ResourceGroup.new({minerals: 1}))
+      expect(pop.output).to eq(ResourceGroup.new({ minerals: 1 }))
     end
 
     it "modifies the upkeep of Reassigner jobs" do
@@ -116,7 +116,7 @@ RSpec.describe "end-to-end tests" do
     let(:species) do
       Species.new(
         living_standard: nil,
-        traits: [ SpeciesTrait::Mechanical ],
+        traits: [SpeciesTrait::Mechanical],
       )
     end
 
@@ -135,10 +135,10 @@ RSpec.describe "end-to-end tests" do
         pop = Pop.new(
           species: species,
           colony: colony,
-          job: Job::Technician
+          job: Job::Technician,
         )
 
-        expect(pop.output).to eq(ResourceGroup.new({energy: 8}))
+        expect(pop.output).to eq(ResourceGroup.new({ energy: 8 }))
       end
     end
   end

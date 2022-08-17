@@ -9,7 +9,7 @@ module Government
         consumer_goods: { additive: -1 },
         food: { multiplicative: 1 },
         minerals: { multiplicative: 1 },
-      }
+      },
     },
   )
 end

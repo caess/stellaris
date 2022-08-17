@@ -1,13 +1,13 @@
-require_relative './job'
-require_relative './modifier'
+require_relative "./job"
+require_relative "./modifier"
 
 module Civic
   # Standard civics
   ByzantineBureaucracy = Modifier.new(
     name: "Byzantine Bureaucracy",
     job_output_modifiers: {
-      Job::Bureaucrat => {unity: { additive: 1 } },
-      Job::DeathChronicler => {unity: { additive: 1 } },
+      Job::Bureaucrat => { unity: { additive: 1 } },
+      Job::DeathChronicler => { unity: { additive: 1 } },
     },
     job_stability_modifier: {
       Job::Bureaucrat => 1,
@@ -24,16 +24,16 @@ module Civic
   MiningGuilds = Modifier.new(
     name: "Mining Guilds",
     job_output_modifiers: {
-      (->(job) { job.miner? and !job.strategic_resource_miner?}) => {
+      (->(job) { job.miner? and !job.strategic_resource_miner? }) => {
         minerals: { additive: 1 },
-      }
-    }
+      },
+    },
   )
 
   PleasureSeekers = Modifier.new(
     name: "Pleasure Seekers",
     job_colony_attribute_modifiers: {
-      Job::Entertainer => { pop_growth_speed_percent: { additive: 1 } }
+      Job::Entertainer => { pop_growth_speed_percent: { additive: 1 } },
     },
   )
 
@@ -49,7 +49,7 @@ module Civic
   CorporateHedonism = Modifier.new(
     name: "Corporate Hedonism",
     job_colony_attribute_modifiers: {
-      Job::Entertainer => { pop_growth_speed_percent: { additive: 1 } }
+      Job::Entertainer => { pop_growth_speed_percent: { additive: 1 } },
     },
   )
 end

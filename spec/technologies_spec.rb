@@ -46,7 +46,7 @@ RSpec.describe "end-to-end tests" do
         pop = Pop.new(
           species: species,
           colony: colony,
-          job: Job::Necromancer
+          job: Job::Necromancer,
         )
 
         expect(pop.job.empire_attribute_modifiers).to eq(ResourceModifier.new({

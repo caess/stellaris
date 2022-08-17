@@ -1,8 +1,8 @@
 require_relative "../stellaris/lib/stellaris"
 
-RSpec.describe 'civics' do
+RSpec.describe "civics" do
   context "standard civics" do
-    describe 'Byzantine Bureaucracy' do
+    describe "Byzantine Bureaucracy" do
       subject { Civic::ByzantineBureaucracy }
 
       it "has the correct name" do
@@ -75,7 +75,7 @@ RSpec.describe 'civics' do
         pop_job = PopJob.new(worker: nil, job: job)
 
         expect(subject.job_output_modifiers(pop_job)).to eq(
-          ResourceModifier.new({minerals: { additive: 1 }})
+          ResourceModifier.new({ minerals: { additive: 1 } })
         )
       end
 
@@ -143,7 +143,7 @@ RSpec.describe 'civics' do
   end
 end
 
-RSpec.describe 'end-to-end tests' do
+RSpec.describe "end-to-end tests" do
   let(:species) do
     Species.new(
       living_standard: nil,
@@ -214,7 +214,7 @@ RSpec.describe 'end-to-end tests' do
         pop = Pop.new(
           species: species,
           colony: colony,
-          job: Job::HighPriest
+          job: Job::HighPriest,
         )
 
         expect(pop.job.output).to eq(ResourceGroup.new({
@@ -226,7 +226,7 @@ RSpec.describe 'end-to-end tests' do
         pop = Pop.new(
           species: species,
           colony: colony,
-          job: Job::Priest
+          job: Job::Priest,
         )
 
         expect(pop.job.output).to eq(ResourceGroup.new({
@@ -238,7 +238,7 @@ RSpec.describe 'end-to-end tests' do
         pop = Pop.new(
           species: species,
           colony: colony,
-          job: Job::DeathPriest
+          job: Job::DeathPriest,
         )
 
         expect(pop.job.output).to eq(ResourceGroup.new({
@@ -263,7 +263,7 @@ RSpec.describe 'end-to-end tests' do
         pop = Pop.new(
           species: species,
           colony: colony,
-          job: Job::Miner
+          job: Job::Miner,
         )
 
         expect(pop.job.output).to eq(ResourceGroup.new({
@@ -275,7 +275,7 @@ RSpec.describe 'end-to-end tests' do
         pop = Pop.new(
           species: species,
           colony: colony,
-          job: Job::ScrapMiner
+          job: Job::ScrapMiner,
         )
 
         expect(pop.job.output).to eq(ResourceGroup.new({
@@ -300,7 +300,7 @@ RSpec.describe 'end-to-end tests' do
         pop = Pop.new(
           species: species,
           colony: colony,
-          job: Job::Entertainer
+          job: Job::Entertainer,
         )
 
         expect(pop.job.colony_attribute_modifiers).to eq(ResourceModifier.new({
@@ -324,7 +324,7 @@ RSpec.describe 'end-to-end tests' do
         pop = Pop.new(
           species: species,
           colony: colony,
-          job: Job::Enforcer
+          job: Job::Enforcer,
         )
 
         expect(pop.job.output).to eq(ResourceGroup.new({
@@ -336,7 +336,7 @@ RSpec.describe 'end-to-end tests' do
         pop = Pop.new(
           species: species,
           colony: colony,
-          job: Job::Telepath
+          job: Job::Telepath,
         )
 
         expect(pop.job.output).to eq(ResourceGroup.new({
@@ -362,7 +362,7 @@ RSpec.describe 'end-to-end tests' do
         pop = Pop.new(
           species: species,
           colony: colony,
-          job: Job::Entertainer
+          job: Job::Entertainer,
         )
 
         expect(pop.job.colony_attribute_modifiers).to eq(ResourceModifier.new({

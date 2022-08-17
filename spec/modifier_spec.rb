@@ -1,11 +1,11 @@
 require_relative "../stellaris/lib/stellaris"
 
-RSpec.describe 'modifier' do
+RSpec.describe "modifier" do
   describe "default" do
-    subject { Modifier.new(name: 'name') }
+    subject { Modifier.new(name: "name") }
 
     it "returns its name" do
-      expect(subject.name).to eq('name')
+      expect(subject.name).to eq("name")
     end
 
     it "has no default job output modifiers" do

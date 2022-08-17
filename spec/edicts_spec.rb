@@ -99,7 +99,7 @@ RSpec.describe "edicts" do
     end
   end
 
-  describe 'Thought Enforcement' do
+  describe "Thought Enforcement" do
     subject { Edict::ThoughtEnforcement }
 
     it "has the correct name" do
@@ -221,7 +221,7 @@ RSpec.describe "end-to-end tests" do
       pop = Pop.new(
         species: species,
         colony: colony,
-        job: Job::Metallurgist
+        job: Job::Metallurgist,
       )
 
       expect(pop.job.upkeep).to eq(ResourceGroup.new({
@@ -234,7 +234,7 @@ RSpec.describe "end-to-end tests" do
       pop = Pop.new(
         species: species,
         colony: colony,
-        job: Job::CatalyticTechnician
+        job: Job::CatalyticTechnician,
       )
 
       expect(pop.job.upkeep).to eq(ResourceGroup.new({
@@ -259,7 +259,7 @@ RSpec.describe "end-to-end tests" do
       pop = Pop.new(
         species: species,
         colony: colony,
-        job: Job::Artisan
+        job: Job::Artisan,
       )
 
       expect(pop.job.upkeep).to eq(ResourceGroup.new({
@@ -272,7 +272,7 @@ RSpec.describe "end-to-end tests" do
       pop = Pop.new(
         species: species,
         colony: colony,
-        job: Job::Artificer
+        job: Job::Artificer,
       )
 
       expect(pop.job.upkeep).to eq(ResourceGroup.new({
@@ -285,7 +285,7 @@ RSpec.describe "end-to-end tests" do
       pop = Pop.new(
         species: species,
         colony: colony,
-        job: Job::PearlDiver
+        job: Job::PearlDiver,
       )
 
       expect(pop.job.upkeep).to eq(ResourceGroup.new({
@@ -329,7 +329,8 @@ RSpec.describe "end-to-end tests" do
       expect(pop.job.upkeep).to eq(ResourceGroup.new({
         energy: 0.5,
       }))
-    end  end
+    end
+  end
 
   describe "Research Subsidies" do
     let(:empire) do
@@ -346,7 +347,7 @@ RSpec.describe "end-to-end tests" do
       pop = Pop.new(
         species: species,
         colony: colony,
-        job: Job::Researcher
+        job: Job::Researcher,
       )
 
       expect(pop.job.upkeep).to eq(ResourceGroup.new({
@@ -371,7 +372,7 @@ RSpec.describe "end-to-end tests" do
       pop = Pop.new(
         species: species,
         colony: colony,
-        job: Job::Telepath
+        job: Job::Telepath,
       )
 
       expect(pop.job.colony_attribute_modifiers).to eq(
@@ -398,7 +399,7 @@ RSpec.describe "end-to-end tests" do
         pop = Pop.new(
           species: species,
           colony: colony,
-          job: Job::DeathPriest
+          job: Job::DeathPriest,
         )
 
         expect(pop.job.output).to eq(ResourceGroup.new({
@@ -423,7 +424,7 @@ RSpec.describe "end-to-end tests" do
         pop = Pop.new(
           species: species,
           colony: colony,
-          job: Job::DeathPriest
+          job: Job::DeathPriest,
         )
 
         expect(pop.job.output).to eq(ResourceGroup.new({
@@ -448,7 +449,7 @@ RSpec.describe "end-to-end tests" do
         pop = Pop.new(
           species: species,
           colony: colony,
-          job: Job::DeathPriest
+          job: Job::DeathPriest,
         )
 
         expect(pop.job.output).to eq(ResourceGroup.new({

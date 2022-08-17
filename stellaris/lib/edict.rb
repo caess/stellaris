@@ -6,7 +6,7 @@ module Edict
     name: "Capacity Subsidies",
     job_upkeep_modifiers: {
       Job::Technician => { energy: { additive: 0.5 } },
-    }
+    },
   )
 
   ForgeSubsidies = Modifier.new(
@@ -20,28 +20,28 @@ module Edict
     name: "Industrial Subsidies",
     job_upkeep_modifiers: {
       :artisan? => { energy: { additive: 1 } },
-    }
+    },
   )
 
   MiningSubsidies = Modifier.new(
     name: "Mining Subsidies",
     job_upkeep_modifiers: {
       :miner? => { energy: { additive: 0.5 } },
-    }
+    },
   )
 
   ResearchSubsidies = Modifier.new(
     name: "Research Subsidies",
     job_upkeep_modifiers: {
       Job::Researcher => { energy: { additive: 1 } },
-    }
+    },
   )
 
   ThoughtEnforcement = Modifier.new(
     name: "Thought Enforcement",
     job_colony_attribute_modifiers: {
       Job::Telepath => { crime: { additive: -5 } },
-    }
+    },
   )
 
   # Sacrifice edicts
@@ -49,20 +49,20 @@ module Edict
     name: "Harmony Sacrifice Edict",
     job_output_modifiers: {
       Job::DeathPriest => { unity: { additive: 3 } },
-    }
+    },
   )
 
   TogethernessSacrificeEdict = Modifier.new(
     name: "Togetherness Sacrifice Edict",
     job_output_modifiers: {
       Job::DeathPriest => { unity: { additive: 3 } },
-    }
+    },
   )
 
   BountySacrificeEdict = Modifier.new(
     name: "Bounty Sacrifice Edict",
     job_output_modifiers: {
       Job::DeathPriest => { unity: { additive: 3 } },
-    }
+    },
   )
 end

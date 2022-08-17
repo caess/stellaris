@@ -299,7 +299,7 @@ RSpec.describe "buildings" do
     end
 
     it "has the correct upkeep" do
-      expect(subject.upkeep).to eq(ResourceGroup.new({energy: 2}))
+      expect(subject.upkeep).to eq(ResourceGroup.new({ energy: 2 }))
     end
   end
 
@@ -333,7 +333,7 @@ RSpec.describe "buildings" do
     end
 
     it "has the correct upkeep" do
-      expect(subject.upkeep).to eq(ResourceGroup.new({energy: 5}))
+      expect(subject.upkeep).to eq(ResourceGroup.new({ energy: 5 }))
     end
   end
 
@@ -371,7 +371,7 @@ RSpec.describe "buildings" do
     end
 
     it "has the correct upkeep" do
-      expect(subject.upkeep).to eq(ResourceGroup.new({energy: 2}))
+      expect(subject.upkeep).to eq(ResourceGroup.new({ energy: 2 }))
     end
   end
 
@@ -409,11 +409,11 @@ RSpec.describe "buildings" do
     end
 
     it "has the correct upkeep" do
-      expect(subject.upkeep).to eq(ResourceGroup.new({energy: 2}))
+      expect(subject.upkeep).to eq(ResourceGroup.new({ energy: 2 }))
     end
   end
 
-  describe 'research labs' do
+  describe "research labs" do
     subject { Building::ResearchLabs }
 
     it "has the correct name" do
@@ -425,11 +425,11 @@ RSpec.describe "buildings" do
     end
 
     it "has the correct upkeep" do
-      expect(subject.upkeep).to eq(ResourceGroup.new({energy: 2}))
+      expect(subject.upkeep).to eq(ResourceGroup.new({ energy: 2 }))
     end
   end
 
-  describe 'research complexes' do
+  describe "research complexes" do
     subject { Building::ResearchComplexes }
 
     it "has the correct name" do
@@ -448,7 +448,7 @@ RSpec.describe "buildings" do
     end
   end
 
-  describe 'advanced research complexes' do
+  describe "advanced research complexes" do
     subject { Building::AdvancedResearchComplexes }
 
     it "has the correct name" do
@@ -467,7 +467,7 @@ RSpec.describe "buildings" do
     end
   end
 
-  describe 'administrative offices' do
+  describe "administrative offices" do
     subject { Building::AdministrativeOffices }
 
     it "has the correct name" do
@@ -479,11 +479,11 @@ RSpec.describe "buildings" do
     end
 
     it "has the correct upkeep" do
-      expect(subject.upkeep).to eq(ResourceGroup.new({energy: 2}))
+      expect(subject.upkeep).to eq(ResourceGroup.new({ energy: 2 }))
     end
   end
 
-  describe 'administrative park' do
+  describe "administrative park" do
     subject { Building::AdministrativePark }
 
     it "has the correct name" do
@@ -502,7 +502,7 @@ RSpec.describe "buildings" do
     end
   end
 
-  describe 'administrative complex' do
+  describe "administrative complex" do
     subject { Building::AdministrativeComplex }
 
     it "has the correct name" do
@@ -521,7 +521,7 @@ RSpec.describe "buildings" do
     end
   end
 
-  describe 'holo-theatres' do
+  describe "holo-theatres" do
     subject { Building::HoloTheatres }
 
     it "has the correct name" do
@@ -533,11 +533,11 @@ RSpec.describe "buildings" do
     end
 
     it "has the correct upkeep" do
-      expect(subject.upkeep).to eq(ResourceGroup.new({energy: 2}))
+      expect(subject.upkeep).to eq(ResourceGroup.new({ energy: 2 }))
     end
   end
 
-  describe 'hyper-entertainment forums' do
+  describe "hyper-entertainment forums" do
     subject { Building::HyperEntertainmentForums }
 
     it "has the correct name" do
@@ -556,7 +556,7 @@ RSpec.describe "buildings" do
     end
   end
 
-  describe 'hydroponics farms' do
+  describe "hydroponics farms" do
     subject { Building::HydroponicsFarms }
 
     it "has the correct name" do
@@ -568,11 +568,11 @@ RSpec.describe "buildings" do
     end
 
     it "has the correct upkeep" do
-      expect(subject.upkeep).to eq(ResourceGroup.new({energy: 2}))
+      expect(subject.upkeep).to eq(ResourceGroup.new({ energy: 2 }))
     end
   end
 
-  describe 'luxury residences' do
+  describe "luxury residences" do
     subject { Building::LuxuryResidences }
 
     it "has the correct name" do
@@ -588,11 +588,11 @@ RSpec.describe "buildings" do
     end
 
     it "has the correct upkeep" do
-      expect(subject.upkeep).to eq(ResourceGroup.new({energy: 2}))
+      expect(subject.upkeep).to eq(ResourceGroup.new({ energy: 2 }))
     end
   end
 
-  describe 'paradise dome' do
+  describe "paradise dome" do
     subject { Building::ParadiseDome }
 
     it "has the correct name" do
@@ -615,7 +615,7 @@ RSpec.describe "buildings" do
     end
   end
 
-  describe 'communal housing' do
+  describe "communal housing" do
     subject { Building::CommunalHousing }
 
     it "has the correct name" do
@@ -631,11 +631,11 @@ RSpec.describe "buildings" do
     end
 
     it "has the correct upkeep" do
-      expect(subject.upkeep).to eq(ResourceGroup.new({energy: 2}))
+      expect(subject.upkeep).to eq(ResourceGroup.new({ energy: 2 }))
     end
   end
 
-  describe 'utopian communal housing' do
+  describe "utopian communal housing" do
     subject { Building::UtopianCommunalHousing }
 
     it "has the correct name" do
@@ -658,7 +658,7 @@ RSpec.describe "buildings" do
     end
   end
 
-  describe 'slave huts' do
+  describe "slave huts" do
     subject { Building::SlaveHuts }
 
     it "has the correct name" do
@@ -674,11 +674,11 @@ RSpec.describe "buildings" do
     end
 
     it "has the correct upkeep" do
-      expect(subject.upkeep).to eq(ResourceGroup.new({energy: 2}))
+      expect(subject.upkeep).to eq(ResourceGroup.new({ energy: 2 }))
     end
   end
 
-  describe 'planetary shield generator' do
+  describe "planetary shield generator" do
     subject { Building::PlanetaryShieldGenerator }
 
     it "has the correct name" do
@@ -686,7 +686,7 @@ RSpec.describe "buildings" do
     end
 
     it "has the correct upkeep" do
-      expect(subject.upkeep).to eq(ResourceGroup.new({energy: 5}))
+      expect(subject.upkeep).to eq(ResourceGroup.new({ energy: 5 }))
     end
 
     it "has the correct colony attribute modifier" do
@@ -696,7 +696,7 @@ RSpec.describe "buildings" do
     end
   end
 
-  describe 'military academy' do
+  describe "military academy" do
     subject { Building::MilitaryAcademy }
 
     it "has the correct name" do
@@ -708,7 +708,7 @@ RSpec.describe "buildings" do
     end
 
     it "has the correct upkeep" do
-      expect(subject.upkeep).to eq(ResourceGroup.new({energy: 2}))
+      expect(subject.upkeep).to eq(ResourceGroup.new({ energy: 2 }))
     end
 
     it "has the correct colony attribute modifier" do
@@ -718,7 +718,7 @@ RSpec.describe "buildings" do
     end
   end
 
-  describe 'dreaed encampment' do
+  describe "dreaed encampment" do
     subject { Building::DreadEncampment }
 
     it "has the correct name" do
@@ -730,7 +730,7 @@ RSpec.describe "buildings" do
     end
 
     it "has the correct upkeep" do
-      expect(subject.upkeep).to eq(ResourceGroup.new({energy: 2}))
+      expect(subject.upkeep).to eq(ResourceGroup.new({ energy: 2 }))
     end
 
     it "has the correct colony attribute modifier" do
@@ -740,7 +740,7 @@ RSpec.describe "buildings" do
     end
   end
 
-  describe 'chamber of elevation' do
+  describe "chamber of elevation" do
     subject { Building::ChamberOfElevation }
 
     it "has the correct name" do
@@ -752,11 +752,11 @@ RSpec.describe "buildings" do
     end
 
     it "has the correct upkeep" do
-      expect(subject.upkeep).to eq(ResourceGroup.new({energy: 2}))
+      expect(subject.upkeep).to eq(ResourceGroup.new({ energy: 2 }))
     end
   end
 
-  describe 'house of apotheosis' do
+  describe "house of apotheosis" do
     subject { Building::HouseOfApotheosis }
 
     it "has the correct name" do
@@ -775,7 +775,7 @@ RSpec.describe "buildings" do
     end
   end
 
-  describe 'energy grid' do
+  describe "energy grid" do
     subject { Building::EnergyGrid }
 
     it "has the correct name" do
@@ -821,7 +821,7 @@ RSpec.describe "buildings" do
     end
   end
 
-  describe 'energy nexus' do
+  describe "energy nexus" do
     subject { Building::EnergyNexus }
 
     it "has the correct name" do
@@ -870,7 +870,7 @@ RSpec.describe "buildings" do
     end
   end
 
-  describe 'mineral purification plants' do
+  describe "mineral purification plants" do
     subject { Building::MineralPurificationPlants }
 
     it "has the correct name" do
@@ -927,11 +927,11 @@ RSpec.describe "buildings" do
         worker: nil,
       )
 
-      expect(subject.job_output_modifiers(pop_job)).to eq(ResourceModifier::NONE);
+      expect(subject.job_output_modifiers(pop_job)).to eq(ResourceModifier::NONE)
     end
   end
 
-  describe 'mineral purification hubs' do
+  describe "mineral purification hubs" do
     subject { Building::MineralPurificationHubs }
 
     it "has the correct name" do
@@ -1005,11 +1005,11 @@ RSpec.describe "buildings" do
         worker: nil,
       )
 
-      expect(subject.job_output_modifiers(pop_job)).to eq(ResourceModifier::NONE);
+      expect(subject.job_output_modifiers(pop_job)).to eq(ResourceModifier::NONE)
     end
   end
 
-  describe 'food processing facilities' do
+  describe "food processing facilities" do
     subject { Building::FoodProcessingFacilities }
 
     it "has the correct name" do
@@ -1055,7 +1055,7 @@ RSpec.describe "buildings" do
     end
   end
 
-  describe 'food processing centers' do
+  describe "food processing centers" do
     subject { Building::FoodProcessingCenters }
 
     it "has the correct name" do

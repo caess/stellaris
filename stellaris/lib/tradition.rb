@@ -1,5 +1,5 @@
-require_relative './job'
-require_relative './modifier'
+require_relative "./job"
+require_relative "./modifier"
 
 module Tradition
   # Domination

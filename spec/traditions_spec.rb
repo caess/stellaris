@@ -79,7 +79,7 @@ RSpec.describe "end-to-end tests" do
         pop = Pop.new(
           species: species,
           colony: colony,
-          job: Job::Enforcer
+          job: Job::Enforcer,
         )
 
         expect(pop.job.output).to eq(ResourceGroup.new({
@@ -91,7 +91,7 @@ RSpec.describe "end-to-end tests" do
         pop = Pop.new(
           species: species,
           colony: colony,
-          job: Job::Telepath
+          job: Job::Telepath,
         )
 
         expect(pop.job.output).to eq(ResourceGroup.new({
@@ -117,7 +117,7 @@ RSpec.describe "end-to-end tests" do
         pop = Pop.new(
           species: species,
           colony: colony,
-          job: Job::Clerk
+          job: Job::Clerk,
         )
 
         expect(pop.job.output).to eq(ResourceGroup.new({

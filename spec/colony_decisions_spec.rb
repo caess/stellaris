@@ -1,17 +1,17 @@
 require_relative "../stellaris/lib/stellaris"
 
 RSpec.describe "colony decisions" do
-  describe 'Anti-Crime Campaign' do
+  describe "Anti-Crime Campaign" do
     subject { ColonyDecision::AntiCrimeCampaign }
 
     it "has the correct name" do
-      expect(subject.name).to eq('Anti-Crime Campaign')
+      expect(subject.name).to eq("Anti-Crime Campaign")
     end
 
     it "modifies the upkeep for enforcers" do
       pop_job = PopJob.new(
         worker: nil,
-        job: Job::Enforcer
+        job: Job::Enforcer,
       )
 
       expect(subject.job_upkeep_modifiers(pop_job)).to eq(ResourceModifier.new({
@@ -22,7 +22,7 @@ RSpec.describe "colony decisions" do
     it "modifies the colony attribute modifiers for enforcers" do
       pop_job = PopJob.new(
         worker: nil,
-        job: Job::Enforcer
+        job: Job::Enforcer,
       )
 
       expect(subject.job_colony_attribute_modifiers(pop_job)).to eq(ResourceModifier.new({
@@ -33,7 +33,7 @@ RSpec.describe "colony decisions" do
     it "modifies the upkeep for telepaths" do
       pop_job = PopJob.new(
         worker: nil,
-        job: Job::Telepath
+        job: Job::Telepath,
       )
 
       expect(subject.job_upkeep_modifiers(pop_job)).to eq(ResourceModifier.new({
@@ -44,7 +44,7 @@ RSpec.describe "colony decisions" do
     it "modifies the colony attribute modifiers for telepaths" do
       pop_job = PopJob.new(
         worker: nil,
-        job: Job::Telepath
+        job: Job::Telepath,
       )
 
       expect(subject.job_colony_attribute_modifiers(pop_job)).to eq(ResourceModifier.new({
@@ -53,17 +53,17 @@ RSpec.describe "colony decisions" do
     end
   end
 
-  describe 'Martial Law' do
+  describe "Martial Law" do
     subject { ColonyDecision::MartialLaw }
 
     it "has the correct name" do
-      expect(subject.name).to eq('Martial Law')
+      expect(subject.name).to eq("Martial Law")
     end
 
     it "modifies the colony attribute modifiers for necromancers" do
       pop_job = PopJob.new(
         worker: nil,
-        job: Job::Necromancer
+        job: Job::Necromancer,
       )
 
       expect(subject.job_colony_attribute_modifiers(pop_job)).to eq(ResourceModifier.new({
@@ -94,7 +94,7 @@ RSpec.describe "end-to-end tests" do
         type: nil,
         size: nil,
         sector: sector,
-        decisions: [ColonyDecision::AntiCrimeCampaign]
+        decisions: [ColonyDecision::AntiCrimeCampaign],
       )
     end
 
@@ -102,7 +102,7 @@ RSpec.describe "end-to-end tests" do
       pop = Pop.new(
         species: species,
         colony: colony,
-        job: Job::Enforcer
+        job: Job::Enforcer,
       )
 
       expect(pop.job.colony_attribute_modifiers).to eq(ResourceModifier.new({
@@ -115,7 +115,7 @@ RSpec.describe "end-to-end tests" do
       pop = Pop.new(
         species: species,
         colony: colony,
-        job: Job::Enforcer
+        job: Job::Enforcer,
       )
 
       expect(pop.job.upkeep).to eq(ResourceGroup.new({
@@ -127,7 +127,7 @@ RSpec.describe "end-to-end tests" do
       pop = Pop.new(
         species: species,
         colony: colony,
-        job: Job::Telepath
+        job: Job::Telepath,
       )
 
       expect(pop.job.colony_attribute_modifiers).to eq(ResourceModifier.new({
@@ -139,7 +139,7 @@ RSpec.describe "end-to-end tests" do
       pop = Pop.new(
         species: species,
         colony: colony,
-        job: Job::Telepath
+        job: Job::Telepath,
       )
 
       expect(pop.job.upkeep).to eq(ResourceGroup.new({
@@ -154,7 +154,7 @@ RSpec.describe "end-to-end tests" do
         type: nil,
         size: nil,
         sector: sector,
-        decisions: [ColonyDecision::MartialLaw]
+        decisions: [ColonyDecision::MartialLaw],
       )
     end
 
@@ -162,7 +162,7 @@ RSpec.describe "end-to-end tests" do
       pop = Pop.new(
         species: species,
         colony: colony,
-        job: Job::Necromancer
+        job: Job::Necromancer,
       )
 
       expect(pop.job.colony_attribute_modifiers).to eq(ResourceModifier.new({

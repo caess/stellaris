@@ -1494,7 +1494,7 @@ RSpec.describe "slave jobs" do
     end
   end
 
-  describe 'Job::AgriDrone' do
+  describe "Job::AgriDrone" do
     subject { Job::AgriDrone }
 
     it "has the correct name" do

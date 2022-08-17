@@ -32,7 +32,7 @@ class Species
       })
     end
 
-    @traits.filter {|x| x.is_a?(Modifier)}.each do |trait|
+    @traits.filter { |x| x.is_a?(Modifier) }.each do |trait|
       modifier += trait.job_output_modifiers(job)
     end
 
@@ -42,18 +42,17 @@ class Species
   def job_upkeep_modifiers(job)
     modifier = ResourceModifier.new()
 
-    @traits.filter {|x| x.is_a?(Modifier)}.each do |trait|
+    @traits.filter { |x| x.is_a?(Modifier) }.each do |trait|
       modifier += trait.job_upkeep_modifiers(job)
     end
 
     modifier
   end
 
-
   def founder_species_job_output_modifiers(job)
     modifier = ResourceModifier.new()
 
-    @traits.filter {|x| x.is_a?(Modifier)}.each do |trait|
+    @traits.filter { |x| x.is_a?(Modifier) }.each do |trait|
       modifier += trait.founder_species_job_output_modifiers(job)
     end
 

@@ -32,8 +32,8 @@ class Building
 
     @job_output_modifiers.each do |key, modifier|
       if key == job.job or
-        (key.is_a?(Symbol) and job.respond_to?(key) and job.send(key)) or
-        (key.is_a?(Proc) and key.lambda? and key.call(job))
+         (key.is_a?(Symbol) and job.respond_to?(key) and job.send(key)) or
+         (key.is_a?(Proc) and key.lambda? and key.call(job))
         return ResourceModifier.new(modifier)
       end
     end
@@ -46,7 +46,7 @@ class Building
       super(
         name: name,
         max_jobs: { job => 2 },
-        upkeep: { energy: 2 }
+        upkeep: { energy: 2 },
       )
     end
   end
@@ -59,7 +59,7 @@ class Building
         upkeep: {
           :energy => 5,
           strategic_resource => 1,
-        }
+        },
       )
     end
   end
@@ -72,7 +72,7 @@ class Building
         upkeep: {
           :energy => 8,
           strategic_resource => 2,
-        }
+        },
       )
     end
   end
@@ -83,13 +83,13 @@ class Building
     buildings = [
       Building::Tier1Building.new(name: tier1_name, job: job),
       Building::Tier2Building.new(
-        name: tier2_name, job: job, strategic_resource: strategic_resource
+        name: tier2_name, job: job, strategic_resource: strategic_resource,
       ),
     ]
 
     if !tier3_name.nil?
       buildings << Building::Tier3Building.new(
-        name: tier3_name, job: job, strategic_resource: strategic_resource
+        name: tier3_name, job: job, strategic_resource: strategic_resource,
       )
     end
 
@@ -263,30 +263,30 @@ class Building
   )
 
   ResearchLabs, ResearchComplexes, AdvancedResearchComplexes = Building::tiered_buildings(
-    tier1_name: 'Research Labs',
-    tier2_name: 'Research Complexes',
-    tier3_name: 'Advanced Research Complexes',
+    tier1_name: "Research Labs",
+    tier2_name: "Research Complexes",
+    tier3_name: "Advanced Research Complexes",
     job: Job::Researcher,
     strategic_resource: :exotic_gases,
   )
 
   AdministrativeOffices, AdministrativePark, AdministrativeComplex = Building::tiered_buildings(
-    tier1_name: 'Administrative Offices',
-    tier2_name: 'Administrative Park',
-    tier3_name: 'Administrative Complex',
+    tier1_name: "Administrative Offices",
+    tier2_name: "Administrative Park",
+    tier3_name: "Administrative Complex",
     job: Job::Bureaucrat,
     strategic_resource: :rare_crystals,
   )
 
   HoloTheatres, HyperEntertainmentForums = Building::tiered_buildings(
-    tier1_name: 'Holo-Theatres',
-    tier2_name: 'Hyper-Entertainment Forums',
+    tier1_name: "Holo-Theatres",
+    tier2_name: "Hyper-Entertainment Forums",
     job: Job::Entertainer,
     strategic_resource: :exotic_gases,
   )
 
   HydroponicsFarms = Building::Tier1Building.new(
-    name: 'Hydroponics Farms',
+    name: "Hydroponics Farms",
     job: Job::Farmer,
   )
 
@@ -397,8 +397,8 @@ class Building
     max_jobs: { Job::Miner => 1 },
     upkeep: { energy: 2 },
     job_output_modifiers: {
-      (->(job) { job.miner? and not job.strategic_resource_miner?}) => { minerals: { additive: 1 } },
-    }
+      (->(job) { job.miner? and not job.strategic_resource_miner? }) => { minerals: { additive: 1 } },
+    },
   )
 
   MineralPurificationHubs = Building.new(
@@ -413,8 +413,8 @@ class Building
         minerals: { additive: 1 },
         alloys: { additive: 0.5 },
       },
-      (->(job) { job.miner? and not job.strategic_resource_miner?}) => { minerals: { additive: 2 } },
-    }
+      (->(job) { job.miner? and not job.strategic_resource_miner? }) => { minerals: { additive: 2 } },
+    },
   )
 
   FoodProcessingFacilities = Building.new(
@@ -423,7 +423,7 @@ class Building
     upkeep: { energy: 2 },
     job_output_modifiers: {
       :farmer? => { food: { additive: 1 } },
-    }
+    },
   )
 
   FoodProcessingCenters = Building.new(
@@ -435,6 +435,6 @@ class Building
     },
     job_output_modifiers: {
       :farmer? => { food: { additive: 2 } },
-    }
+    },
   )
 end

@@ -9,9 +9,8 @@ class Empire
   attr_reader :ruler, :ethics, :civics, :technology
 
   def initialize(founder_species:, ruler:, government: nil, ethics: [],
-    civics: [], technology: {}, technologies: [], edicts: [],
-    traditions: []
-  )
+                 civics: [], technology: {}, technologies: [], edicts: [],
+                 traditions: [])
     @founder_species = founder_species
     @ruler = ruler
     @ruler.role = :ruler
@@ -77,7 +76,7 @@ class Empire
       modifier += edict.job_output_modifiers(job)
     end
 
-    @civics.filter {|c| c.is_a?(Modifier)}.each do |civic|
+    @civics.filter { |c| c.is_a?(Modifier) }.each do |civic|
       modifier += civic.job_output_modifiers(job)
     end
 
@@ -111,7 +110,7 @@ class Empire
       modifier += edict.job_colony_attribute_modifiers(job)
     end
 
-    @civics.filter {|c| c.is_a?(Modifier) }.each do |civic|
+    @civics.filter { |c| c.is_a?(Modifier) }.each do |civic|
       modifier += civic.job_colony_attribute_modifiers(job)
     end
 
@@ -130,7 +129,7 @@ class Empire
       modifier += edict.job_empire_attribute_modifiers(job)
     end
 
-    @civics.filter {|c| c.is_a?(Modifier) }.each do |civic|
+    @civics.filter { |c| c.is_a?(Modifier) }.each do |civic|
       modifier += civic.job_empire_attribute_modifiers(job)
     end
 
@@ -149,7 +148,7 @@ class Empire
       modifier += edict.job_stability_modifier(job)
     end
 
-    @civics.filter {|c| c.is_a?(Modifier) }.each do |civic|
+    @civics.filter { |c| c.is_a?(Modifier) }.each do |civic|
       modifier += civic.job_stability_modifier(job)
     end
 

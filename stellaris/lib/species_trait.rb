@@ -7,7 +7,7 @@ module SpeciesTrait
       Job::Colonist => {
         food: { additive: -1 },
         minerals: { additive: 1 },
-      }
+      },
     },
     job_upkeep_modifiers: {
       Job::Necrophyte => {
@@ -17,7 +17,7 @@ module SpeciesTrait
       Job::Reassigner => {
         food: { additive: -2 },
         minerals: { additive: 2 },
-      }
+      },
     },
   )
 
