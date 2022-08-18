@@ -1,23 +1,25 @@
+# frozen_string_literal: true
+
 class ResourceGroup
-  PRODUCED_RESOURCES = [
-    :food, :minerals, :energy, :consumer_goods, :alloys, :volatile_motes,
-    :exotic_gases, :rare_crystals, :unity, :physics_research,
-    :society_research, :engineering_research,
-  ]
+  PRODUCED_RESOURCES = %i[
+    food minerals energy consumer_goods alloys volatile_motes
+    exotic_gases rare_crystals unity physics_research
+    society_research engineering_research
+  ].freeze
 
   def initialize(resources = {})
-    @resources = (Hash.new(0)).merge(resources)
+    @resources = Hash.new(0).merge(resources)
 
     @modifiers = []
     @resolved = nil
   end
 
   def [](key)
-    return nil if !@resources.key?(key)
+    return nil unless @resources.key?(key)
 
     resolve if @resolved.nil?
 
-    return @resolved[key]
+    @resolved[key]
   end
 
   def []=(key, value)
@@ -30,42 +32,42 @@ class ResourceGroup
     @resolved = nil
   end
 
-  def resolve()
-    return @resolved.dup if !@resolved.nil?
+  def resolve
+    return @resolved.dup unless @resolved.nil?
 
     @resolved = @resources.dup
     total_modifiers = @modifiers.reduce(ResourceModifier::NONE, &:+)
 
-    total_modifiers.values.each do |good, modifiers|
+    total_modifiers.each do |good, modifiers|
       @resolved[good] += (modifiers[:additive] || 0)
       @resolved[good] *= 1 + (modifiers[:multiplicative] || 0)
     end
 
-    return @resolved.dup
+    @resolved.dup
   end
 
-  def +(rhs)
-    output = resolve().dup
+  def +(other)
+    output = resolve.dup
 
-    rhs.resolve().each do |good, value|
+    other.resolve.each do |good, value|
       output[good] += value
     end
 
-    return ResourceGroup.new(output)
+    ResourceGroup.new(output)
   end
 
-  def -(rhs)
-    output = resolve().dup
+  def -(other)
+    output = resolve.dup
 
-    rhs.resolve().each do |good, value|
+    other.resolve.each do |good, value|
       output[good] -= value
     end
 
-    return ResourceGroup.new(output)
+    ResourceGroup.new(output)
   end
 
-  def ==(rhs)
-    resolve().reject { |k, v| v == 0 } == rhs.resolve().reject { |k, v| v == 0 }
+  def ==(other)
+    resolve.reject { |_k, v| v.zero? } == other.resolve.reject { |_k, v| v.zero? }
   end
 
   def dup
@@ -79,7 +81,7 @@ class ResourceGroup
   def empty?
     resolve if @resolved.nil?
 
-    @resolved.values.reject { |value| value == 0 }.empty?
+    @resolved.values.reject(&:zero?).empty?
   end
 
   EMPTY = ResourceGroup.new({})

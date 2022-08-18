@@ -1,12 +1,15 @@
-require_relative "./district"
-require_relative "./job"
-require_relative "./mixins"
-require_relative "./pop"
-require_relative "./resource_group"
-require_relative "./resource_modifier"
+# frozen_string_literal: true
+
+require_relative './district'
+require_relative './job'
+require_relative './mixins'
+require_relative './pop'
+require_relative './resource_group'
+require_relative './resource_modifier'
 
 class Colony
-  include UsesAmenities, OutputsResources
+  include OutputsResources
+  include UsesAmenities
 
   attr_reader :pops, :districts
 
@@ -25,52 +28,50 @@ class Colony
 
     @districts = []
     districts.each do |type, number|
-      if type == :habitation
+      case type
+      when :habitation
         district = District::HabitationDistrict
-      elsif type == :industrial
+      when :industrial
         district = District::HabitatIndustrialDistrict
-      elsif type == :mining
+      when :mining
         district = District::AstroMiningBay
-      elsif type == :reactor
+      when :reactor
         district = District::ReactorDistrict
-      elsif type == :research
+      when :research
         district = District::ResearchDistrict
-      elsif type == :trade
+      when :trade
         district = District::HabitatTradeDistrict
-      elsif type == :leisure
+      when :leisure
         district = District::LeisureDistrict
       end
 
-      1.upto(number) { |x| @districts << district }
+      1.upto(number) { |_x| @districts << district }
     end
 
-    if !deposits.is_a?(Array)
-      deposits = [deposits]
-    end
+    deposits = [deposits] unless deposits.is_a?(Array)
     @deposits = deposits.map do |deposit|
-      if deposit.is_a?(Hash)
+      case deposit
+      when Hash
         ResourceGroup.new(deposit)
-      elsif deposit.is_a?(ResourceGroup)
+      when ResourceGroup
         deposit
-      else
-        nil
       end
     end
 
     @pops = []
     if fill_jobs_with
-      @jobs = max_jobs()
+      @jobs = max_jobs
 
       @jobs.each do |job_id, num|
-        job = Job::lookup(job_id)
+        job = Job.lookup(job_id)
 
-        1.upto(num) do |x|
+        1.upto(num) do |_x|
           @pops << Pop.new(species: fill_jobs_with, colony: self, job: job)
         end
       end
     else
       jobs.each do |job_id, pops|
-        job = Job::lookup(job_id)
+        job = Job.lookup(job_id)
 
         pops.each do |species, count|
           1.upto(count) do
@@ -99,27 +100,28 @@ class Colony
     @jobs
   end
 
-  def max_jobs()
-    max_jobs = @districts.reduce({}) { |sum, x| sum.merge(x.max_jobs) { |k, v1, v2| v1 + v2 } }
+  def max_jobs
+    max_jobs = @districts.reduce({}) { |sum, x| sum.merge(x.max_jobs) { |_k, v1, v2| v1 + v2 } }
     max_jobs = max_jobs.merge({
-      Job::Politician => 2 * buildings(:habitat_central_control),
-      Job::Enforcer => 1 * buildings(:habitat_central_control),
-      Job::Artisan => 2 * buildings(:civilian_industries),
-      Job::Metallurgist => 2 * buildings(:alloy_foundries),
-      Job::Colonist => 2 * buildings(:habitat_administration),
-      Job::Researcher => 2 * buildings(:research_labs),
-      Job::Bureaucrat => 2 * buildings(:administrative_offices),
-      Job::Entertainer => 2 * buildings(:holo_theatres),
-      Job::Farmer => 3 * buildings(:hydroponics_farms),
-    }) { |k, v1, v2| v1 + v2 }
+                                Job::Politician => 2 * buildings(:habitat_central_control),
+                                Job::Enforcer => 1 * buildings(:habitat_central_control),
+                                Job::Artisan => 2 * buildings(:civilian_industries),
+                                Job::Metallurgist => 2 * buildings(:alloy_foundries),
+                                Job::Colonist => 2 * buildings(:habitat_administration),
+                                Job::Researcher => 2 * buildings(:research_labs),
+                                Job::Bureaucrat => 2 * buildings(:administrative_offices),
+                                Job::Entertainer => 2 * buildings(:holo_theatres),
+                                Job::Farmer => 3 * buildings(:hydroponics_farms)
+                              }) { |_k, v1, v2| v1 + v2 }
 
-    if @designation == :factory_station
+    case @designation
+    when :factory_station
       max_jobs[Job::Artisan] += 1 * num_districts(District::HabitatIndustrialDistrict)
       max_jobs[Job::Metallurgist] -= 1 * num_districts(District::HabitatIndustrialDistrict)
-    elsif @designation == :foundry_station
+    when :foundry_station
       max_jobs[Job::Artisan] -= 1 * num_districts(District::HabitatIndustrialDistrict)
       max_jobs[Job::Metallurgist] += 1 * num_districts(District::HabitatIndustrialDistrict)
-    elsif @designation == :hydroponics_station
+    when :hydroponics_station
       max_jobs[Job::Farmer] += 1 * num_districts(District::HabitationDistrict)
     end
 
@@ -149,101 +151,98 @@ class Colony
     modifier += 10 if @designation == :leisure_station
     modifier += @pops.reduce(0) { |sum, pop| sum + pop.pop_happiness_modifiers }
 
-    if net_amenities() > 0
-      modifier += [20, (20.0 * net_amenities() / amenities_upkeep())].min
-    elsif net_amenities() < 0
-      modifier += [-50, 100 * (2.0 / 3 * net_amenities() / amenities_upkeep())].max
+    if net_amenities.positive?
+      modifier += [20, (20.0 * net_amenities / amenities_upkeep)].min
+    elsif net_amenities.negative?
+      modifier += [-50, 100 * (2.0 / 3 * net_amenities / amenities_upkeep)].max
     end
 
     modifier
   end
 
-  def approval_rating()
+  def approval_rating
     1.0 * @pops.reduce(0) do |sum, pop|
       sum + pop.happiness * pop.political_power
     end / @pops.reduce(0) { |sum, pop| sum + pop.political_power }
   end
 
-  def stability_modifier()
+  def stability_modifier
     @designation == :empire_capital ? 5 : 0
   end
 
-  def stability()
+  def stability
     stability = [
       50,
       @pops.reduce(0) { |sum, pop| sum + pop.stability_modifier },
       @sector.stability_modifier,
-      stability_modifier,
+      stability_modifier
     ].reduce(0, &:+)
 
-    if approval_rating() > 50
-      stability += (0.6 * (approval_rating() - 50)).floor()
-    elsif approval_rating() < 50
-      stability -= (50 - approval_rating()).floor()
+    if approval_rating > 50
+      stability += (0.6 * (approval_rating - 50)).floor
+    elsif approval_rating < 50
+      stability -= (50 - approval_rating).floor
     end
 
     stability
   end
 
-  def stability_coefficient()
-    if stability() > 50
-      0.006 * (stability() - 50).floor()
-    elsif stability() < 50
-      -0.01 * (50 - stability()).floor()
+  def stability_coefficient
+    if stability > 50
+      0.006 * (stability - 50).floor
+    elsif stability < 50
+      -0.01 * (50 - stability).floor
     else
       0
     end
   end
 
-  def stability_coefficient_modifier()
-    ResourceModifier::multiplyAllProducedResources(stability_coefficient()) +
-      ResourceModifier.new(trade: { multiplicative: stability_coefficient() })
+  def stability_coefficient_modifier
+    ResourceModifier.multiplyAllProducedResources(stability_coefficient) +
+      ResourceModifier.new(trade: { multiplicative: stability_coefficient })
   end
 
   def job_output_modifiers(job)
-    modifier = ResourceModifier.new()
+    modifier = ResourceModifier.new
 
     @pops.each { |pop| modifier += pop.all_job_output_modifiers(job) }
 
-    modifier += stability_coefficient_modifier()
+    modifier += stability_coefficient_modifier
     modifier += @sector.job_output_modifiers(job)
 
     @decisions.each { |d| modifier += d.job_output_modifiers(job) }
 
-    if @designation == :empire_capital
-      modifier += ResourceModifier::multiplyAllProducedResources(0.1)
-    elsif @designation == :research_station
+    case @designation
+    when :empire_capital
+      modifier += ResourceModifier.multiplyAllProducedResources(0.1)
+    when :research_station
       modifier += ResourceModifier.new({
-        physics_research: { multiplicative: 0.1 },
-        society_research: { multiplicative: 0.1 },
-        engineering_research: { multiplicative: 0.1 },
-      })
-    elsif @designation == :refinery_station
-      if job.chemist? or job.translucer? or job.refiner?
+                                         physics_research: { multiplicative: 0.1 },
+                                         society_research: { multiplicative: 0.1 },
+                                         engineering_research: { multiplicative: 0.1 }
+                                       })
+    when :refinery_station
+      if job.chemist? || job.translucer? || job.refiner?
         modifier += ResourceModifier.new({
-          exotic_gases: { multiplicative: 0.1 },
-          rare_crystals: { multiplicative: 0.1 },
-          volatile_motes: { multiplicative: 0.1 },
-        })
+                                           exotic_gases: { multiplicative: 0.1 },
+                                           rare_crystals: { multiplicative: 0.1 },
+                                           volatile_motes: { multiplicative: 0.1 }
+                                         })
       end
-    elsif @designation == :unification_station
-      if job.administrator?
-        modifier += ResourceModifier::multiplyAllProducedResources(0.1)
-      end
-    elsif @designation == :trade_station
+    when :unification_station
+      modifier += ResourceModifier.multiplyAllProducedResources(0.1) if job.administrator?
+    when :trade_station
       modifier += ResourceModifier.new({ trade: { multiplicative: 0.2 } })
-    elsif @designation == :generator_station
-      if job.technician?
-        modifier += ResourceModifier.new({ energy: { multiplicative: 0.1 } })
-      end
-    elsif @designation == :mining_station
+    when :generator_station
+      modifier += ResourceModifier.new({ energy: { multiplicative: 0.1 } }) if job.technician?
+    when :mining_station
       if job.miner?
         modifier += ResourceModifier.new({
-          minerals: { multiplicative: 0.1 },
-          exotic_gases: { multiplicative: 0.1 },
-          rare_crystals: { multiplicative: 0.1 },
-          volatile_motes: { multiplicative: 0.1 },
-        })
+                                           minerals: { multiplicative: 0.1 },
+                                           exotic_gases: { multiplicative: 0.1 },
+                                           rare_crystals: { multiplicative: 0.1 },
+                                           volatile_motes: { multiplicative: 0.1 }
+                                         })
       end
     end
 
@@ -251,38 +250,29 @@ class Colony
   end
 
   def pop_output_modifiers(pop)
-    modifier = ResourceModifier.new()
-    modifier += ResourceModifier.new({ trade: { multiplicative: stability_coefficient() } })
+    modifier = ResourceModifier.new
+    modifier += ResourceModifier.new({ trade: { multiplicative: stability_coefficient } })
     modifier += @sector.pop_output_modifiers(pop)
 
-    if @designation == :trade_station
-      modifier += ResourceModifier.new({ trade: { multiplicative: 0.2 } })
-    end
+    modifier += ResourceModifier.new({ trade: { multiplicative: 0.2 } }) if @designation == :trade_station
 
     modifier
   end
 
   def job_upkeep_modifiers(job)
-    modifier = ResourceModifier.new()
+    modifier = ResourceModifier.new
 
     @decisions.each { |d| modifier += d.job_upkeep_modifiers(job) }
 
-    if @designation == :foundry_station
-      if job.metallurgist?
-        modifier += ResourceModifier::multiplyAllProducedResources(-0.2)
-      end
-    elsif @designation == :factory_station
-      if job.artisan?
-        modifier += ResourceModifier::multiplyAllProducedResources(-0.2)
-      end
-    elsif @designation == :industrial_station
-      if job.artisan? or job.metallurgist?
-        modifier += ResourceModifier::multiplyAllProducedResources(-0.1)
-      end
-    elsif @designation == :unification_station
-      if job.administrator?
-        modifier += ResourceModifier::multiplyAllProducedResources(-0.1)
-      end
+    case @designation
+    when :foundry_station
+      modifier += ResourceModifier.multiplyAllProducedResources(-0.2) if job.metallurgist?
+    when :factory_station
+      modifier += ResourceModifier.multiplyAllProducedResources(-0.2) if job.artisan?
+    when :industrial_station
+      modifier += ResourceModifier.multiplyAllProducedResources(-0.1) if job.artisan? || job.metallurgist?
+    when :unification_station
+      modifier += ResourceModifier.multiplyAllProducedResources(-0.1) if job.administrator?
     end
 
     modifier += @sector.job_upkeep_modifiers(job)
@@ -290,7 +280,7 @@ class Colony
     modifier
   end
 
-  def pop_upkeep_modifiers(pop)
+  def pop_upkeep_modifiers(_pop)
     ResourceModifier::NONE
   end
 
@@ -344,50 +334,46 @@ class Colony
     modifier
   end
 
-  def building_output(num, building)
-    ResourceGroup.new()
+  def building_output(_num, _building)
+    ResourceGroup.new
   end
 
   def building_upkeep(num, building)
-    upkeep = ResourceGroup.new()
+    upkeep = ResourceGroup.new
 
-    if building == :habitat_central_control or building == :habitat_administration
+    if %i[habitat_central_control habitat_administration].include?(building)
       upkeep[:energy] = 3 * num
       upkeep[:alloys] = 5 * num
-    elsif building == :research_labs or building == :administrative_offices or
-          building == :holo_theatres or building == :hydroponics_farms or
-          building == :luxury_residences or building == :communal_housing or
-          building == :energy_grid or building == :mineral_purification_plants or
-          building == :food_processing_facilities or building == :alloy_foundries or
-          building == :civilian_industries
+    elsif %i[research_labs administrative_offices holo_theatres hydroponics_farms luxury_residences
+             communal_housing energy_grid mineral_purification_plants food_processing_facilities alloy_foundries civilian_industries].include?(building)
       upkeep[:energy] = 2 * num
     end
 
     upkeep
   end
 
-  def output()
-    pop_output = @pops.reduce(ResourceGroup.new()) do |sum, pop|
+  def output
+    pop_output = @pops.reduce(ResourceGroup.new) do |sum, pop|
       sum + pop.output
     end
 
-    building_output = @buildings.reduce(ResourceGroup.new()) do |sum, (building, num)|
+    building_output = @buildings.reduce(ResourceGroup.new) do |sum, (building, num)|
       sum + building_output(num, building)
     end
 
-    deposits_output = @deposits.reduce(ResourceGroup.new()) do |sum, deposit|
+    deposits_output = @deposits.reduce(ResourceGroup.new) do |sum, deposit|
       sum + deposit
     end
 
     pop_output + building_output + deposits_output
   end
 
-  def upkeep()
-    pop_upkeep = @pops.reduce(ResourceGroup.new()) do |sum, pop|
+  def upkeep
+    pop_upkeep = @pops.reduce(ResourceGroup.new) do |sum, pop|
       sum + pop.upkeep
     end
 
-    building_upkeep = @buildings.reduce(ResourceGroup.new()) do |sum, (building, num)|
+    building_upkeep = @buildings.reduce(ResourceGroup.new) do |sum, (building, num)|
       sum + building_upkeep(num, building)
     end
 

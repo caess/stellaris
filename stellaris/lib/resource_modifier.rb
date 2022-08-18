@@ -1,4 +1,6 @@
-require_relative "./resource_group"
+# frozen_string_literal: true
+
+require_relative './resource_group'
 
 class ResourceModifier
   attr_reader :values
@@ -7,39 +9,39 @@ class ResourceModifier
     @values = {}
 
     source = {}
-    if values.is_a?(ResourceModifier)
-      source = values.values.dup
-    else
-      source = values.dup
-    end
+    source = if values.is_a?(ResourceModifier)
+               values.values.dup
+             else
+               values.dup
+             end
 
     source.each do |key, value|
       @values[key] = value.dup
     end
   end
 
-  def +(rhs)
+  def +(other)
     result = @values.dup
 
-    rhs.values.each_key do |resource|
+    other.values.each_key do |resource|
       if result.key?(resource)
-        rhs.values[resource].each do |modifier_type, value|
+        other.values[resource].each do |modifier_type, value|
           result[resource][modifier_type] ||= 0
           result[resource][modifier_type] += value
         end
       else
-        result[resource] = rhs.values[resource]
+        result[resource] = other.values[resource]
       end
     end
 
-    return ResourceModifier.new(result)
+    ResourceModifier.new(result)
   end
 
-  def ==(obj)
-    @values == obj.values
+  def ==(other)
+    @values == other.values
   end
 
-  NONE = ResourceModifier.new()
+  NONE = ResourceModifier.new
 
   def self.multiplyAllProducedResources(value)
     resources = {}
@@ -47,10 +49,14 @@ class ResourceModifier
       resources[resource] = { multiplicative: value }
     end
 
-    return ResourceModifier.new(resources)
+    ResourceModifier.new(resources)
   end
 
   def dup
     ResourceModifier.new(self)
+  end
+
+  def each(&block)
+    @values.each(&block)
   end
 end

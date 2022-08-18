@@ -1,4 +1,6 @@
-require_relative "./resource_modifier"
+# frozen_string_literal: true
+
+require_relative './resource_modifier'
 
 class Leader
   attr_reader :level, :traits
@@ -19,47 +21,35 @@ class Leader
   end
 
   def job_output_modifiers(job)
-    modifier = ResourceModifier.new()
+    modifier = ResourceModifier.new
 
     if governor?
-      modifier += ResourceModifier::multiplyAllProducedResources(
+      modifier += ResourceModifier.multiplyAllProducedResources(
         0.02 * @level
       )
 
-      if @traits.include?(:unifier)
-        if job.administrator?
-          modifier += ResourceModifier.new({ unity: { multiplicative: 0.1 } })
-        end
+      if @traits.include?(:unifier) && job.administrator?
+        modifier += ResourceModifier.new({ unity: { multiplicative: 0.1 } })
       end
     elsif ruler?
-      if @traits.include?(:industrialist)
-        modifier += ResourceModifier.new(minerals: { multiplicative: 0.1 })
-      end
+      modifier += ResourceModifier.new(minerals: { multiplicative: 0.1 }) if @traits.include?(:industrialist)
     end
 
     modifier
   end
 
-  def empire_base_modifiers()
-    modifier = ResourceModifier.new()
+  def empire_base_modifiers
+    modifier = ResourceModifier.new
 
-    if ruler?
-      if @traits.include?(:industrialist)
-        modifier += ResourceModifier.new(minerals: { multiplicative: 0.1 })
-      end
-    end
+    modifier += ResourceModifier.new(minerals: { multiplicative: 0.1 }) if ruler? && @traits.include?(:industrialist)
 
     modifier
   end
 
-  def mining_station_modifiers()
-    modifier = ResourceModifier.new()
+  def mining_station_modifiers
+    modifier = ResourceModifier.new
 
-    if ruler?
-      if @traits.include?(:industrialist)
-        modifier += ResourceModifier.new(minerals: { multiplicative: 0.1 })
-      end
-    end
+    modifier += ResourceModifier.new(minerals: { multiplicative: 0.1 }) if ruler? && @traits.include?(:industrialist)
 
     modifier
   end

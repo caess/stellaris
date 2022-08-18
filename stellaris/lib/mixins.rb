@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module UsesAmenities
   def amenities_output
     0
@@ -22,6 +24,6 @@ module OutputsResources
   end
 
   def net_output
-    output() - upkeep()
+    output - upkeep
   end
 end

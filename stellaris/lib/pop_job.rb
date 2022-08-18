@@ -1,21 +1,24 @@
-require "forwardable"
+# frozen_string_literal: true
 
-require_relative "./job"
-require_relative "./mixins"
-require_relative "./resource_group"
+require 'forwardable'
+
+require_relative './job'
+require_relative './mixins'
+require_relative './resource_group'
 
 class PopJob
-  include UsesAmenities, OutputsResources
+  include OutputsResources
+  include UsesAmenities
   extend Forwardable
 
   def_delegators :@job, :all_job_output_modifiers, :pop_happiness_modifiers,
-    :ruler?, :specialist?, :worker?, :slave?,
-    :farmer?, :miner?, :strategic_resource_miner?, :livestock?,
-    :technician?, :politician?, :executive?, :noble?, :administrator?,
-    :manager?, :priest?, :telepath?, :researcher?, :metallurgist?,
-    :culture_worker?, :evaluator?, :refiner?, :translucer?, :chemist?,
-    :artisan?, :bio_trophy?, :pop_assembler?, :necro_apprentice?,
-    :merchant?, :entertainer?, :soldier?, :enforcer?, :doctor?
+                 :ruler?, :specialist?, :worker?, :slave?,
+                 :farmer?, :miner?, :strategic_resource_miner?, :livestock?,
+                 :technician?, :politician?, :executive?, :noble?, :administrator?,
+                 :manager?, :priest?, :telepath?, :researcher?, :metallurgist?,
+                 :culture_worker?, :evaluator?, :refiner?, :translucer?, :chemist?,
+                 :artisan?, :bio_trophy?, :pop_assembler?, :necro_apprentice?,
+                 :merchant?, :entertainer?, :soldier?, :enforcer?, :doctor?
 
   attr_reader :job, :worker
 
@@ -41,7 +44,7 @@ class PopJob
   end
 
   def colony_attribute_modifiers
-    modifiers = ResourceModifier.new()
+    modifiers = ResourceModifier.new
     modifiers += @job.colony_attribute_modifiers
     modifiers += @worker.job_colony_attribute_modifiers(self)
 
@@ -49,7 +52,7 @@ class PopJob
   end
 
   def empire_attribute_modifiers
-    modifiers = ResourceModifier.new()
+    modifiers = ResourceModifier.new
     modifiers += @job.empire_attribute_modifiers
     modifiers += @worker.job_empire_attribute_modifiers(self)
 
@@ -71,7 +74,7 @@ class PopJob
   end
 
   def worker_housing_modifier
-    modifiers = ResourceModifier.new()
+    modifiers = ResourceModifier.new
     modifiers += @job.worker_housing_modifier
     modifiers += @worker.job_worker_housing_modifier(self)
 

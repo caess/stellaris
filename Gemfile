@@ -1,4 +1,5 @@
 source "http://rubygems.org"
 
 gem "rspec"
-gem "rufo"
+gem "rubocop", require: false
+gem "rubocop-rspec", require: false

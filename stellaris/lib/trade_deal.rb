@@ -1,5 +1,7 @@
-require_relative "./mixins"
-require_relative "./resource_group"
+# frozen_string_literal: true
+
+require_relative './mixins'
+require_relative './resource_group'
 
 class TradeDeal
   include OutputsResources

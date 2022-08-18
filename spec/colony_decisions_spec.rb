@@ -1,116 +1,118 @@
-require_relative "../stellaris/lib/stellaris"
+# frozen_string_literal: true
 
-RSpec.describe "colony decisions" do
-  describe "Anti-Crime Campaign" do
+require_relative '../stellaris/lib/stellaris'
+
+RSpec.describe 'colony decisions' do
+  describe 'Anti-Crime Campaign' do
     subject { ColonyDecision::AntiCrimeCampaign }
 
-    it "has the correct name" do
-      expect(subject.name).to eq("Anti-Crime Campaign")
+    it 'has the correct name' do
+      expect(subject.name).to eq('Anti-Crime Campaign')
     end
 
-    it "modifies the upkeep for enforcers" do
+    it 'modifies the upkeep for enforcers' do
       pop_job = PopJob.new(
         worker: nil,
-        job: Job::Enforcer,
+        job: Job::Enforcer
       )
 
       expect(subject.job_upkeep_modifiers(pop_job)).to eq(ResourceModifier.new({
-        energy: { additive: 2 },
-      }))
+                                                                                 energy: { additive: 2 }
+                                                                               }))
     end
 
-    it "modifies the colony attribute modifiers for enforcers" do
+    it 'modifies the colony attribute modifiers for enforcers' do
       pop_job = PopJob.new(
         worker: nil,
-        job: Job::Enforcer,
+        job: Job::Enforcer
       )
 
       expect(subject.job_colony_attribute_modifiers(pop_job)).to eq(ResourceModifier.new({
-        crime: { additive: -10 },
-      }))
+                                                                                           crime: { additive: -10 }
+                                                                                         }))
     end
 
-    it "modifies the upkeep for telepaths" do
+    it 'modifies the upkeep for telepaths' do
       pop_job = PopJob.new(
         worker: nil,
-        job: Job::Telepath,
+        job: Job::Telepath
       )
 
       expect(subject.job_upkeep_modifiers(pop_job)).to eq(ResourceModifier.new({
-        energy: { additive: 2 },
-      }))
+                                                                                 energy: { additive: 2 }
+                                                                               }))
     end
 
-    it "modifies the colony attribute modifiers for telepaths" do
+    it 'modifies the colony attribute modifiers for telepaths' do
       pop_job = PopJob.new(
         worker: nil,
-        job: Job::Telepath,
+        job: Job::Telepath
       )
 
       expect(subject.job_colony_attribute_modifiers(pop_job)).to eq(ResourceModifier.new({
-        crime: { additive: -10 },
-      }))
+                                                                                           crime: { additive: -10 }
+                                                                                         }))
     end
 
-    it "modifies the upkeep for Overseers" do
+    it 'modifies the upkeep for Overseers' do
       pop_job = PopJob.new(
         worker: nil,
-        job: Job::Overseer,
+        job: Job::Overseer
       )
 
       expect(subject.job_upkeep_modifiers(pop_job)).to eq(ResourceModifier.new({
-        energy: { additive: 2 },
-      }))
+                                                                                 energy: { additive: 2 }
+                                                                               }))
     end
   end
 
-  describe "Compliance Protocols" do
+  describe 'Compliance Protocols' do
     subject { ColonyDecision::ComplianceProtocols }
 
-    it "has the correct name" do
-      expect(subject.name).to eq("Compliance Protocols")
+    it 'has the correct name' do
+      expect(subject.name).to eq('Compliance Protocols')
     end
 
-    it "modifies the stability for Warrior Drones" do
+    it 'modifies the stability for Warrior Drones' do
       pop_job = PopJob.new(worker: nil, job: Job::WarriorDrone)
 
       expect(subject.job_stability_modifier(pop_job)).to eq(5)
     end
   end
 
-  describe "Hunter-Killer Drones" do
+  describe 'Hunter-Killer Drones' do
     subject { ColonyDecision::HunterKillerDrones }
 
-    it "has the correct name" do
-      expect(subject.name).to eq("Hunter-Killer Drones")
+    it 'has the correct name' do
+      expect(subject.name).to eq('Hunter-Killer Drones')
     end
 
-    it "modifies the stability for Warrior Drones" do
+    it 'modifies the stability for Warrior Drones' do
       pop_job = PopJob.new(worker: nil, job: Job::WarriorDrone)
 
       expect(subject.job_stability_modifier(pop_job)).to eq(5)
     end
   end
 
-  describe "Martial Law" do
+  describe 'Martial Law' do
     subject { ColonyDecision::MartialLaw }
 
-    it "has the correct name" do
-      expect(subject.name).to eq("Martial Law")
+    it 'has the correct name' do
+      expect(subject.name).to eq('Martial Law')
     end
 
-    it "modifies the colony attribute modifiers for necromancers" do
+    it 'modifies the colony attribute modifiers for necromancers' do
       pop_job = PopJob.new(
         worker: nil,
-        job: Job::Necromancer,
+        job: Job::Necromancer
       )
 
       expect(subject.job_colony_attribute_modifiers(pop_job)).to eq(ResourceModifier.new({
-        defense_armies: { additive: 2 },
-      }))
+                                                                                           defense_armies: { additive: 2 }
+                                                                                         }))
     end
 
-    it "modifies the stability for Soldiers" do
+    it 'modifies the stability for Soldiers' do
       pop_job = PopJob.new(worker: nil, job: Job::Soldier)
 
       expect(subject.job_stability_modifier(pop_job)).to eq(5)
@@ -118,162 +120,162 @@ RSpec.describe "colony decisions" do
   end
 end
 
-RSpec.describe "end-to-end tests" do
+RSpec.describe 'end-to-end tests' do
   let(:species) do
     Species.new(
-      living_standard: nil,
+      living_standard: nil
     )
   end
   let(:ruler) { Leader.new(level: 0) }
   let(:empire) do
     Empire.new(
       founder_species: species,
-      ruler: ruler,
+      ruler: ruler
     )
   end
   let(:sector) { Sector.new(empire: empire) }
 
-  describe "Anti-Crime Campaign" do
+  describe 'Anti-Crime Campaign' do
     let(:colony) do
       Colony.new(
         type: nil,
         size: nil,
         sector: sector,
-        decisions: [ColonyDecision::AntiCrimeCampaign],
+        decisions: [ColonyDecision::AntiCrimeCampaign]
       )
     end
 
-    it "modifies the colony attribute modifiers of enforcers" do
+    it 'modifies the colony attribute modifiers of enforcers' do
       pop = Pop.new(
         species: species,
         colony: colony,
-        job: Job::Enforcer,
+        job: Job::Enforcer
       )
 
       expect(pop.job.colony_attribute_modifiers).to eq(ResourceModifier.new({
-        crime: { additive: -35 },
-        defense_armies: { additive: 2 },
-      }))
+                                                                              crime: { additive: -35 },
+                                                                              defense_armies: { additive: 2 }
+                                                                            }))
     end
 
-    it "modifies the upkeep of enforcers" do
+    it 'modifies the upkeep of enforcers' do
       pop = Pop.new(
         species: species,
         colony: colony,
-        job: Job::Enforcer,
+        job: Job::Enforcer
       )
 
       expect(pop.job.upkeep).to eq(ResourceGroup.new({
-        energy: 2,
-      }))
+                                                       energy: 2
+                                                     }))
     end
 
-    it "modifies the colony attribute modifiers of telepaths" do
+    it 'modifies the colony attribute modifiers of telepaths' do
       pop = Pop.new(
         species: species,
         colony: colony,
-        job: Job::Telepath,
+        job: Job::Telepath
       )
 
       expect(pop.job.colony_attribute_modifiers).to eq(ResourceModifier.new({
-        crime: { additive: -45 },
-      }))
+                                                                              crime: { additive: -45 }
+                                                                            }))
     end
 
-    it "modifies the upkeep of telepaths" do
+    it 'modifies the upkeep of telepaths' do
       pop = Pop.new(
         species: species,
         colony: colony,
-        job: Job::Telepath,
+        job: Job::Telepath
       )
 
       expect(pop.job.upkeep).to eq(ResourceGroup.new({
-        energy: 3,
-      }))
+                                                       energy: 3
+                                                     }))
     end
 
-    it "modifies the upkeep of Overseers" do
+    it 'modifies the upkeep of Overseers' do
       pop = Pop.new(
         species: species,
         colony: colony,
-        job: Job::Overseer,
+        job: Job::Overseer
       )
 
       expect(pop.job.upkeep).to eq(ResourceGroup.new({
-        energy: 2,
-      }))
+                                                       energy: 2
+                                                     }))
     end
   end
 
-  describe "Compliance Protocols" do
+  describe 'Compliance Protocols' do
     let(:colony) do
       Colony.new(
         type: nil,
         size: nil,
         sector: sector,
-        decisions: [ColonyDecision::ComplianceProtocols],
+        decisions: [ColonyDecision::ComplianceProtocols]
       )
     end
 
-    it "modifies the stability modifier of Warrior Drones" do
+    it 'modifies the stability modifier of Warrior Drones' do
       pop = Pop.new(
         species: species,
         colony: colony,
-        job: Job::WarriorDrone,
+        job: Job::WarriorDrone
       )
 
       expect(pop.job.stability_modifier).to eq(5)
     end
   end
 
-  describe "Hunter-Killer Drones" do
+  describe 'Hunter-Killer Drones' do
     let(:colony) do
       Colony.new(
         type: nil,
         size: nil,
         sector: sector,
-        decisions: [ColonyDecision::HunterKillerDrones],
+        decisions: [ColonyDecision::HunterKillerDrones]
       )
     end
 
-    it "modifies the stability modifier of Warrior Drones" do
+    it 'modifies the stability modifier of Warrior Drones' do
       pop = Pop.new(
         species: species,
         colony: colony,
-        job: Job::WarriorDrone,
+        job: Job::WarriorDrone
       )
 
       expect(pop.job.stability_modifier).to eq(5)
     end
   end
 
-  describe "Martial Law" do
+  describe 'Martial Law' do
     let(:colony) do
       Colony.new(
         type: nil,
         size: nil,
         sector: sector,
-        decisions: [ColonyDecision::MartialLaw],
+        decisions: [ColonyDecision::MartialLaw]
       )
     end
 
-    it "modifies the colony attribute modifiers of Necromancers" do
+    it 'modifies the colony attribute modifiers of Necromancers' do
       pop = Pop.new(
         species: species,
         colony: colony,
-        job: Job::Necromancer,
+        job: Job::Necromancer
       )
 
       expect(pop.job.colony_attribute_modifiers).to eq(ResourceModifier.new({
-        defense_armies: { additive: 5 },
-      }))
+                                                                              defense_armies: { additive: 5 }
+                                                                            }))
     end
 
-    it "modifies the stability modifier of Soldiers" do
+    it 'modifies the stability modifier of Soldiers' do
       pop = Pop.new(
         species: species,
         colony: colony,
-        job: Job::Soldier,
+        job: Job::Soldier
       )
 
       expect(pop.job.stability_modifier).to eq(5)

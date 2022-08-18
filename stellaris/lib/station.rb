@@ -1,6 +1,8 @@
-require_relative "./mixins"
-require_relative "./resource_group"
-require_relative "./resource_modifier"
+# frozen_string_literal: true
+
+require_relative './mixins'
+require_relative './resource_group'
+require_relative './resource_modifier'
 
 class Station
   attr_accessor :empire
@@ -31,9 +33,7 @@ class MiningStation < Station
     upkeep = super()
 
     # Energy mining stations have no upkeep
-    if (@output[:energy] || 0) > 0
-      upkeep << ResourceModifier.new({ energy: { additive: -1 } })
-    end
+    upkeep << ResourceModifier.new({ energy: { additive: -1 } }) if (@output[:energy] || 0).positive?
 
     upkeep
   end

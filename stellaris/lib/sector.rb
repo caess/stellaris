@@ -1,7 +1,9 @@
-require_relative "./leader"
-require_relative "./mixins"
-require_relative "./resource_group"
-require_relative "./resource_modifier"
+# frozen_string_literal: true
+
+require_relative './leader'
+require_relative './mixins'
+require_relative './resource_group'
+require_relative './resource_modifier'
 
 class Sector
   include OutputsResources
@@ -27,7 +29,7 @@ class Sector
   end
 
   def job_output_modifiers(job)
-    modifier = ResourceModifier.new()
+    modifier = ResourceModifier.new
     modifier += @governor.job_output_modifiers(job)
     modifier += @empire.job_output_modifiers(job)
 
@@ -35,28 +37,28 @@ class Sector
   end
 
   def job_upkeep_modifiers(job)
-    modifier = ResourceModifier.new()
+    modifier = ResourceModifier.new
     modifier += @empire.job_upkeep_modifiers(job)
 
     modifier
   end
 
   def pop_output_modifiers(pop)
-    modifier = ResourceModifier.new()
+    modifier = ResourceModifier.new
     modifier += @empire.pop_output_modifiers(pop)
 
     modifier
   end
 
   def job_colony_attribute_modifiers(job)
-    modifier = ResourceModifier.new()
+    modifier = ResourceModifier.new
     modifier += @empire.job_colony_attribute_modifiers(job)
 
     modifier
   end
 
   def job_empire_attribute_modifiers(job)
-    modifier = ResourceModifier.new()
+    modifier = ResourceModifier.new
     modifier += @empire.job_empire_attribute_modifiers(job)
 
     modifier
@@ -77,7 +79,7 @@ class Sector
   end
 
   def job_worker_housing_modifier(job)
-    modifier = ResourceModifier.new()
+    modifier = ResourceModifier.new
     modifier += @empire.job_worker_housing_modifier(job)
 
     modifier
@@ -88,13 +90,13 @@ class Sector
   end
 
   def output
-    @colonies.reduce(ResourceGroup.new()) do |sum, colony|
+    @colonies.reduce(ResourceGroup.new) do |sum, colony|
       sum + colony.output
     end
   end
 
   def upkeep
-    @colonies.reduce(ResourceGroup.new()) do |sum, colony|
+    @colonies.reduce(ResourceGroup.new) do |sum, colony|
       sum + colony.upkeep
     end
   end

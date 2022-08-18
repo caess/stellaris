@@ -1,12 +1,15 @@
-require "forwardable"
+# frozen_string_literal: true
 
-require_relative "./mixins"
-require_relative "./pop_job"
-require_relative "./resource_group"
-require_relative "./resource_modifier"
+require 'forwardable'
+
+require_relative './mixins'
+require_relative './pop_job'
+require_relative './resource_group'
+require_relative './resource_modifier'
 
 class Pop
-  include UsesAmenities, OutputsResources
+  include OutputsResources
+  include UsesAmenities
   extend Forwardable
 
   def_delegators :@job, :all_job_output_modifiers, :pop_happiness_modifiers
@@ -106,11 +109,12 @@ class Pop
   end
 
   def pop_output
-    output = ResourceGroup.new()
+    output = ResourceGroup.new
 
-    if @species.living_standard == :shared_burden
+    case @species.living_standard
+    when :shared_burden
       output[:trade] = 0.25
-    elsif @species.living_standard == :utopian_abundance
+    when :utopian_abundance
       output[:trade] = 0.5
     end
 
@@ -120,11 +124,12 @@ class Pop
   end
 
   def pop_upkeep
-    upkeep = ResourceGroup.new()
+    upkeep = ResourceGroup.new
 
-    if @species.living_standard == :shared_burden
+    case @species.living_standard
+    when :shared_burden
       upkeep[:consumer_goods] = 0.4
-    elsif @species.living_standard == :utopian_abundance
+    when :utopian_abundance
       upkeep[:consumer_goods] = 1
     end
     upkeep[:food] = 1
