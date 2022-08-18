@@ -625,10 +625,12 @@ RSpec.describe 'specialist jobs' do
     end
 
     it 'has the correct colony attribute modifiers' do
-      expect(subject.colony_attribute_modifiers).to eq(ResourceModifier.new({
-                                                                              pop_growth_speed_percent: { additive: 5 },
-                                                                              organic_pop_assembly_speed_percent: { additive: 5 }
-                                                                            }))
+      expect(subject.colony_attribute_modifiers).to eq(
+        ResourceModifier.new({
+                               pop_growth_speed_percent: { additive: 5 },
+                               organic_pop_assembly_speed_percent: { additive: 5 }
+                             })
+      )
     end
 
     it 'has the correct habitability modifier' do
@@ -1636,9 +1638,11 @@ RSpec.describe 'complex drone jobs' do
     end
 
     it 'has the correct colony attribute modifiers' do
-      expect(subject.colony_attribute_modifiers).to eq(ResourceModifier.new({
-                                                                              monthly_mechanical_pop_assembly: { additive: 1 }
-                                                                            }))
+      expect(subject.colony_attribute_modifiers).to eq(
+        ResourceModifier.new({
+                               monthly_mechanical_pop_assembly: { additive: 1 }
+                             })
+      )
     end
 
     it 'has the correct upkeep' do

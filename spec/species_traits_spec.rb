@@ -16,10 +16,12 @@ RSpec.describe 'species traits' do
         worker: nil
       )
 
-      expect(subject.job_output_modifiers(pop_job)).to eq(ResourceModifier.new({
-                                                                                 food: { additive: -1 },
-                                                                                 minerals: { additive: 1 }
-                                                                               }))
+      expect(subject.job_output_modifiers(pop_job)).to eq(
+        ResourceModifier.new({
+                               food: { additive: -1 },
+                               minerals: { additive: 1 }
+                             })
+      )
     end
 
     it 'modifies the upkeep of Reassigner jobs' do
@@ -28,10 +30,12 @@ RSpec.describe 'species traits' do
         worker: nil
       )
 
-      expect(subject.job_upkeep_modifiers(pop_job)).to eq(ResourceModifier.new({
-                                                                                 food: { additive: -2 },
-                                                                                 minerals: { additive: 2 }
-                                                                               }))
+      expect(subject.job_upkeep_modifiers(pop_job)).to eq(
+        ResourceModifier.new({
+                               food: { additive: -2 },
+                               minerals: { additive: 2 }
+                             })
+      )
     end
 
     it 'modifies the upkeep of Necrophyte jobs' do
@@ -40,19 +44,23 @@ RSpec.describe 'species traits' do
         worker: nil
       )
 
-      expect(subject.job_upkeep_modifiers(pop_job)).to eq(ResourceModifier.new({
-                                                                                 food: { additive: -1 },
-                                                                                 minerals: { additive: 1 }
-                                                                               }))
+      expect(subject.job_upkeep_modifiers(pop_job)).to eq(
+        ResourceModifier.new({
+                               food: { additive: -1 },
+                               minerals: { additive: 1 }
+                             })
+      )
     end
 
     it 'modifies the output of Livestock jobs' do
       pop_job = PopJob.new(worker: nil, job: Job::Livestock)
 
-      expect(subject.job_output_modifiers(pop_job)).to eq(ResourceModifier.new({
-                                                                                 food: { additive: -4 },
-                                                                                 minerals: { additive: 2 }
-                                                                               }))
+      expect(subject.job_output_modifiers(pop_job)).to eq(
+        ResourceModifier.new({
+                               food: { additive: -4 },
+                               minerals: { additive: 2 }
+                             })
+      )
     end
   end
 
