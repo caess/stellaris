@@ -66,4 +66,14 @@ module Civic
       Job::Entertainer => { pop_growth_speed_percent: { additive: 1 } },
     },
   )
+
+  # Machine Intelligence civics
+  Rockbreakers = Modifier.new(
+    name: "Rockbreakers",
+    job_output_modifiers: {
+      (->(job) { job.miner? and !job.strategic_resource_miner? }) => {
+        minerals: { additive: 1 },
+      },
+    },
+  )
 end

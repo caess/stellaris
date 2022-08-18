@@ -173,6 +173,42 @@ RSpec.describe "civics" do
       end
     end
   end
+
+  context "machine intelligence civics" do
+    describe "Rockbreakers" do
+      subject { Civic::Rockbreakers }
+
+      it "has the correct name" do
+        expect(subject.name).to eq("Rockbreakers")
+      end
+
+      it "add minerals to miner output" do
+        job = instance_double("Job")
+
+        expect(job).to receive(:miner?).and_return(true)
+        expect(job).to receive(:strategic_resource_miner?).and_return(false)
+
+        pop_job = PopJob.new(worker: nil, job: job)
+
+        expect(subject.job_output_modifiers(pop_job)).to eq(
+          ResourceModifier.new({ minerals: { additive: 1 } })
+        )
+      end
+
+      it "does not add minerals to strategic resource miner output" do
+        job = instance_double("Job")
+
+        expect(job).to receive(:miner?).and_return(true)
+        expect(job).to receive(:strategic_resource_miner?).and_return(true)
+
+        pop_job = PopJob.new(worker: nil, job: job)
+
+        expect(subject.job_output_modifiers(pop_job)).to eq(
+          ResourceModifier::NONE
+        )
+      end
+    end
+  end
 end
 
 RSpec.describe "end-to-end tests" do
@@ -445,6 +481,32 @@ RSpec.describe "end-to-end tests" do
 
         expect(pop.job.colony_attribute_modifiers).to eq(ResourceModifier.new({
           pop_growth_speed_percent: { additive: 1 },
+        }))
+      end
+    end
+  end
+
+  context "machine intelligence civics" do
+    describe "Rockbreakers" do
+      let(:empire) do
+        Empire.new(
+          founder_species: species,
+          ruler: ruler,
+          civics: [Civic::Rockbreakers],
+        )
+      end
+      let(:sector) { Sector.new(empire: empire) }
+      let(:colony) { Colony.new(type: nil, size: nil, sector: sector) }
+
+      it "modifies the output of Mining Drones" do
+        pop = Pop.new(
+          species: species,
+          colony: colony,
+          job: Job::MiningDrone,
+        )
+
+        expect(pop.job.output).to eq(ResourceGroup.new({
+          minerals: 5,
         }))
       end
     end
