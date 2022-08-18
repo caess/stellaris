@@ -68,6 +68,13 @@ module Civic
   )
 
   # Machine Intelligence civics
+  MaintenanceProtocols = Modifier.new(
+    name: "Maintenance Protocols",
+    job_output_modifiers: {
+      Job::MaintenanceDrone => { unity: { additive: 1 } },
+    },
+  )
+
   Rockbreakers = Modifier.new(
     name: "Rockbreakers",
     job_output_modifiers: {

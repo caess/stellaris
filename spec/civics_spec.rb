@@ -175,6 +175,22 @@ RSpec.describe "civics" do
   end
 
   context "machine intelligence civics" do
+    describe "Maintenance Protocols" do
+      subject { Civic::MaintenanceProtocols }
+
+      it "has the correct name" do
+        expect(subject.name).to eq("Maintenance Protocols")
+      end
+
+      it "adds unity to Maintenance Drone output" do
+        pop_job = PopJob.new(worker: nil, job: Job::MaintenanceDrone)
+
+        expect(subject.job_output_modifiers(pop_job)).to eq(
+          ResourceModifier.new({ unity: { additive: 1 } })
+        )
+      end
+    end
+
     describe "Rockbreakers" do
       subject { Civic::Rockbreakers }
 
@@ -487,6 +503,28 @@ RSpec.describe "end-to-end tests" do
   end
 
   context "machine intelligence civics" do
+    describe "Maintenance Protocols" do
+      let(:empire) do
+        Empire.new(
+          founder_species: species,
+          ruler: ruler,
+          civics: [Civic::MaintenanceProtocols],
+        )
+      end
+      let(:sector) { Sector.new(empire: empire) }
+      let(:colony) { Colony.new(type: nil, size: nil, sector: sector) }
+
+      it "modifies the output of Maintenance Drones" do
+        pop = Pop.new(
+          species: species,
+          colony: colony,
+          job: Job::MaintenanceDrone,
+        )
+
+        expect(pop.job.output).to eq(ResourceGroup.new({ unity: 1 }))
+      end
+    end
+
     describe "Rockbreakers" do
       let(:empire) do
         Empire.new(

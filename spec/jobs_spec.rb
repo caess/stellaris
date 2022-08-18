@@ -1576,4 +1576,20 @@ RSpec.describe "slave jobs" do
       expect(subject.miner?).to be_truthy
     end
   end
+
+  describe "Job::MaintenanceDrone" do
+    subject { Job::MaintenanceDrone }
+
+    it "has the correct name" do
+      expect(subject.name).to eq("Maintenance Drone")
+    end
+
+    it "has the correct amenities output" do
+      expect(subject.amenities_output).to eq(4)
+    end
+
+    it "is a menial drone" do
+      expect(subject.menial_drone?).to be_truthy
+    end
+  end
 end

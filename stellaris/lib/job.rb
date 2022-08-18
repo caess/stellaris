@@ -696,6 +696,12 @@ class Job
     },
   )
 
+  MaintenanceDrone = Job.new(
+    name: "Maintenance Drone",
+    strata: :menial_drone,
+    amenities_output: 4,
+  )
+
   def self.lookup(name)
     if name.is_a?(Job)
       return name
