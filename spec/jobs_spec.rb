@@ -751,9 +751,11 @@ RSpec.describe 'specialist jobs' do
     end
 
     it 'has the correct colony attribute modifiers' do
-      expect(subject.colony_attribute_modifiers).to eq(ResourceModifier.new({
-                                                                              crime: { additive: -35 }
-                                                                            }))
+      expect(subject.colony_attribute_modifiers).to eq(
+        ResourceModifier.new({
+                               crime: { additive: -35 }
+                             })
+      )
     end
 
     it 'has the correct job output modifier' do
