@@ -38,7 +38,6 @@ GEM
     rubocop-rspec (2.12.1)
       rubocop (~> 1.31)
     ruby-progressbar (1.11.0)
-    rufo (0.13.0)
     unicode-display_width (2.2.0)
 
 PLATFORMS
@@ -48,7 +47,6 @@ DEPENDENCIES
   rspec
   rubocop
   rubocop-rspec
-  rufo
 
 BUNDLED WITH
    2.3.7
