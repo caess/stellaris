@@ -716,6 +716,7 @@ class Job
     }
   )
 
+  # Complex Drone jobs
   Replicator = Job.new(
     name: 'Replicator',
     strata: :complex_drone,
@@ -724,6 +725,16 @@ class Job
       monthly_mechanical_pop_assembly: { additive: 1 }
     },
     upkeep: { alloys: 1 }
+  )
+
+  SpawningDrone = Job.new(
+    name: 'Spawning Drone',
+    strata: :complex_drone,
+    amenities_output: 5,
+    colony_attribute_modifiers: {
+      organic_pop_assembly_speed_percent: { additive: 2 }
+    },
+    upkeep: { food: 5 }
   )
 
   def self.lookup(name)

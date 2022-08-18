@@ -23,6 +23,10 @@ module SpeciesTrait
       Job::Reassigner => {
         food: { additive: -2 },
         minerals: { additive: 2 }
+      },
+      Job::SpawningDrone => {
+        food: { additive: -5 },
+        minerals: { additive: 5 }
       }
     }
   )

@@ -1657,4 +1657,28 @@ RSpec.describe 'complex drone jobs' do
       expect(subject).to be_pop_assembler
     end
   end
+
+  describe 'Job::SpawningDrone' do
+    subject { Job::SpawningDrone }
+
+    it 'has the correct name' do
+      expect(subject.name).to eq('Spawning Drone')
+    end
+
+    it 'has the correct amenities output' do
+      expect(subject.amenities_output).to eq(5)
+    end
+
+    it 'has the correct colony attribute modifiers' do
+      expect(subject.colony_attribute_modifiers).to eq(
+        ResourceModifier.new({
+                               organic_pop_assembly_speed_percent: { additive: 2 }
+                             })
+      )
+    end
+
+    it 'has the correct upkeep' do
+      expect(subject.upkeep).to eq(ResourceGroup.new({ food: 5 }))
+    end
+  end
 end
