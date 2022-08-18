@@ -686,6 +686,16 @@ class Job
     output: { minerals: 4 },
   )
 
+  ScrapMinerDrone = Job.new(
+    name: "Scrap Miner Drone",
+    strata: :menial_drone,
+    category: :miners,
+    output: {
+      minerals: 2,
+      alloys: 1,
+    },
+  )
+
   def self.lookup(name)
     if name.is_a?(Job)
       return name

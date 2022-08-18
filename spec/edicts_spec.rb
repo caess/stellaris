@@ -458,6 +458,18 @@ RSpec.describe "end-to-end tests" do
         energy: 0.5,
       }))
     end
+
+    it "modifies the upkeep of Scrap Miner Drones" do
+      pop = Pop.new(
+        species: species,
+        colony: colony,
+        job: Job::ScrapMinerDrone,
+      )
+
+      expect(pop.job.upkeep).to eq(ResourceGroup.new({
+        energy: 0.5,
+      }))
+    end
   end
 
   describe "Research Subsidies" do

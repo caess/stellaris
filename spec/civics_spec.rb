@@ -509,6 +509,19 @@ RSpec.describe "end-to-end tests" do
           minerals: 5,
         }))
       end
+
+      it "modifies the output of Scrap Miner Drones" do
+        pop = Pop.new(
+          species: species,
+          colony: colony,
+          job: Job::ScrapMinerDrone,
+        )
+
+        expect(pop.job.output).to eq(ResourceGroup.new({
+          minerals: 3,
+          alloys: 1,
+        }))
+      end
     end
   end
 end
