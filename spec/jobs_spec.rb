@@ -1493,7 +1493,9 @@ RSpec.describe "slave jobs" do
       expect(subject.slave?).to be_truthy
     end
   end
+end
 
+RSpec.describe "menial drone jobs" do
   describe "Job::AgriDrone" do
     subject { Job::AgriDrone }
 
