@@ -1592,4 +1592,32 @@ RSpec.describe "slave jobs" do
       expect(subject.menial_drone?).to be_truthy
     end
   end
+
+  describe "Job::WarriorDrone" do
+    subject { Job::WarriorDrone }
+
+    it "has the correct name" do
+      expect(subject.name).to eq("Warrior Drone")
+    end
+
+    it "has the correct colony attribute modifiers" do
+      expect(subject.colony_attribute_modifiers).to eq(ResourceModifier.new({
+        defense_armies: { additive: 3 },
+      }))
+    end
+
+    it "has the correct empire attribute modifiers" do
+      expect(subject.empire_attribute_modifiers).to eq(ResourceModifier.new({
+        naval_capacity: { additive: 4 },
+      }))
+    end
+
+    it "is a menial drone" do
+      expect(subject.menial_drone?).to be_truthy
+    end
+
+    it "is a soldier" do
+      expect(subject.soldier?).to be_truthy
+    end
+  end
 end

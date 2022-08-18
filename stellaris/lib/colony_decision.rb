@@ -15,6 +15,20 @@ module ColonyDecision
     },
   )
 
+  ComplianceProtocols = Modifier.new(
+    name: "Compliance Protocols",
+    job_stability_modifier: {
+      Job::WarriorDrone => 5,
+    },
+  )
+
+  HunterKillerDrones = Modifier.new(
+    name: "Hunter-Killer Drones",
+    job_stability_modifier: {
+      Job::WarriorDrone => 5,
+    },
+  )
+
   MartialLaw = Modifier.new(
     name: "Martial Law",
     job_colony_attribute_modifiers: {

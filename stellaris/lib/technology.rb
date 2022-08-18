@@ -9,6 +9,7 @@ module Technology
     job_empire_attribute_modifiers: {
       Job::Necromancer => { naval_capacity: { additive: 2 } },
       Job::Soldier => { naval_capacity: { additive: 2 } },
+      Job::WarriorDrone => { naval_capacity: { additive: 2 } },
     },
   )
 end

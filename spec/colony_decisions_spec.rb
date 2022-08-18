@@ -64,6 +64,34 @@ RSpec.describe "colony decisions" do
     end
   end
 
+  describe "Compliance Protocols" do
+    subject { ColonyDecision::ComplianceProtocols }
+
+    it "has the correct name" do
+      expect(subject.name).to eq("Compliance Protocols")
+    end
+
+    it "modifies the stability for Warrior Drones" do
+      pop_job = PopJob.new(worker: nil, job: Job::WarriorDrone)
+
+      expect(subject.job_stability_modifier(pop_job)).to eq(5)
+    end
+  end
+
+  describe "Hunter-Killer Drones" do
+    subject { ColonyDecision::HunterKillerDrones }
+
+    it "has the correct name" do
+      expect(subject.name).to eq("Hunter-Killer Drones")
+    end
+
+    it "modifies the stability for Warrior Drones" do
+      pop_job = PopJob.new(worker: nil, job: Job::WarriorDrone)
+
+      expect(subject.job_stability_modifier(pop_job)).to eq(5)
+    end
+  end
+
   describe "Martial Law" do
     subject { ColonyDecision::MartialLaw }
 
@@ -174,6 +202,48 @@ RSpec.describe "end-to-end tests" do
       expect(pop.job.upkeep).to eq(ResourceGroup.new({
         energy: 2,
       }))
+    end
+  end
+
+  describe "Compliance Protocols" do
+    let(:colony) do
+      Colony.new(
+        type: nil,
+        size: nil,
+        sector: sector,
+        decisions: [ColonyDecision::ComplianceProtocols],
+      )
+    end
+
+    it "modifies the stability modifier of Warrior Drones" do
+      pop = Pop.new(
+        species: species,
+        colony: colony,
+        job: Job::WarriorDrone,
+      )
+
+      expect(pop.job.stability_modifier).to eq(5)
+    end
+  end
+
+  describe "Hunter-Killer Drones" do
+    let(:colony) do
+      Colony.new(
+        type: nil,
+        size: nil,
+        sector: sector,
+        decisions: [ColonyDecision::HunterKillerDrones],
+      )
+    end
+
+    it "modifies the stability modifier of Warrior Drones" do
+      pop = Pop.new(
+        species: species,
+        colony: colony,
+        job: Job::WarriorDrone,
+      )
+
+      expect(pop.job.stability_modifier).to eq(5)
     end
   end
 

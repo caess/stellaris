@@ -28,6 +28,16 @@ RSpec.describe "technologies" do
           })
         )
       end
+
+      it "modifies the empire attribute modifiers for Warrior Drones" do
+        pop_job = PopJob.new(worker: nil, job: Job::WarriorDrone)
+
+        expect(subject.job_empire_attribute_modifiers(pop_job)).to eq(
+          ResourceModifier.new({
+            naval_capacity: { additive: 2 },
+          })
+        )
+      end
     end
   end
 end
@@ -69,6 +79,18 @@ RSpec.describe "end-to-end tests" do
           species: species,
           colony: colony,
           job: Job::Soldier,
+        )
+
+        expect(pop.job.empire_attribute_modifiers).to eq(ResourceModifier.new({
+          naval_capacity: { additive: 6 },
+        }))
+      end
+
+      it "modifies the empire attribute modifiers of Warrior Drones" do
+        pop = Pop.new(
+          species: species,
+          colony: colony,
+          job: Job::WarriorDrone,
         )
 
         expect(pop.job.empire_attribute_modifiers).to eq(ResourceModifier.new({
