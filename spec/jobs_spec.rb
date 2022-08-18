@@ -1623,3 +1623,31 @@ RSpec.describe "menial drone jobs" do
     end
   end
 end
+
+RSpec.describe "complex drone jobs" do
+  describe "Job::Replicator" do
+    subject { Job::Replicator }
+
+    it "has the correct name" do
+      expect(subject.name).to eq("Replicator")
+    end
+
+    it "has the correct colony attribute modifiers" do
+      expect(subject.colony_attribute_modifiers).to eq(ResourceModifier.new({
+        monthly_mechanical_pop_assembly: { additive: 1 },
+      }))
+    end
+
+    it "has the correct upkeep" do
+      expect(subject.upkeep).to eq(ResourceGroup.new(alloys: 1))
+    end
+
+    it "is a complex drone" do
+      expect(subject.complex_drone?).to be_truthy
+    end
+
+    it "is a pop assembler" do
+      expect(subject.pop_assembler?).to be_truthy
+    end
+  end
+end
