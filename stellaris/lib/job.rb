@@ -28,7 +28,7 @@ class Job
     @stability_modifier = stability_modifier
     @colony_attribute_modifiers = ResourceModifier.new(colony_attribute_modifiers)
     @empire_attribute_modifiers = ResourceModifier.new(empire_attribute_modifiers)
-    @all_job_output_modifiers = ResourceModifier.new(all_job_output_modifiers)
+    @all_job_output_modifiers = all_job_output_modifiers.dup
     @worker_housing_modifier = ResourceModifier.new(worker_housing_modifier)
     @habitability_modifier = habitability_modifier
     @pop_happiness_modifiers = pop_happiness_modifiers
@@ -43,8 +43,19 @@ class Job
     @upkeep.dup
   end
 
-  def all_job_output_modifiers(_job)
-    @all_job_output_modifiers
+  def all_job_output_modifiers(job)
+    return (@all_job_output_modifiers[true] || ResourceModifier::NONE) if job.nil?
+
+    @all_job_output_modifiers.each do |key, modifier|
+      if (key == job.job) ||
+         (key.is_a?(Symbol) && job.respond_to?(key) && job.send(key)) ||
+         (key.is_a?(Proc) && key.lambda? && key.call(job)) ||
+         (key == true)
+        return ResourceModifier.new(modifier)
+      end
+    end
+
+    ResourceModifier::NONE
   end
 
   # Strata
@@ -397,7 +408,9 @@ class Job
     subcategory: :telepaths,
     output: { unity: 6 },
     colony_attribute_modifiers: { crime: { additive: -35 } },
-    all_job_output_modifiers: ResourceModifier.multiplyAllProducedResources(0.05),
+    all_job_output_modifiers: {
+      true => ResourceModifier.multiplyAllProducedResources(0.05)
+    },
     upkeep: { energy: 1 }
   )
 
@@ -733,6 +746,19 @@ class Job
     amenities_output: 5,
     colony_attribute_modifiers: {
       organic_pop_assembly_speed_percent: { additive: 2 }
+    },
+    upkeep: { food: 5 }
+  )
+
+  OffspringDrone = Job.new(
+    name: 'Offspring Drone',
+    strata: :complex_drone,
+    amenities_output: 5,
+    colony_attribute_modifiers: {
+      organic_pop_assembly_speed_percent: { additive: 2 }
+    },
+    all_job_output_modifiers: {
+      menial_drone?: ResourceModifier.multiplyAllProducedResources(0.1)
     },
     upkeep: { food: 5 }
   )

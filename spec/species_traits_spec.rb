@@ -76,6 +76,20 @@ RSpec.describe 'species traits' do
                              })
       )
     end
+
+    it 'modifies the upkeep of Offspring Drone jobs' do
+      pop_job = PopJob.new(
+        job: Job::OffspringDrone,
+        worker: nil
+      )
+
+      expect(subject.job_upkeep_modifiers(pop_job)).to eq(
+        ResourceModifier.new({
+                               food: { additive: -5 },
+                               minerals: { additive: 5 }
+                             })
+      )
+    end
   end
 
   describe 'Machine' do
@@ -193,6 +207,16 @@ RSpec.describe 'end-to-end tests' do
         species: species,
         colony: nil,
         job: Job::SpawningDrone
+      )
+
+      expect(pop.job.upkeep).to eq(ResourceGroup.new({ minerals: 5 }))
+    end
+
+    it 'modifies the upkeep of Offspring Drone jobs' do
+      pop = Pop.new(
+        species: species,
+        colony: nil,
+        job: Job::OffspringDrone
       )
 
       expect(pop.job.upkeep).to eq(ResourceGroup.new({ minerals: 5 }))

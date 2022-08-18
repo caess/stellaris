@@ -1683,4 +1683,50 @@ RSpec.describe 'complex drone jobs' do
       expect(subject.upkeep).to eq(ResourceGroup.new({ food: 5 }))
     end
   end
+
+  describe 'Job::OffspringDrone' do
+    subject { Job::OffspringDrone }
+
+    it 'has the correct name' do
+      expect(subject.name).to eq('Offspring Drone')
+    end
+
+    it 'has the correct amenities output' do
+      expect(subject.amenities_output).to eq(5)
+    end
+
+    it 'has the correct colony attribute modifiers' do
+      expect(subject.colony_attribute_modifiers).to eq(
+        ResourceModifier.new({
+                               organic_pop_assembly_speed_percent: { additive: 2 }
+                             })
+      )
+    end
+
+    it 'has the correct upkeep' do
+      expect(subject.upkeep).to eq(ResourceGroup.new({ food: 5 }))
+    end
+
+    it 'has the correct job output modifier for menial drones' do
+      job = instance_double('Job')
+      expect(job).to receive(:menial_drone?).and_return(true)
+
+      pop_job = PopJob.new(worker: nil, job: job)
+
+      expect(subject.all_job_output_modifiers(pop_job)).to eq(
+        ResourceModifier.multiplyAllProducedResources(0.1)
+      )
+    end
+
+    it 'has no job output modifer for others' do
+      job = instance_double('Job')
+      expect(job).to receive(:menial_drone?).and_return(false)
+
+      pop_job = PopJob.new(worker: nil, job: job)
+
+      expect(subject.all_job_output_modifiers(pop_job)).to eq(
+        ResourceModifier::NONE
+      )
+    end
+  end
 end

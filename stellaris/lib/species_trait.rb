@@ -27,6 +27,10 @@ module SpeciesTrait
       Job::SpawningDrone => {
         food: { additive: -5 },
         minerals: { additive: 5 }
+      },
+      Job::OffspringDrone => {
+        food: { additive: -5 },
+        minerals: { additive: 5 }
       }
     }
   )

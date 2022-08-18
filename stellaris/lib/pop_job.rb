@@ -13,6 +13,7 @@ class PopJob
 
   def_delegators :@job, :all_job_output_modifiers, :pop_happiness_modifiers,
                  :ruler?, :specialist?, :worker?, :slave?,
+                 :menial_drone?, :complex_drone?,
                  :farmer?, :miner?, :strategic_resource_miner?, :livestock?,
                  :technician?, :politician?, :executive?, :noble?, :administrator?,
                  :manager?, :priest?, :telepath?, :researcher?, :metallurgist?,
