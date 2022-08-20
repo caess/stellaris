@@ -745,7 +745,7 @@ class Job
     strata: :complex_drone,
     amenities_output: 5,
     colony_attribute_modifiers: {
-      organic_pop_assembly_speed_percent: { additive: 2 }
+      monthly_organic_pop_assembly: { additive: 2 }
     },
     upkeep: { food: 5 }
   )
@@ -755,7 +755,7 @@ class Job
     strata: :complex_drone,
     amenities_output: 5,
     colony_attribute_modifiers: {
-      organic_pop_assembly_speed_percent: { additive: 2 }
+      monthly_organic_pop_assembly: { additive: 2 }
     },
     all_job_output_modifiers: {
       menial_drone?: ResourceModifier.multiplyAllProducedResources(0.1)
@@ -768,7 +768,7 @@ class Job
     when Job
       name
     when Symbol
-      const_get(name.to_s.split('_').map(&:capitalize).join('').to_sym)
+      const_get(name.to_s.split('_').map(&:capitalize).join.to_sym)
     else
       constants.find { |x| x.is_a?(Job) and x.name == name }
     end

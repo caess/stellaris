@@ -59,4 +59,8 @@ class ResourceModifier
   def each(&block)
     @values.each(&block)
   end
+
+  def empty?
+    @values.empty?
+  end
 end
