@@ -143,12 +143,20 @@ class Pop
     @job.stability_modifier
   end
 
+  def job_output
+    @job.output
+  end
+
+  def job_upkeep
+    @job.upkeep
+  end
+
   def output
-    @job.output + pop_output
+    job_output + pop_output
   end
 
   def upkeep
-    @job.upkeep + pop_upkeep
+    job_upkeep + pop_upkeep
   end
 
   def colony_attribute_modifiers
