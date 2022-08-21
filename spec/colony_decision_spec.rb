@@ -1,6 +1,14 @@
 # frozen_string_literal: true
 
-require_relative '../stellaris/lib/stellaris'
+require 'colony'
+require 'colony_decision'
+require 'empire'
+require 'job'
+require 'leader'
+require 'pop'
+require 'pop_job'
+require 'resource_modifier'
+require 'species'
 
 RSpec.describe 'colony decisions' do
   describe 'Anti-Crime Campaign' do
