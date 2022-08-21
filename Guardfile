@@ -75,8 +75,7 @@ group :red_green_refactor, halt_on_fail: true do
 
   guard :rubocop, cli: '--display-cop-names -E', all_on_start: false do
     # watch(/.+\.rb$/)
-    watch(%r{^spec/job/.+\.rb$})
-    watch(%r{^spec/job_spec.rb$})
+    watch(%r{^spec/.+\.rb$})
     watch(%r{^stellaris/lib/([^/]+)\.rb}) { |m| ["stellaris/lib/#{m[1]}.rb", "spec/#{m[1]}_spec.rb", "spec/#{m[1]}"] }
     watch(%r{^stellaris/lib/([^/]+/.+)\.rb}) do |m|
       ["stellaris/lib/#{m[1]}.rb", "spec/#{m[1]}_spec.rb", "spec/#{m[1]}"]
