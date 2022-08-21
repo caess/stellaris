@@ -89,6 +89,13 @@ class Sector
     @empire.stability_modifier
   end
 
+  def colony_attribute_modifiers
+    modifier = ResourceModifier.new
+    modifier += @governor.colony_attribute_modifiers if @governor
+    modifier += @empire.colony_attribute_modifiers if @governor
+    modifier
+  end
+
   def output
     @colonies.reduce(ResourceGroup.new) do |sum, colony|
       sum + colony.output

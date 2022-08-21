@@ -150,4 +150,12 @@ class Pop
   def upkeep
     @job.upkeep + pop_upkeep
   end
+
+  def colony_attribute_modifiers
+    modifier = ResourceModifier.new({})
+
+    modifier += @job.colony_attribute_modifiers
+
+    modifier
+  end
 end

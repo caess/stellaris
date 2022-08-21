@@ -26,8 +26,12 @@ class ResourceModifier
     other.values.each_key do |resource|
       if result.key?(resource)
         other.values[resource].each do |modifier_type, value|
-          result[resource][modifier_type] ||= 0
-          result[resource][modifier_type] += value
+          if modifier_type == :map
+            result[resource][modifier_type] = value
+          else
+            result[resource][modifier_type] ||= 0
+            result[resource][modifier_type] += value
+          end
         end
       else
         result[resource] = other.values[resource]
@@ -39,6 +43,10 @@ class ResourceModifier
 
   def ==(other)
     @values == other.values
+  end
+
+  def [](key)
+    @values[key] || {}
   end
 
   NONE = ResourceModifier.new

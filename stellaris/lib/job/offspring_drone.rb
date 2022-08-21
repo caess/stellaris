@@ -6,6 +6,7 @@ class Job
     strata: :complex_drone,
     amenities_output: 5,
     colony_attribute_modifiers: {
+      defense_armies: { map: :offspring_led_armies },
       monthly_organic_pop_assembly: { additive: 2 }
     },
     all_job_output_modifiers: lambda do |job|

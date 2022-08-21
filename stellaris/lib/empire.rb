@@ -192,6 +192,25 @@ class Empire
     modifier
   end
 
+  def colony_attribute_modifiers
+    modifier = ResourceModifier.new({})
+    modifier += @ruler.colony_attribute_modifiers
+    modifier += @government.colony_attribute_modifiers(job) unless @government.nil?
+
+    @edicts.each do |edict|
+      modifier += edict.colony_attribute_modifiers(job)
+    end
+
+    @civics.filter { |c| c.is_a?(Modifier) }.each do |civic|
+      modifier += civic.colony_attribute_modifiers(job)
+    end
+
+    @technologies.each { |t| modifier += t.colony_attribute_modifiers(job) }
+    @traditions.each { |t| modifier += t.colony_attribute_modifiers(job) }
+
+    modifier
+  end
+
   def mining_station_modifiers
     modifier = ResourceModifier.new
     modifier += @ruler.mining_station_modifiers if @ruler

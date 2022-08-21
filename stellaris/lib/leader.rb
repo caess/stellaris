@@ -38,6 +38,10 @@ class Leader
     modifier
   end
 
+  def colony_attribute_modifiers
+    ResourceModifier::NONE
+  end
+
   def empire_base_modifiers
     modifier = ResourceModifier.new
 

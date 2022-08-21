@@ -35,12 +35,20 @@ class ResourceGroup
   def resolve
     return @resolved.dup unless @resolved.nil?
 
+    maps = {}
+
     @resolved = @resources.dup
     total_modifiers = @modifiers.reduce(ResourceModifier::NONE, &:+)
 
     total_modifiers.each do |good, modifiers|
       @resolved[good] += (modifiers[:additive] || 0)
       @resolved[good] *= 1 + (modifiers[:multiplicative] || 0)
+      maps[good] = modifiers[:map] if modifiers.key?(:map)
+    end
+
+    maps.each do |good, replacement|
+      @resolved[replacement] = @resolved[good]
+      @resolved[good] = 0
     end
 
     @resolved.dup

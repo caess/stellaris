@@ -82,6 +82,12 @@ class Colony
     end
 
     @num_pops = @pops.length
+    @attributes = nil
+  end
+
+  def add_pop(pop)
+    @pops << pop
+    @attributes = nil
   end
 
   def buildings(type)
@@ -129,8 +135,8 @@ class Colony
   end
 
   def buildings_amenities_output
-    5 * buildings(:habitat_central_control) +
-      3 * buildings(:habitat_administration)
+    (5 * buildings(:habitat_central_control)) +
+      (3 * buildings(:habitat_administration))
   end
 
   def designation_amenities_output
@@ -162,7 +168,7 @@ class Colony
 
   def approval_rating
     1.0 * @pops.reduce(0) do |sum, pop|
-      sum + pop.happiness * pop.political_power
+      sum + (pop.happiness * pop.political_power)
     end / @pops.reduce(0) { |sum, pop| sum + pop.political_power }
   end
 
@@ -382,5 +388,31 @@ class Colony
     end
 
     pop_upkeep + building_upkeep + district_upkeep
+  end
+
+  def attributes
+    return @attributes if @attributes
+
+    colony_attributes = ResourceGroup.new({
+                                            defense_armies: 0,
+                                            offspring_led_armies: 0
+                                          })
+
+    @pops.each { |pop| colony_attributes << pop.colony_attribute_modifiers }
+    @districts.each { |pop| colony_attributes << pop.colony_attribute_modifiers }
+
+    colony_attributes << @sector.colony_attribute_modifiers
+
+    @attributes = colony_attributes.resolve
+
+    @attributes
+  end
+
+  def defense_armies
+    attributes[:defense_armies] || 0
+  end
+
+  def offspring_led_armies
+    attributes[:offspring_led_armies] || 0
   end
 end
