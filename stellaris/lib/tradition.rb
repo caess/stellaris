@@ -6,7 +6,9 @@ require_relative './modifier'
 # rubocop:todo Style/Documentation
 
 module Tradition
-  def self.lookup(name)
+  module_function
+
+  def lookup(name)
     case name
     when Job
       name
