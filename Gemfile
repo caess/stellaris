@@ -8,4 +8,6 @@ group :development do
   gem "rubocop", require: false
   gem "rubocop-rspec", require: false
   gem "rb-readline"
+  gem "flay"
+  gem "solargraph"
 end
