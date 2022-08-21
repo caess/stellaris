@@ -15,8 +15,6 @@ class ResourceGroup
   end
 
   def [](key)
-    return nil unless @resources.key?(key)
-
     resolve if @resolved.nil?
 
     @resolved[key]
