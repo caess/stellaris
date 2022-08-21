@@ -3,17 +3,23 @@
 require_relative './job'
 require_relative './modifier'
 
+# rubocop:todo Style/Documentation
+
 module Technology
-  # Society technologies
-  ## Tier 1
-  GroundDefensePlanning = Modifier.new(
-    name: 'Ground Defense Planning',
-    job_empire_attribute_modifiers: lambda do |job|
-      if job.job == Job::Necromancer || job.job == Job::Soldier || job.job == Job::WarriorDrone
-        { naval_capacity: { additive: 2 } }
-      else
-        {}
-      end
+  module_function
+
+  def lookup(name)
+    case name
+    when Job
+      name
+    when Symbol
+      const_get(name.to_s.split('_').map(&:capitalize).join.to_sym)
+    else
+      constants.find { |x| x.is_a?(Job) and x.name == name }
     end
-  )
+  end
 end
+
+# rubocop:enable Style/Documentation
+
+Dir[File.join(__dir__, 'technology', '*.rb')].sort.each { |file| require file }

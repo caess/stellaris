@@ -15,12 +15,14 @@ RSpec.shared_context 'default empire' do
   let(:ruler) { Leader.new(level: 0) }
   let(:traditions) { [] }
   let(:civics) { [] }
+  let(:technologies) { [] }
   let(:empire) do
     Empire.new(
       founder_species: species,
       ruler: Leader.new(level: 0),
       traditions: traditions,
-      civics: civics
+      civics: civics,
+      technologies: technologies
     )
   end
   let(:governor) { Leader.new(level: 0) }
