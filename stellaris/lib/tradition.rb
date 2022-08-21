@@ -3,28 +3,21 @@
 require_relative './job'
 require_relative './modifier'
 
-module Tradition
-  # Domination
-  JudgmentCorps = Modifier.new(
-    name: 'Judgment Corps',
-    job_output_modifiers: lambda do |job|
-      if job.job == Job::Enforcer || job.job == Job::Telepath
-        { unity: { additive: 1 } }
-      else
-        {}
-      end
-    end
-  )
+# rubocop:todo Style/Documentation
 
-  # Mercantile
-  TrickleUpEconomics = Modifier.new(
-    name: 'Trickle Up Economics',
-    job_output_modifiers: lambda do |job|
-      if job.job == Job::Clerk
-        { trade: { additive: 1 } }
-      else
-        {}
-      end
+module Tradition
+  def self.lookup(name)
+    case name
+    when Job
+      name
+    when Symbol
+      const_get(name.to_s.split('_').map(&:capitalize).join.to_sym)
+    else
+      constants.find { |x| x.is_a?(Job) and x.name == name }
     end
-  )
+  end
 end
+
+# rubocop:enable Style/Documentation
+
+Dir[File.join(__dir__, 'tradition', '*.rb')].sort.each { |file| require file }
