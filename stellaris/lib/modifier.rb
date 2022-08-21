@@ -47,6 +47,10 @@ class Modifier
     resolve_job_modifier(:founder_species_job_output_modifiers, job)
   end
 
+  def empire_attribute_modifiers
+    ResourceModifier.new(@options[:empire_attribute_modifiers] || {})
+  end
+
   protected
 
   def resolve_job_modifier(modifier_type, job)

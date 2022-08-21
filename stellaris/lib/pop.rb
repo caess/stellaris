@@ -166,4 +166,8 @@ class Pop
 
     modifier
   end
+
+  def empire_attribute_modifiers
+    @job.empire_attribute_modifiers
+  end
 end

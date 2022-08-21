@@ -20,6 +20,10 @@ class District
     @upkeep.dup
   end
 
+  def empire_attribute_modifiers
+    ResourceModifier::NONE
+  end
+
   CityDistrict = District.new(
     name: 'City District',
     housing: 5,

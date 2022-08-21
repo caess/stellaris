@@ -309,4 +309,29 @@ class Empire
 
     sector_upkeep + station_upkeep + trade_deal_upkeep
   end
+
+  def attributes
+    return @attributes if @attributes
+
+    empire_attributes = ResourceGroup.new({ naval_capacity: 20 })
+
+    empire_attributes << ruler.empire_attribute_modifiers
+    @edicts.each { |e| empire_attributes << e.empire_attribute_modifiers }
+
+    @civics.filter { |c| c.is_a?(Modifier) }.each do |civic|
+      empire_attributes << civic.empire_attribute_modifiers
+    end
+
+    @technologies.each { |t| empire_attributes << t.empire_attribute_modifiers }
+    @traditions.each { |t| empire_attributes << t.empire_attribute_modifiers }
+
+    @sectors.each { |s| empire_attributes << s.empire_attribute_modifiers }
+    @attributes = empire_attributes.resolve
+
+    @attributes
+  end
+
+  def naval_capacity
+    attributes[:naval_capacity] || 0
+  end
 end

@@ -399,7 +399,7 @@ class Colony
                                           })
 
     @pops.each { |pop| colony_attributes << pop.colony_attribute_modifiers }
-    @districts.each { |pop| colony_attributes << pop.colony_attribute_modifiers }
+    @districts.each { |d| colony_attributes << d.colony_attribute_modifiers }
 
     colony_attributes << @sector.colony_attribute_modifiers
 
@@ -414,5 +414,13 @@ class Colony
 
   def offspring_led_armies
     attributes[:offspring_led_armies] || 0
+  end
+
+  def empire_attribute_modifiers
+    modifier = ResourceModifier.new
+    @pops.each { |pop| modifier += pop.empire_attribute_modifiers }
+    @districts.each { |d| modifier += d.empire_attribute_modifiers }
+
+    modifier
   end
 end

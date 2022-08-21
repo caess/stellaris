@@ -41,5 +41,9 @@ RSpec.describe Modifier do
     it 'has no default founding species job output modifiers' do
       expect(modifier.founder_species_job_output_modifiers(nil)).to be_empty
     end
+
+    it 'has no default empire attribute modifiers' do
+      expect(modifier.empire_attribute_modifiers).to be_empty
+    end
   end
 end

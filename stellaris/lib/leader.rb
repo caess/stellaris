@@ -42,6 +42,10 @@ class Leader
     ResourceModifier::NONE
   end
 
+  def empire_attribute_modifiers
+    ResourceModifier::NONE
+  end
+
   def empire_base_modifiers
     modifier = ResourceModifier.new
 
