@@ -3,19 +3,23 @@
 require_relative './mixins'
 require_relative './resource_group'
 
+# rubocop:todo Style/Documentation
+
 class TradeDeal
   include OutputsResources
 
-  def initialize(us: {}, them: {})
-    @our_contribution = ResourceGroup.new(us)
-    @their_contribution = ResourceGroup.new(them)
+  def initialize(ours: {}, theirs: {})
+    @our_contribution = ours.dup.freeze
+    @their_contribution = theirs.dup.freeze
   end
 
   def output
-    @their_contribution.dup
+    ResourceGroup.new(@their_contribution)
   end
 
   def upkeep
-    @our_contribution.dup
+    ResourceGroup.new(@our_contribution)
   end
 end
+
+# rubocop:enable Style/Documentation

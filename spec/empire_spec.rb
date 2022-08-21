@@ -42,7 +42,7 @@ RSpec.describe Empire do
   end
 
   describe 'trade deals' do
-    let(:deal) { TradeDeal.new(us: { consumer_goods: 10 }, them: { minerals: 20 }) }
+    let(:deal) { TradeDeal.new(ours: { consumer_goods: 10 }, theirs: { minerals: 20 }) }
 
     it 'includes trade deals in its output' do
       subject.add_trade_deal(deal)
