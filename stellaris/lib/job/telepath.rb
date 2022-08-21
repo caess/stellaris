@@ -8,7 +8,7 @@ class Job
     subcategory: :telepaths,
     output: { unity: 6 },
     colony_attribute_modifiers: { crime: { additive: -35 } },
-    all_job_output_modifiers: ResourceModifier.multiplyAllProducedResources(0.05),
+    all_job_output_modifiers: ResourceModifier::MultiplyAllProducedResources.new(0.05),
     upkeep: { energy: 1 }
   )
 end

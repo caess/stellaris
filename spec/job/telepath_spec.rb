@@ -19,7 +19,7 @@ RSpec.describe Job::Telepath do
 
   it 'improves other jobs\' output by 5%' do
     expect(job.all_job_output_modifiers(nil)).to eq(
-      ResourceModifier.multiplyAllProducedResources(0.05)
+      ResourceModifier::MultiplyAllProducedResources.new(0.05)
     )
   end
 

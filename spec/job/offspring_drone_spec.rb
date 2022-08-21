@@ -12,7 +12,7 @@ require 'species'
 RSpec.describe Job::OffspringDrone do
   subject(:job) { described_class }
 
-  let(:expected_menial_drone_modifier) { ResourceModifier.multiplyAllProducedResources(0.1) }
+  let(:expected_menial_drone_modifier) { ResourceModifier::MultiplyAllProducedResources.new(0.1) }
 
   it 'is named Offspring drone' do
     expect(job.name).to eq('Offspring Drone')

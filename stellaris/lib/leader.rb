@@ -24,7 +24,7 @@ class Leader
     modifier = ResourceModifier.new
 
     if governor?
-      modifier += ResourceModifier.multiplyAllProducedResources(
+      modifier += ResourceModifier::MultiplyAllProducedResources.new(
         0.02 * @level
       )
 

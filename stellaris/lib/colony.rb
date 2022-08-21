@@ -204,7 +204,7 @@ class Colony
   end
 
   def stability_coefficient_modifier
-    ResourceModifier.multiplyAllProducedResources(stability_coefficient) +
+    ResourceModifier::MultiplyAllProducedResources.new(stability_coefficient) +
       ResourceModifier.new(trade: { multiplicative: stability_coefficient })
   end
 
@@ -220,7 +220,7 @@ class Colony
 
     case @designation
     when :empire_capital
-      modifier += ResourceModifier.multiplyAllProducedResources(0.1)
+      modifier += ResourceModifier::MultiplyAllProducedResources.new(0.1)
     when :research_station
       modifier += ResourceModifier.new({
                                          physics_research: { multiplicative: 0.1 },
@@ -236,7 +236,7 @@ class Colony
                                          })
       end
     when :unification_station
-      modifier += ResourceModifier.multiplyAllProducedResources(0.1) if job.administrator?
+      modifier += ResourceModifier::MultiplyAllProducedResources.new(0.1) if job.administrator?
     when :trade_station
       modifier += ResourceModifier.new({ trade: { multiplicative: 0.2 } })
     when :generator_station
@@ -272,13 +272,13 @@ class Colony
 
     case @designation
     when :foundry_station
-      modifier += ResourceModifier.multiplyAllProducedResources(-0.2) if job.metallurgist?
+      modifier += ResourceModifier::MultiplyAllProducedResources.new(-0.2) if job.metallurgist?
     when :factory_station
-      modifier += ResourceModifier.multiplyAllProducedResources(-0.2) if job.artisan?
+      modifier += ResourceModifier::MultiplyAllProducedResources.new(-0.2) if job.artisan?
     when :industrial_station
-      modifier += ResourceModifier.multiplyAllProducedResources(-0.1) if job.artisan? || job.metallurgist?
+      modifier += ResourceModifier::MultiplyAllProducedResources.new(-0.1) if job.artisan? || job.metallurgist?
     when :unification_station
-      modifier += ResourceModifier.multiplyAllProducedResources(-0.1) if job.administrator?
+      modifier += ResourceModifier::MultiplyAllProducedResources.new(-0.1) if job.administrator?
     end
 
     modifier += @sector.job_upkeep_modifiers(job)

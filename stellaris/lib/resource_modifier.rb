@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# rubocop:todo Style/Documentation
+
 require_relative './resource_group'
 
 class ResourceModifier
@@ -8,7 +10,6 @@ class ResourceModifier
   def initialize(values = {})
     @values = {}
 
-    source = {}
     source = if values.is_a?(ResourceModifier)
                values.values.dup
              else
@@ -21,20 +22,9 @@ class ResourceModifier
   end
 
   def +(other)
-    result = @values.dup
-
-    other.values.each_key do |resource|
-      if result.key?(resource)
-        other.values[resource].each do |modifier_type, value|
-          if modifier_type == :map
-            result[resource][modifier_type] = value
-          else
-            result[resource][modifier_type] ||= 0
-            result[resource][modifier_type] += value
-          end
-        end
-      else
-        result[resource] = other.values[resource]
+    result = @values.dup.merge(other.values) do |_key, lhs, rhs|
+      lhs.merge(rhs) do |type, old_value, new_value|
+        type == :map ? new_value : old_value + new_value
       end
     end
 
@@ -49,17 +39,6 @@ class ResourceModifier
     @values[key] || {}
   end
 
-  NONE = ResourceModifier.new
-
-  def self.multiplyAllProducedResources(value)
-    resources = {}
-    ResourceGroup::PRODUCED_RESOURCES.each do |resource|
-      resources[resource] = { multiplicative: value }
-    end
-
-    ResourceModifier.new(resources)
-  end
-
   def dup
     ResourceModifier.new(self)
   end
@@ -71,4 +50,19 @@ class ResourceModifier
   def empty?
     @values.empty?
   end
+
+  NONE = ResourceModifier.new
+
+  class MultiplyAllProducedResources < ResourceModifier
+    def initialize(value)
+      resources = {}
+      ResourceGroup::PRODUCED_RESOURCES.each do |resource|
+        resources[resource] = { multiplicative: value }
+      end
+
+      super(resources)
+    end
+  end
 end
+
+# rubocop:enable Style/Documentation

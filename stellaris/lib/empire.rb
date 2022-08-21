@@ -53,13 +53,13 @@ class Empire
     modifier += @founder_species.founder_species_job_output_modifiers(job) unless @founder_species.nil?
 
     if @ethics.include?(:fanatic_egalitarian) && job.worker.specialist?
-      modifier += ResourceModifier.multiplyAllProducedResources(0.1)
+      modifier += ResourceModifier::MultiplyAllProducedResources.new(0.1)
     end
 
     modifier += ResourceModifier.new(trade: { multiplicative: 0.1 }) if @ethics.include?(:xenophile)
 
     if @civics.include?(:meritocracy) && job.worker.specialist?
-      modifier += ResourceModifier.multiplyAllProducedResources(0.1)
+      modifier += ResourceModifier::MultiplyAllProducedResources.new(0.1)
     end
 
     modifier += ResourceModifier.new(unity: { multiplicative: 0.15 }) if @civics.include?(:beacon_of_liberty)

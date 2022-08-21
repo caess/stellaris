@@ -17,7 +17,7 @@ class Species
 
     if @traits.include?(:void_dweller)
       # FIXME: - need to check planet type
-      modifier += ResourceModifier.multiplyAllProducedResources(0.15)
+      modifier += ResourceModifier::MultiplyAllProducedResources.new(0.15)
     end
 
     if @traits.include?(:intelligent)

@@ -11,7 +11,7 @@ class Job
     },
     all_job_output_modifiers: lambda do |job|
       if job.menial_drone?
-        ResourceModifier.multiplyAllProducedResources(0.1)
+        ResourceModifier::MultiplyAllProducedResources.new(0.1)
       else
         {}
       end
