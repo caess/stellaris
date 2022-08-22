@@ -7,9 +7,11 @@ require 'sector'
 require 'species'
 
 RSpec.shared_context 'default empire' do
+  let(:species_traits) { [] }
   let(:species) do
     Species.new(
-      living_standard: nil
+      living_standard: nil,
+      traits: species_traits
     )
   end
   let(:ruler) { Leader.new(level: 0) }

@@ -1,66 +1,25 @@
 # frozen_string_literal: true
 
+require_relative './job'
 require_relative './modifier'
 
+# rubocop:todo Style/Documentation
+
 module SpeciesTrait
-  Lithoid = Modifier.new(
-    name: 'Lithoid',
-    job_output_modifiers: lambda do |job|
-      if job.job == Job::Colonist
-        {
-          food: { additive: -1 },
-          minerals: { additive: 1 }
-        }
-      elsif job.job == Job::Livestock
-        {
-          food: { additive: -4 },
-          minerals: { additive: 2 }
-        }
-      else
-        {}
-      end
-    end,
-    job_upkeep_modifiers: lambda do |job|
-      case job.job
-      when Job::Necrophyte
-        {
-          food: { additive: -1 },
-          minerals: { additive: 1 }
-        }
-      when Job::Reassigner
-        {
-          food: { additive: -2 },
-          minerals: { additive: 2 }
-        }
-      when Job::SpawningDrone, Job::OffspringDrone
-        {
-          food: { additive: -5 },
-          minerals: { additive: 5 }
-        }
-      else
-        {}
-      end
-    end
-  )
+  module_function
 
-  Machine = Modifier.new(
-    name: 'Machine',
-    job_worker_housing_modifier:
-      ->(job) { job.job == Job::Servant ? { housing: { additive: 0.5 } } : {} }
-  )
-
-  Mechanical = Modifier.new(
-    name: 'Mechanical',
-    job_worker_housing_modifier:
-      ->(job) { job.job == Job::Servant ? { housing: { additive: 0.5 } } : {} },
-    founder_species_job_output_modifiers: lambda do |job|
-      if job.job == Job::Technician
-        { energy: { additive: 2 } }
-      elsif job.job == Job::Farmer
-        { food: { additive: -1 } }
-      else
-        {}
-      end
+  def lookup(name)
+    case name
+    when Job
+      name
+    when Symbol
+      const_get(name.to_s.split('_').map(&:capitalize).join.to_sym)
+    else
+      constants.find { |x| x.is_a?(Job) and x.name == name }
     end
-  )
+  end
 end
+
+# rubocop:enable Style/Documentation
+
+Dir[File.join(__dir__, 'species_trait', '*.rb')].sort.each { |file| require file }
