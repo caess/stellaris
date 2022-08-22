@@ -20,6 +20,11 @@ class ResourceGroup
     @resolved[key]
   end
 
+  def fetch(key, default)
+    resolve if @resolved.nil?
+    @resolved.fetch(key, default)
+  end
+
   def []=(key, value)
     @resources[key] = value
     @resolved = nil
