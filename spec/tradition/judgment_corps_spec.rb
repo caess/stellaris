@@ -25,7 +25,7 @@ RSpec.describe Tradition::JudgmentCorps do
   end
 
   context 'when applied to an empire' do
-    include_context 'default empire' do
+    include_context 'with empire' do
       let(:traditions) { [described_class] }
     end
 

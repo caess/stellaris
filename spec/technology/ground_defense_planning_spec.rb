@@ -33,29 +33,29 @@ RSpec.describe Technology::GroundDefensePlanning do
   end
 
   context 'when learned by an empire' do
-    include_context 'default empire' do
+    include_context 'with empire' do
       let(:technologies) { [described_class] }
+    end
 
-      it 'increases the naval capacity provided by Necromancers to 4' do
-        necromancer = Pop.new(species: species, colony: colony, job: Job::Necromancer)
-        colony.add_pop(necromancer)
+    it 'increases the naval capacity provided by Necromancers to 4' do
+      necromancer = Pop.new(species: species, colony: colony, job: Job::Necromancer)
+      colony.add_pop(necromancer)
 
-        expect(empire.naval_capacity).to eq(24)
-      end
+      expect(empire.naval_capacity).to eq(24)
+    end
 
-      it 'increases the naval capacity provided by Soldiers to 6' do
-        soldier = Pop.new(species: species, colony: colony, job: Job::Soldier)
-        colony.add_pop(soldier)
+    it 'increases the naval capacity provided by Soldiers to 6' do
+      soldier = Pop.new(species: species, colony: colony, job: Job::Soldier)
+      colony.add_pop(soldier)
 
-        expect(empire.naval_capacity).to eq(26)
-      end
+      expect(empire.naval_capacity).to eq(26)
+    end
 
-      it 'increases the naval capacity provided by Warrior Drones to 6' do
-        warrior_drone = Pop.new(species: species, colony: colony, job: Job::WarriorDrone)
-        colony.add_pop(warrior_drone)
+    it 'increases the naval capacity provided by Warrior Drones to 6' do
+      warrior_drone = Pop.new(species: species, colony: colony, job: Job::WarriorDrone)
+      colony.add_pop(warrior_drone)
 
-        expect(empire.naval_capacity).to eq(26)
-      end
+      expect(empire.naval_capacity).to eq(26)
     end
   end
 end

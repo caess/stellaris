@@ -50,7 +50,7 @@ RSpec.describe SpeciesTrait::Mechanical do
     end
 
     context 'when the founding species for an empire' do
-      include_context 'default empire' do
+      include_context 'with empire' do
         let(:species_traits) { [described_class] }
       end
 

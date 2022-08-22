@@ -99,4 +99,4 @@ RSpec.configure do |config|
 end
 
 require_relative './support/matchers'
-require_relative './support/default_empire_context'
+require_relative './support/with_empire_context'

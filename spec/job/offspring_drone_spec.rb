@@ -1,13 +1,8 @@
 # frozen_string_literal: true
 
-require_relative '../../lib/colony'
-require_relative '../../lib/empire'
 require_relative '../../lib/job'
-require_relative '../../lib/leader'
 require_relative '../../lib/pop'
 require_relative '../../lib/pop_job'
-require_relative '../../lib/sector'
-require_relative '../../lib/species'
 
 RSpec.describe Job::OffspringDrone do
   subject(:job) { described_class }
@@ -53,24 +48,8 @@ RSpec.describe Job::OffspringDrone do
   end
 
   context 'when assigned to a colony' do
-    let(:species) do
-      Species.new(
-        living_standard: nil
-      )
-    end
-    let(:empire) do
-      Empire.new(
-        founder_species: species,
-        ruler: Leader.new(level: 0)
-      )
-    end
-    let(:sector) { Sector.new(empire: empire) }
-    let(:colony) do
-      colony = Colony.new(type: nil, size: nil, sector: sector, jobs: {
-                            described_class => { species => 1 }
-                          })
-      allow(colony).to receive(:stability_coefficient_modifier).and_return(ResourceModifier::NONE)
-      colony
+    include_context 'with empire' do
+      let(:colony_jobs) { { described_class => { species => 1 } } }
     end
 
     it 'increases the output of a Tech-Drone to 6.6 Energy' do
