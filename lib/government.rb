@@ -3,32 +3,23 @@
 require_relative './job'
 require_relative './modifier'
 
-module Government
-  HiveMind = Modifier.new(
-    name: 'Hive Mind',
-    job_upkeep_modifiers: lambda do |job|
-      if job.job == Job::Necrophyte
-        {
-          consumer_goods: { additive: -1 },
-          food: { multiplicative: 1 },
-          minerals: { multiplicative: 1 }
-        }
-      else
-        {}
-      end
-    end
-  )
+# rubocop:todo Style/Documentation
 
-  MachineIntelligence = Modifier.new(
-    name: 'Machine Intelligence',
-    job_output_modifiers: lambda do |job|
-      if job.job == Job::AgriDrone
-        { food: { additive: -1 } }
-      elsif job.job == Job::TechDrone
-        { energy: { additive: 2 } }
-      else
-        {}
-      end
+module Government
+  module_function
+
+  def lookup(name)
+    case name
+    when Symbol
+      const_get(name.to_s.split('_').map(&:capitalize).join.to_sym)
+    when String
+      constants.find { |x| x.is_a?(Job) and x.name == name }
+    else
+      name
     end
-  )
+  end
 end
+
+# rubocop:enable Style/Documentation
+
+Dir[File.join(__dir__, 'government', '*.rb')].sort.each { |file| require file }

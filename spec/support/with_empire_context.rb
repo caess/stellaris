@@ -20,10 +20,12 @@ RSpec.shared_context 'with empire' do
   let(:traditions) { [] }
   let(:civics) { [] }
   let(:technologies) { [] }
+  let(:government) { nil }
   let(:empire) do
     Empire.new(
       founder_species: species,
       ruler: Leader.new(level: 0),
+      government: government,
       traditions: traditions,
       civics: civics,
       technologies: technologies
