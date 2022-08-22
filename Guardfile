@@ -81,8 +81,6 @@ group :red_green_refactor, halt_on_fail: true do
       ["lib/#{m[1]}.rb", "spec/#{m[1]}_spec.rb", "spec/#{m[1]}"]
     end
     watch(%r{^lib/(.+)\.rb}) { |m| ["spec/#{m[1]}_spec.rb", "spec/#{m[1]}"] }
-    watch(%r{(?:.+/)?\.rubocop(?:_todo)?\.yml$}) do |m|
-      [File.dirname(m[0]) + '/spec', File.dirname(m[0]) + '/lib']
-    end
+    watch(%r{(?:.+/)?\.rubocop(?:_todo)?\.yml$}) { File.dirname(m[0]) }
   end
 end
