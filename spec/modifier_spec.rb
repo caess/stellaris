@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'modifier'
+require_relative '../lib/modifier'
 
 RSpec.describe Modifier do
   describe 'default' do

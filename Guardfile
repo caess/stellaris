@@ -37,8 +37,8 @@ group :red_green_refactor, halt_on_fail: true do
     watch(rspec.spec_support) { rspec.spec_dir }
     watch(rspec.spec_files)
 
-    watch(%r{^stellaris/lib/([^/]+)\.rb}) { |m| ["#{rspec.spec_dir}/#{m[1]}_spec.rb", "#{rspec.spec_dir}/#{m[1]}"] }
-    watch(%r{^stellaris/lib/([^/]+/.+)\.rb}) { |m| ["#{rspec.spec_dir}/#{m[1]}_spec.rb"] }
+    watch(%r{^lib/([^/]+)\.rb}) { |m| ["#{rspec.spec_dir}/#{m[1]}_spec.rb", "#{rspec.spec_dir}/#{m[1]}"] }
+    watch(%r{^lib/([^/]+/.+)\.rb}) { |m| ["#{rspec.spec_dir}/#{m[1]}_spec.rb"] }
 
     # Ruby files
     # ruby = dsl.ruby
@@ -76,13 +76,13 @@ group :red_green_refactor, halt_on_fail: true do
   guard :rubocop, cli: '--display-cop-names -E', all_on_start: false do
     # watch(/.+\.rb$/)
     watch(%r{^spec/.+\.rb$})
-    watch(%r{^stellaris/lib/([^/]+)\.rb}) { |m| ["stellaris/lib/#{m[1]}.rb", "spec/#{m[1]}_spec.rb", "spec/#{m[1]}"] }
-    watch(%r{^stellaris/lib/([^/]+/.+)\.rb}) do |m|
-      ["stellaris/lib/#{m[1]}.rb", "spec/#{m[1]}_spec.rb", "spec/#{m[1]}"]
+    watch(%r{^lib/([^/]+)\.rb}) { |m| ["lib/#{m[1]}.rb", "spec/#{m[1]}_spec.rb", "spec/#{m[1]}"] }
+    watch(%r{^lib/([^/]+/.+)\.rb}) do |m|
+      ["lib/#{m[1]}.rb", "spec/#{m[1]}_spec.rb", "spec/#{m[1]}"]
     end
-    watch(%r{^stellaris/lib/(.+)\.rb}) { |m| ["spec/#{m[1]}_spec.rb", "spec/#{m[1]}"] }
+    watch(%r{^lib/(.+)\.rb}) { |m| ["spec/#{m[1]}_spec.rb", "spec/#{m[1]}"] }
     watch(%r{(?:.+/)?\.rubocop(?:_todo)?\.yml$}) do |m|
-      [File.dirname(m[0]) + '/spec', File.dirname(m[0]) + '/stellaris']
+      [File.dirname(m[0]) + '/spec', File.dirname(m[0]) + '/lib']
     end
   end
 end

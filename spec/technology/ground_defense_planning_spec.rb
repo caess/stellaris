@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'job'
-require 'pop_job'
-require 'technology'
+require_relative '../../lib/job'
+require_relative '../../lib/pop_job'
+require_relative '../../lib/technology'
 
 RSpec.describe Technology::GroundDefensePlanning do
   subject(:tech) { described_class }

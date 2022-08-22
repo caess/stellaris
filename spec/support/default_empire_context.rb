@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require 'colony'
-require 'empire'
-require 'leader'
-require 'sector'
-require 'species'
+require_relative '../../lib/colony'
+require_relative '../../lib/empire'
+require_relative '../../lib/leader'
+require_relative '../../lib/sector'
+require_relative '../../lib/species'
 
 RSpec.shared_context 'default empire' do
   let(:species_traits) { [] }

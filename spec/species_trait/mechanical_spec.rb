@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
-require 'job'
-require 'pop_job'
-require 'species_trait'
+require_relative '../../lib/job'
+require_relative '../../lib/pop_job'
+require_relative '../../lib/species'
+require_relative '../../lib/species_trait'
 
 RSpec.describe SpeciesTrait::Mechanical do
   subject(:trait) { described_class }

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../stellaris/lib/stellaris'
+require_relative '../lib/stellaris'
 
 RSpec.describe 'mining stations' do
   subject { MiningStation.new({ minerals: 10 }) }

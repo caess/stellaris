@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-require 'colony'
-require 'empire'
-require 'job'
-require 'leader'
-require 'pop'
-require 'pop_job'
-require 'sector'
-require 'species'
+require_relative '../../lib/colony'
+require_relative '../../lib/empire'
+require_relative '../../lib/job'
+require_relative '../../lib/leader'
+require_relative '../../lib/pop'
+require_relative '../../lib/pop_job'
+require_relative '../../lib/sector'
+require_relative '../../lib/species'
 
 RSpec.describe Job::OffspringDrone do
   subject(:job) { described_class }

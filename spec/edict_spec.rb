@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../stellaris/lib/stellaris'
+require_relative '../lib/stellaris'
 
 RSpec.describe 'edicts' do
   describe 'Forge Subsidies' do

@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
-require 'pop_job'
-require 'tradition'
+require_relative '../../lib/job'
+require_relative '../../lib/pop_job'
+require_relative '../../lib/tradition'
 
 RSpec.describe Tradition::JudgmentCorps do
   subject(:tradition) { described_class }

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'resource_group'
-require 'resource_modifier'
+require_relative '../../lib/resource_group'
+require_relative '../../lib/resource_modifier'
 
 RSpec::Matchers.define :eq_resources do |_expected|
   def expected_resources

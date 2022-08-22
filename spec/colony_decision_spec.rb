@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
-require 'colony'
-require 'colony_decision'
-require 'empire'
-require 'job'
-require 'leader'
-require 'pop'
-require 'pop_job'
-require 'resource_modifier'
-require 'species'
+require_relative '../lib/colony'
+require_relative '../lib/colony_decision'
+require_relative '../lib/empire'
+require_relative '../lib/job'
+require_relative '../lib/leader'
+require_relative '../lib/pop'
+require_relative '../lib/pop_job'
+require_relative '../lib/resource_modifier'
+require_relative '../lib/species'
 
 RSpec.describe 'colony decisions' do
   describe 'Anti-Crime Campaign' do

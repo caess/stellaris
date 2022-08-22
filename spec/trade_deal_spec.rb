@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'trade_deal'
+require_relative '../lib/trade_deal'
 
 RSpec.describe TradeDeal do
   subject(:deal) { described_class.new(ours: { consumer_goods: 10 }, theirs: { minerals: 20 }) }

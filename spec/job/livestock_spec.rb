@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'stellaris'
+require_relative '../../lib/job'
 
 RSpec.describe Job::Livestock do
   subject(:job) { described_class }

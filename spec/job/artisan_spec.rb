@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'job'
+require_relative '../../lib/job'
 
 RSpec.describe Job::Artisan do
   subject(:job) { described_class }
