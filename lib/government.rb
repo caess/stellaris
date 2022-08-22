@@ -14,7 +14,7 @@ module Government
       const_get(name.to_s.split('_').map(&:capitalize).join.to_sym)
     when String
       constants.find { |x| x.is_a?(Job) and x.name == name }
-    else
+    when Modifier
       name
     end
   end

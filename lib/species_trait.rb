@@ -10,12 +10,12 @@ module SpeciesTrait
 
   def lookup(name)
     case name
-    when Job
-      name
     when Symbol
       const_get(name.to_s.split('_').map(&:capitalize).join.to_sym)
-    else
+    when String
       constants.find { |x| x.is_a?(Job) and x.name == name }
+    when Modifier
+      name
     end
   end
 end
