@@ -36,8 +36,9 @@ RSpec.shared_context 'with empire' do
   let(:governor) { Leader.new(level: 0) }
   let(:sector) { Sector.new(empire: empire, governor: governor) }
   let(:colony_jobs) { {} }
+  let(:colony_modifiers) { [] }
   let(:colony) do
-    colony = Colony.new(type: nil, size: nil, sector: sector, jobs: colony_jobs)
+    colony = Colony.new(type: nil, size: nil, sector: sector, jobs: colony_jobs, decisions: colony_modifiers)
     allow(colony).to receive(:stability_coefficient_modifier).and_return(ResourceModifier::NONE)
     colony
   end

@@ -1,41 +1,22 @@
 # frozen_string_literal: true
 
-require_relative './job'
-require_relative './modifier'
+# rubocop:todo Style/Documentation
 
 module ColonyDecision
-  AntiCrimeCampaign = Modifier.new(
-    name: 'Anti-Crime Campaign',
-    job_upkeep_modifiers: lambda do |job|
-      if job.job == Job::Enforcer || job.job == Job::Telepath || job.job == Job::Overseer
-        { energy: { additive: 2 } }
-      else
-        {}
-      end
-    end,
-    job_colony_attribute_modifiers: lambda do |job|
-      if job.job == Job::Enforcer || job.job == Job::Telepath
-        { crime: { additive: -10 } }
-      else
-        {}
-      end
+  module_function
+
+  def lookup(name)
+    case name
+    when Symbol
+      const_get(name.to_s.split('_').map(&:capitalize).join.to_sym)
+    when String
+      constants.find { |x| x.is_a?(Job) and x.name == name }
+    when Modifier
+      name
     end
-  )
-
-  ComplianceProtocols = Modifier.new(
-    name: 'Compliance Protocols',
-    job_stability_modifier: ->(job) { job.job == Job::WarriorDrone ? 5 : 0 }
-  )
-
-  HunterKillerDrones = Modifier.new(
-    name: 'Hunter-Killer Drones',
-    job_stability_modifier: ->(job) { job.job == Job::WarriorDrone ? 5 : 0 }
-  )
-
-  MartialLaw = Modifier.new(
-    name: 'Martial Law',
-    job_colony_attribute_modifiers:
-      ->(job) { job.job == Job::Necromancer ? { defense_armies: { additive: 2 } } : {} },
-    job_stability_modifier: ->(job) { job.job == Job::Soldier ? 5 : 0 }
-  )
+  end
 end
+
+# rubocop:enable Style/Documentation
+
+Dir[File.join(__dir__, 'colony_decision', '*.rb')].sort.each { |file| require file }
