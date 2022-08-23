@@ -19,6 +19,7 @@ RSpec.shared_context 'with empire' do
   let(:ruler) { Leader.new(level: 0) }
   let(:traditions) { [] }
   let(:civics) { [] }
+  let(:edicts) { [] }
   let(:technologies) { [] }
   let(:government) { nil }
   let(:empire) do
@@ -28,6 +29,7 @@ RSpec.shared_context 'with empire' do
       government: government,
       traditions: traditions,
       civics: civics,
+      edicts: edicts,
       technologies: technologies
     )
   end
