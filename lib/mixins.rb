@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# rubocop:todo Style/Documentation
+
 module UsesAmenities
   def amenities_output
     0
@@ -27,3 +29,5 @@ module OutputsResources
     output - upkeep
   end
 end
+
+# rubocop:enable Style/Documentation
