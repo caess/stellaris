@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # A sample Guardfile
 # More info at https://github.com/guard/guard#readme
 
@@ -74,13 +76,7 @@ group :red_green_refactor, halt_on_fail: true do
   end
 
   guard :rubocop, cli: '--display-cop-names -E', all_on_start: false do
-    # watch(/.+\.rb$/)
-    watch(%r{^spec/.+\.rb$})
-    watch(%r{^lib/([^/]+)\.rb}) { |m| ["lib/#{m[1]}.rb", "spec/#{m[1]}_spec.rb", "spec/#{m[1]}"] }
-    watch(%r{^lib/([^/]+/.+)\.rb}) do |m|
-      ["lib/#{m[1]}.rb", "spec/#{m[1]}_spec.rb", "spec/#{m[1]}"]
-    end
-    watch(%r{^lib/(.+)\.rb}) { |m| ["spec/#{m[1]}_spec.rb", "spec/#{m[1]}"] }
+    watch(/.+\.rb$/)
     watch(%r{(?:.+/)?\.rubocop(?:_todo)?\.yml$}) { File.dirname(m[0]) }
   end
 end
