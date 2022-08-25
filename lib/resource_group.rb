@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# rubocop:todo Style/Documentation
+
 class ResourceGroup
   PRODUCED_RESOURCES = %i[
     food minerals energy consumer_goods alloys volatile_motes
@@ -35,6 +37,7 @@ class ResourceGroup
     @resolved = nil
   end
 
+  # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
   def resolve
     return @resolved.dup unless @resolved.nil?
 
@@ -44,18 +47,20 @@ class ResourceGroup
     total_modifiers = @modifiers.reduce(ResourceModifier::NONE, &:+)
 
     total_modifiers.each do |good, modifiers|
-      @resolved[good] += (modifiers[:additive] || 0)
-      @resolved[good] *= 1 + (modifiers[:multiplicative] || 0)
+      @resolved[good] += modifiers.fetch(:additive, 0)
+      @resolved[good] *= 1 + modifiers.fetch(:multiplicative, 0)
       maps[good] = modifiers[:map] if modifiers.key?(:map)
     end
 
     maps.each do |good, replacement|
-      @resolved[replacement] = @resolved[good]
+      @resolved[replacement] ||= 0
+      @resolved[replacement] += @resolved[good]
       @resolved[good] = 0
     end
 
     @resolved.dup
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
   def +(other)
     output = resolve.dup
@@ -97,3 +102,5 @@ class ResourceGroup
 
   EMPTY = ResourceGroup.new({})
 end
+
+# rubocop:enable Style/Documentation
