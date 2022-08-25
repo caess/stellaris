@@ -5,11 +5,14 @@ require_relative './resource_group'
 require_relative './resource_modifier'
 require_relative './sector'
 
+# rubocop:todo Metrics/ClassLength, Style/Documentation
+
 class Empire
   include OutputsResources
 
   attr_reader :ruler, :ethics, :civics, :technology
 
+  # rubocop:todo Metrics/AbcSize, Metrics/MethodLength, Metrics/ParameterLists
   def initialize(founder_species:, ruler:, government: nil, ethics: [],
                  civics: [], technology: {}, technologies: [], edicts: [],
                  traditions: [])
@@ -32,6 +35,7 @@ class Empire
       @technology[science] = [] unless @technology.key?(science)
     end
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength, Metrics/ParameterLists
 
   def add_sector(sector)
     @sectors << sector
@@ -46,41 +50,37 @@ class Empire
     @trade_deals << deal
   end
 
+  # rubocop:todo Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
   def job_output_modifiers(job)
-    modifier = ResourceModifier.new
-    modifier += @ruler.job_output_modifiers(job)
-    modifier += @government.job_output_modifiers(job) unless @government.nil?
+    modifiers = [@government, @ruler, @edicts, @technologies, @traditions, @civics].compact.flatten.filter do |x|
+      x.respond_to?(:job_output_modifiers)
+    end
+
+    modifier = modifiers.reduce(ResourceModifier.new) { |sum, m| sum + m.job_output_modifiers(job) }
     modifier += @founder_species.founder_species_job_output_modifiers(job) unless @founder_species.nil?
 
+    # FIXME: Replace with ethics classes
     if @ethics.include?(:fanatic_egalitarian) && job.worker.specialist?
       modifier += ResourceModifier::MultiplyAllProducedResources.new(0.1)
     end
 
     modifier += ResourceModifier.new(trade: { multiplicative: 0.1 }) if @ethics.include?(:xenophile)
 
+    # FIXME: Replace hard-coded civics
     if @civics.include?(:meritocracy) && job.worker.specialist?
       modifier += ResourceModifier::MultiplyAllProducedResources.new(0.1)
     end
 
     modifier += ResourceModifier.new(unity: { multiplicative: 0.15 }) if @civics.include?(:beacon_of_liberty)
 
+    # FIXME: Replace hard-coded technology
     if @technology[:society].include?(:eco_simulation) && job.farmer?
       modifier += ResourceModifier.new(food: { multiplicative: 0.2 })
     end
 
-    @edicts.each do |edict|
-      modifier += edict.job_output_modifiers(job)
-    end
-
-    @civics.filter { |c| c.is_a?(Modifier) }.each do |civic|
-      modifier += civic.job_output_modifiers(job)
-    end
-
-    @technologies.each { |t| modifier += t.job_output_modifiers(job) }
-    @traditions.each { |t| modifier += t.job_output_modifiers(job) }
-
     modifier
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
 
   def job_upkeep_modifiers(job)
     modifier = ResourceModifier.new
@@ -98,117 +98,51 @@ class Empire
   end
 
   def job_colony_attribute_modifiers(job)
-    modifier = ResourceModifier.new
-
-    modifier += @government.job_colony_attribute_modifiers(job) unless @government.nil?
-
-    @edicts.each do |edict|
-      modifier += edict.job_colony_attribute_modifiers(job)
+    modifiers = [@government, @ruler, @edicts, @technologies, @traditions, @civics].compact.flatten.filter do |x|
+      x.respond_to?(:job_colony_attribute_modifiers)
     end
 
-    @civics.filter { |c| c.is_a?(Modifier) }.each do |civic|
-      modifier += civic.job_colony_attribute_modifiers(job)
-    end
-
-    @technologies.each { |t| modifier += t.job_colony_attribute_modifiers(job) }
-    @traditions.each { |t| modifier += t.job_colony_attribute_modifiers(job) }
-
-    modifier
+    modifiers.reduce(ResourceModifier.new) { |sum, m| sum + m.job_colony_attribute_modifiers(job) }
   end
 
   def job_empire_attribute_modifiers(job)
-    modifier = ResourceModifier.new
-
-    modifier += @government.job_empire_attribute_modifiers(job) unless @government.nil?
-
-    @edicts.each do |edict|
-      modifier += edict.job_empire_attribute_modifiers(job)
+    modifiers = [@government, @ruler, @edicts, @technologies, @traditions, @civics].compact.flatten.filter do |x|
+      x.respond_to?(:job_empire_attribute_modifiers)
     end
 
-    @civics.filter { |c| c.is_a?(Modifier) }.each do |civic|
-      modifier += civic.job_empire_attribute_modifiers(job)
-    end
-
-    @technologies.each { |t| modifier += t.job_empire_attribute_modifiers(job) }
-    @traditions.each { |t| modifier += t.job_empire_attribute_modifiers(job) }
-
-    modifier
+    modifiers.reduce(ResourceModifier.new) { |sum, m| sum + m.job_empire_attribute_modifiers(job) }
   end
 
   def job_amenities_output_modifier(job)
-    modifier = 0
-
-    modifier += @government.job_amenities_output_modifier(job) unless @government.nil?
-
-    @edicts.each do |edict|
-      modifier += edict.job_stability_modifier(job)
+    modifiers = [@government, @ruler, @edicts, @technologies, @traditions, @civics].compact.flatten.filter do |x|
+      x.respond_to?(:job_amenities_output_modifier)
     end
 
-    @civics.filter { |c| c.is_a?(Modifier) }.each do |civic|
-      modifier += civic.job_amenities_output_modifier(job)
-    end
-
-    @technologies.each { |t| modifier += t.job_amenities_output_modifier(job) }
-    @traditions.each { |t| modifier += t.job_amenities_output_modifier(job) }
-
-    modifier
+    modifiers.reduce(0) { |sum, m| sum + m.job_amenities_output_modifier(job) }
   end
 
   def job_stability_modifier(job)
-    modifier = 0
-
-    modifier += @government.job_stability_modifier(job) unless @government.nil?
-
-    @edicts.each do |edict|
-      modifier += edict.job_stability_modifier(job)
+    modifiers = [@government, @ruler, @edicts, @technologies, @traditions, @civics].compact.flatten.filter do |x|
+      x.respond_to?(:job_stability_modifier)
     end
 
-    @civics.filter { |c| c.is_a?(Modifier) }.each do |civic|
-      modifier += civic.job_stability_modifier(job)
-    end
-
-    @technologies.each { |t| modifier += t.job_stability_modifier(job) }
-    @traditions.each { |t| modifier += t.job_stability_modifier(job) }
-
-    modifier
+    modifiers.reduce(0) { |sum, m| sum + m.job_stability_modifier(job) }
   end
 
   def job_worker_housing_modifier(job)
-    modifier = ResourceModifier.new
-
-    modifier += @government.job_worker_housing_modifier(job) unless @government.nil?
-
-    @edicts.each do |edict|
-      modifier += edict.job_worker_housing_modifier(job)
+    modifiers = [@government, @ruler, @edicts, @technologies, @traditions, @civics].compact.flatten.filter do |x|
+      x.respond_to?(:job_worker_housing_modifier)
     end
 
-    @civics.filter { |c| c.is_a?(Modifier) }.each do |civic|
-      modifier += civic.job_worker_housing_modifier(job)
-    end
-
-    @technologies.each { |t| modifier += t.job_worker_housing_modifier(job) }
-    @traditions.each { |t| modifier += t.job_worker_housing_modifier(job) }
-
-    modifier
+    modifiers.reduce(ResourceModifier.new) { |sum, m| sum + m.job_worker_housing_modifier(job) }
   end
 
   def colony_attribute_modifiers
-    modifier = ResourceModifier.new({})
-    modifier += @ruler.colony_attribute_modifiers
-    modifier += @government.colony_attribute_modifiers(job) unless @government.nil?
-
-    @edicts.each do |edict|
-      modifier += edict.colony_attribute_modifiers(job)
+    modifiers = [@government, @ruler, @edicts, @technologies, @traditions, @civics].compact.flatten.filter do |x|
+      x.respond_to?(:colony_attribute_modifiers)
     end
 
-    @civics.filter { |c| c.is_a?(Modifier) }.each do |civic|
-      modifier += civic.colony_attribute_modifiers(job)
-    end
-
-    @technologies.each { |t| modifier += t.colony_attribute_modifiers(job) }
-    @traditions.each { |t| modifier += t.colony_attribute_modifiers(job) }
-
-    modifier
+    modifiers.reduce(ResourceModifier.new) { |sum, m| sum + m.colony_attribute_modifiers }
   end
 
   def mining_station_modifiers
@@ -247,6 +181,7 @@ class Empire
     modifier
   end
 
+  # rubocop:todo Metrics/MethodLength
   def empire_base_modified_output
     empire_base = ResourceGroup.new({
                                       energy: 20,
@@ -276,38 +211,16 @@ class Empire
 
     empire_base
   end
+  # rubocop:enable Metrics/MethodLength
 
   def output
-    sector_output = @sectors.reduce(ResourceGroup.new) do |sum, sector|
-      sum + sector.output
-    end
+    output = [@sectors, @stations, @trade_deals].flatten.map(&:output).reduce(ResourceGroup.new, &:+)
 
-    station_output = @stations.reduce(ResourceGroup.new) do |sum, station|
-      sum + station.output
-    end
-
-    trade_deal_output = @trade_deals.reduce(ResourceGroup.new) do |sum, deal|
-      sum + deal.output
-    end
-
-    sector_output + station_output + trade_deal_output +
-      empire_base_modified_output
+    output + empire_base_modified_output
   end
 
   def upkeep
-    sector_upkeep = @sectors.reduce(ResourceGroup.new) do |sum, sector|
-      sum + sector.upkeep
-    end
-
-    station_upkeep = @stations.reduce(ResourceGroup.new) do |sum, station|
-      sum + station.upkeep
-    end
-
-    trade_deal_upkeep = @trade_deals.reduce(ResourceGroup.new) do |sum, deal|
-      sum + deal.upkeep
-    end
-
-    sector_upkeep + station_upkeep + trade_deal_upkeep
+    [@sectors, @stations, @trade_deals].flatten.map(&:upkeep).reduce(ResourceGroup.new, &:+)
   end
 
   def attributes
@@ -315,19 +228,14 @@ class Empire
 
     empire_attributes = ResourceGroup.new({ naval_capacity: 20 })
 
-    empire_attributes << ruler.empire_attribute_modifiers
-    @edicts.each { |e| empire_attributes << e.empire_attribute_modifiers }
-
-    @civics.filter { |c| c.is_a?(Modifier) }.each do |civic|
-      empire_attributes << civic.empire_attribute_modifiers
+    modifiers = [@government, @ruler, @edicts, @technologies, @traditions, @civics,
+                 @sectors].compact.flatten.filter do |x|
+      x.respond_to?(:empire_attribute_modifiers)
     end
 
-    @technologies.each { |t| empire_attributes << t.empire_attribute_modifiers }
-    @traditions.each { |t| empire_attributes << t.empire_attribute_modifiers }
+    empire_attributes << modifiers.reduce(ResourceModifier.new) { |sum, m| sum + m.empire_attribute_modifiers }
 
-    @sectors.each { |s| empire_attributes << s.empire_attribute_modifiers }
     @attributes = empire_attributes.resolve
-
     @attributes
   end
 
@@ -335,3 +243,5 @@ class Empire
     attributes[:naval_capacity] || 0
   end
 end
+
+# rubocop:enable Metrics/ClassLength, Style/Documentation

@@ -10,26 +10,31 @@ require_relative '../../lib/species'
 
 RSpec.shared_context 'with empire' do
   let(:species_traits) { [] }
+  let(:living_standard) { nil }
   let(:species) do
     Species.new(
-      living_standard: nil,
+      living_standard: living_standard,
       traits: species_traits
     )
   end
   let(:ruler) { Leader.new(level: 0) }
   let(:traditions) { [] }
+  let(:ethics) { {} }
   let(:civics) { [] }
   let(:edicts) { [] }
   let(:technologies) { [] }
+  let(:technology) { {} }
   let(:government) { nil }
   let(:empire) do
     Empire.new(
       founder_species: species,
-      ruler: Leader.new(level: 0),
+      ruler: ruler,
       government: government,
       traditions: traditions,
+      ethics: ethics,
       civics: civics,
       edicts: edicts,
+      technology: technology,
       technologies: technologies
     )
   end
@@ -39,7 +44,7 @@ RSpec.shared_context 'with empire' do
   let(:colony_modifiers) { [] }
   let(:colony) do
     colony = Colony.new(type: nil, size: nil, sector: sector, jobs: colony_jobs, decisions: colony_modifiers)
-    allow(colony).to receive(:stability_coefficient_modifier).and_return(ResourceModifier::NONE)
+    allow(colony).to receive(:stability_coefficient).and_return(0)
     colony
   end
 end
