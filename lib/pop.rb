@@ -7,6 +7,8 @@ require_relative './pop_job'
 require_relative './resource_group'
 require_relative './resource_modifier'
 
+# rubocop:todo Metrics/ClassLength, Style/Documentation
+
 class Pop
   include OutputsResources
   include UsesAmenities
@@ -22,8 +24,8 @@ class Pop
     @job = PopJob.new(job: job, worker: self)
   end
 
-  def has_job?(job)
-    @job.job == Job.lookup(job)
+  def job?(job)
+    @job.job?(job)
   end
 
   def specialist?
@@ -40,6 +42,7 @@ class Pop
 
   def happiness
     happiness = 50
+    # FIXME: Replace hard-coded living standerd
     happiness += 5 if @species.living_standard == :shared_burden
 
     happiness += @colony.pop_happiness_modifiers
@@ -171,3 +174,5 @@ class Pop
     @job.empire_attribute_modifiers
   end
 end
+
+# rubocop:enable Metrics/ClassLength, Style/Documentation
