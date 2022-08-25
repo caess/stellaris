@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require_relative './building'
 require_relative './district'
 require_relative './job'
 require_relative './mixins'
@@ -7,28 +8,31 @@ require_relative './pop'
 require_relative './resource_group'
 require_relative './resource_modifier'
 
+# rubocop:todo Metrics/ClassLength, Style/Documentation
+
 class Colony
   include OutputsResources
   include UsesAmenities
 
   attr_reader :pops, :districts
 
+  # rubocop:todo Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity, Metrics/ParameterLists
   def initialize(
-    type:, size:, sector:, designation: nil, districts: {}, buildings: {},
+    type:, size:, sector: nil, designation: nil, districts: {}, buildings: {},
     decisions: {}, jobs: {}, deposits: {}, fill_jobs_with: nil
   )
     @type = type
     @size = size
     @sector = sector
-    @sector.add_colony(self)
+    @sector&.add_colony(self)
     @designation = designation
     @districts = districts.dup
-    @buildings = buildings.dup
+    @buildings = buildings.flat_map { |b| [Building.lookup(b.first)] * b.last }
     @decisions = decisions.dup
 
     @districts = []
-    districts.each do |type, number|
-      case type
+    districts.each do |district_type, number|
+      case district_type
       when :habitation
         district = District::HabitationDistrict
       when :industrial
@@ -85,13 +89,16 @@ class Colony
     @attributes = nil
   end
 
+  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity, Metrics/ParameterLists
+
   def add_pop(pop)
     @pops << pop
     @attributes = nil
   end
 
   def buildings(type)
-    (@buildings[type] || 0)
+    building_type = Building.lookup(type)
+    (@buildings.select { |b| b == building_type }).count
   end
 
   def num_districts(type)
@@ -99,27 +106,22 @@ class Colony
   end
 
   def jobs(job)
-    @pops.filter { |pop| pop.has_job?(job) }.count
+    @pops.filter { |pop| pop.job?(job) }.count
   end
 
   def all_jobs
     @jobs
   end
 
+  # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
   def max_jobs
-    max_jobs = @districts.reduce({}) { |sum, x| sum.merge(x.max_jobs) { |_k, v1, v2| v1 + v2 } }
-    max_jobs = max_jobs.merge({
-                                Job::Politician => 2 * buildings(:habitat_central_control),
-                                Job::Enforcer => 1 * buildings(:habitat_central_control),
-                                Job::Artisan => 2 * buildings(:civilian_industries),
-                                Job::Metallurgist => 2 * buildings(:alloy_foundries),
-                                Job::Colonist => 2 * buildings(:habitat_administration),
-                                Job::Researcher => 2 * buildings(:research_labs),
-                                Job::Bureaucrat => 2 * buildings(:administrative_offices),
-                                Job::Entertainer => 2 * buildings(:holo_theatres),
-                                Job::Farmer => 3 * buildings(:hydroponics_farms)
-                              }) { |_k, v1, v2| v1 + v2 }
+    max_jobs = (@buildings + @districts).reduce({}) { |sum, x| sum.merge(x.max_jobs) { |_k, v1, v2| v1 + v2 } }
 
+    # FIXME: This needs to be handled through the Void Dweller origin
+    hydroponics_farms = buildings(Building::HydroponicsFarms)
+    max_jobs[Job::Farmer] += hydroponics_farms if hydroponics_farms.positive?
+
+    # FIXME: Move designations to their own classes
     case @designation
     when :factory_station
       max_jobs[Job::Artisan] += 1 * num_districts(District::HabitatIndustrialDistrict)
@@ -133,10 +135,10 @@ class Colony
 
     max_jobs
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
   def buildings_amenities_output
-    (5 * buildings(:habitat_central_control)) +
-      (3 * buildings(:habitat_administration))
+    @buildings.reduce(0) { |sum, b| sum + b.amenities_output }
   end
 
   def designation_amenities_output
@@ -152,19 +154,24 @@ class Colony
     5 + @pops.reduce(0) { |sum, pop| sum + pop.amenities_upkeep }
   end
 
+  # rubocop:todo Metrics/AbcSize
   def pop_happiness_modifiers
     modifier = 0
+
+    # FIXME: Move Designation to its own class
     modifier += 10 if @designation == :leisure_station
+
     modifier += @pops.reduce(0) { |sum, pop| sum + pop.pop_happiness_modifiers }
 
-    if net_amenities.positive?
-      modifier += [20, (20.0 * net_amenities / amenities_upkeep)].min
-    elsif net_amenities.negative?
-      modifier += [-50, 100 * (2.0 / 3 * net_amenities / amenities_upkeep)].max
-    end
+    modifier += if net_amenities.positive?
+                  [20, (20.0 * net_amenities / amenities_upkeep)].min
+                else
+                  [-50, 100 * (2.0 / 3 * net_amenities / amenities_upkeep)].max
+                end
 
     modifier
   end
+  # rubocop:enable Metrics/AbcSize
 
   def approval_rating
     1.0 * @pops.reduce(0) do |sum, pop|
@@ -176,19 +183,18 @@ class Colony
     @designation == :empire_capital ? 5 : 0
   end
 
-  def stability
-    stability = [
-      50,
-      @pops.reduce(0) { |sum, pop| sum + pop.stability_modifier },
-      @sector.stability_modifier,
-      stability_modifier
-    ].reduce(0, &:+)
-
+  def stability_from_approval_rating
     if approval_rating > 50
-      stability += (0.6 * (approval_rating - 50)).floor
-    elsif approval_rating < 50
-      stability -= (50 - approval_rating).floor
+      (0.6 * (approval_rating - 50)).floor
+    else
+      -1 * (50 - approval_rating).floor
     end
+  end
+
+  def stability
+    stability = 50 + stability_modifier + @sector.stability_modifier
+    stability += @pops.reduce(0) { |sum, pop| sum + pop.stability_modifier }
+    stability += stability_from_approval_rating
 
     stability
   end
@@ -208,10 +214,10 @@ class Colony
       ResourceModifier.new(trade: { multiplicative: stability_coefficient })
   end
 
+  # rubocop:todo Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
   def job_output_modifiers(job)
     modifier = ResourceModifier.new
-
-    @pops.each { |pop| modifier += pop.all_job_output_modifiers(job) }
+    modifier += @pops.reduce(modifier) { |sum, p| sum + p.all_job_output_modifiers(job) }
 
     modifier += stability_coefficient_modifier
     modifier += @sector.job_output_modifiers(job)
@@ -254,6 +260,7 @@ class Colony
 
     modifier
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
 
   def pop_output_modifiers(pop)
     modifier = ResourceModifier.new
@@ -265,6 +272,7 @@ class Colony
     modifier
   end
 
+  # rubocop:todo Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
   def job_upkeep_modifiers(job)
     modifier = ResourceModifier.new
 
@@ -285,6 +293,7 @@ class Colony
 
     modifier
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
 
   def pop_upkeep_modifiers(_pop)
     ResourceModifier::NONE
@@ -340,22 +349,12 @@ class Colony
     modifier
   end
 
-  def building_output(_num, _building)
-    ResourceGroup.new
+  def buildings_output
+    @buildings.reduce(ResourceGroup.new) { |sum, b| sum + b.output }
   end
 
-  def building_upkeep(num, building)
-    upkeep = ResourceGroup.new
-
-    if %i[habitat_central_control habitat_administration].include?(building)
-      upkeep[:energy] = 3 * num
-      upkeep[:alloys] = 5 * num
-    elsif %i[research_labs administrative_offices holo_theatres hydroponics_farms luxury_residences
-             communal_housing energy_grid mineral_purification_plants food_processing_facilities alloy_foundries civilian_industries].include?(building)
-      upkeep[:energy] = 2 * num
-    end
-
-    upkeep
+  def buildings_upkeep
+    @buildings.reduce(ResourceGroup.new) { |sum, b| sum + b.upkeep }
   end
 
   def output
@@ -363,15 +362,11 @@ class Colony
       sum + pop.output
     end
 
-    building_output = @buildings.reduce(ResourceGroup.new) do |sum, (building, num)|
-      sum + building_output(num, building)
-    end
-
     deposits_output = @deposits.reduce(ResourceGroup.new) do |sum, deposit|
       sum + deposit
     end
 
-    pop_output + building_output + deposits_output
+    pop_output + buildings_output + deposits_output
   end
 
   def upkeep
@@ -379,15 +374,11 @@ class Colony
       sum + pop.upkeep
     end
 
-    building_upkeep = @buildings.reduce(ResourceGroup.new) do |sum, (building, num)|
-      sum + building_upkeep(num, building)
-    end
-
     district_upkeep = @districts.reduce(ResourceGroup.new({})) do |sum, d|
       sum + d.upkeep
     end
 
-    pop_upkeep + building_upkeep + district_upkeep
+    pop_upkeep + buildings_upkeep + district_upkeep
   end
 
   def attributes
@@ -424,3 +415,5 @@ class Colony
     modifier
   end
 end
+
+# rubocop:enable Metrics/ClassLength, Style/Documentation
