@@ -33,6 +33,10 @@ class Building
     @options.fetch(:stability_modifier, 0)
   end
 
+  def output
+    ResourceGroup.new(@options.fetch(:output, {}))
+  end
+
   def upkeep
     ResourceGroup.new(@options.fetch(:upkeep, {}))
   end
