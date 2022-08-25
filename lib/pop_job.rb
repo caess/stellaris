@@ -6,6 +6,8 @@ require_relative './job'
 require_relative './mixins'
 require_relative './resource_group'
 
+# rubocop:todo Style/Documentation
+
 class PopJob
   include OutputsResources
   include UsesAmenities
@@ -26,6 +28,10 @@ class PopJob
   def initialize(job:, worker:)
     @job = job
     @worker = worker
+  end
+
+  def job?(job)
+    @job == Job.lookup(job)
   end
 
   def output
@@ -82,3 +88,5 @@ class PopJob
     modifiers
   end
 end
+
+# rubocop:enable Style/Documentation
