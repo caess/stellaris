@@ -4,6 +4,8 @@ require_relative './resource_group'
 require_relative './resource_modifier'
 require_relative './species_trait'
 
+# rubocop:todo Style/Documentation
+
 class Species
   attr_reader :traits, :living_standard
 
@@ -12,14 +14,16 @@ class Species
     @traits = traits.dup
   end
 
+  # rubocop:todo Metrics/MethodLength
   def job_output_modifiers(job)
     modifier = ResourceModifier.new
 
     if @traits.include?(:void_dweller)
-      # FIXME: - need to check planet type
+      # FIXME: need to check planet type
       modifier += ResourceModifier::MultiplyAllProducedResources.new(0.15)
     end
 
+    # FIXME: replace hard-coded traits
     if @traits.include?(:intelligent)
       modifier += ResourceModifier.new({
                                          physics_research: { multiplicative: 0.1 },
@@ -40,6 +44,7 @@ class Species
 
     modifier
   end
+  # rubocop:enable Metrics/MethodLength
 
   def job_upkeep_modifiers(job)
     modifier = ResourceModifier.new
@@ -71,3 +76,5 @@ class Species
     modifier
   end
 end
+
+# rubocop:enable Style/Documentation
