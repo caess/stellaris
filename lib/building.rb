@@ -75,7 +75,7 @@ class Building
 
   def self.lookup(name)
     case name
-    when Job
+    when Building
       name
     when Symbol
       const_get(name.to_s.split('_').map(&:capitalize).join.to_sym)
