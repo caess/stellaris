@@ -2,6 +2,8 @@
 
 require_relative './resource_modifier'
 
+# rubocop:todo Style/Documentation
+
 class Leader
   attr_reader :level, :traits
   attr_accessor :role
@@ -20,8 +22,11 @@ class Leader
     @role == :ruler
   end
 
+  # rubocop:todo Metrics/MethodLength
   def job_output_modifiers(job)
     modifier = ResourceModifier.new
+
+    # FIXME: Replace with leader traits.
 
     if governor?
       modifier += ResourceModifier::MultiplyAllProducedResources.new(
@@ -37,6 +42,7 @@ class Leader
 
     modifier
   end
+  # rubocop:enable Metrics/MethodLength
 
   def colony_attribute_modifiers
     ResourceModifier::NONE
@@ -64,3 +70,5 @@ class Leader
 
   NONE = Leader.new(level: 0)
 end
+
+# rubocop:enable Style/Documentation
