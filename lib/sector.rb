@@ -5,6 +5,8 @@ require_relative './mixins'
 require_relative './resource_group'
 require_relative './resource_modifier'
 
+# rubocop:todo Style/Documentation
+
 class Sector
   include OutputsResources
 
@@ -116,3 +118,5 @@ class Sector
     end
   end
 end
+
+# rubocop:enable Style/Documentation
