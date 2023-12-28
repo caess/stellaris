@@ -33,6 +33,13 @@ RSpec.describe SpeciesTrait::Lithoid do
       .to eq_resource_modifier({ food: { additive: -1 }, minerals: { additive: 1 } })
   end
 
+  it 'replaces Food in Death Chronicler upkeep with Minerals' do
+    necrophyte = PopJob.new(worker: nil, job: Job::DeathChronicler)
+
+    expect(trait.job_upkeep_modifiers(necrophyte))
+      .to eq_resource_modifier({ food: { additive: -1 }, minerals: { additive: 1 } })
+  end
+
   it 'changes the output of Livestock jobs to 2 Minerals' do
     livestock = PopJob.new(worker: nil, job: Job::Livestock)
 

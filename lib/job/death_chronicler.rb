@@ -11,6 +11,9 @@ class Job
     },
     amenities_output: 2,
     stability_modifier: 2,
-    upkeep: { consumer_goods: 2 }
+    upkeep: {
+      consumer_goods: 2,
+      food: 1
+    }
   )
 end

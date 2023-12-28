@@ -20,7 +20,7 @@ module SpeciesTrait
     end,
     job_upkeep_modifiers: lambda do |job|
       case job.job
-      when Job::Necrophyte
+      when Job::Necrophyte, Job::DeathChronicler
         {
           food: { additive: -1 },
           minerals: { additive: 1 }

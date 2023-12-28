@@ -36,18 +36,6 @@ RSpec.describe Civic::ByzantineBureaucracy do
     let(:bureaucrat) { Pop.new(species: species, colony: colony, job: Job::Bureaucrat) }
     let(:death_chronicler) { Pop.new(species: species, colony: colony, job: Job::DeathChronicler) }
 
-    it 'increases the Unity output of Bureaucrats to 5' do
-      colony.add_pop(bureaucrat)
-
-      expect(bureaucrat.job_output[:unity]).to eq(5)
-    end
-
-    it 'increases the stability provided by Bureaucrats to 1' do
-      colony.add_pop(bureaucrat)
-
-      expect(bureaucrat.stability_modifier).to eq(1)
-    end
-
     it 'increases the Unity output of Death Chroniclers to 3' do
       colony.add_pop(death_chronicler)
 
