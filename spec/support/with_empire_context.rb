@@ -10,11 +10,18 @@ require_relative '../../lib/species'
 
 RSpec.shared_context 'with empire' do
   let(:species_traits) { [] }
+  let(:founder_species_traits) { [] }
   let(:living_standard) { nil }
   let(:species) do
     Species.new(
       living_standard: living_standard,
       traits: species_traits
+    )
+  end
+  let(:founder_species) do
+    Species.new(
+      living_standard: living_standard,
+      traits: founder_species_traits
     )
   end
   let(:ruler) { Leader.new(level: 0) }
@@ -27,7 +34,7 @@ RSpec.shared_context 'with empire' do
   let(:government) { nil }
   let(:empire) do
     Empire.new(
-      founder_species: species,
+      founder_species: founder_species,
       ruler: ruler,
       government: government,
       traditions: traditions,

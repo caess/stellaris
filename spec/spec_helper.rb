@@ -100,3 +100,4 @@ end
 
 require_relative './support/matchers'
 require_relative './support/with_empire_context'
+require_relative './support/with_species_context'
