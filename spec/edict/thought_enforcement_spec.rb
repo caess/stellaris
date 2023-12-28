@@ -17,16 +17,4 @@ RSpec.describe Edict::ThoughtEnforcement do
     expect(edict.job_colony_attribute_modifiers(telepath))
       .to eq_resource_modifier({ crime: { additive: -5 } })
   end
-
-  context 'when enacted' do
-    include_context 'with empire' do
-      let(:edicts) { [described_class] }
-    end
-
-    let(:telepath) { Pop.new(species: species, colony: colony, job: Job::Telepath) }
-
-    it 'increases the crime reduction of Telepaths to 40' do
-      expect(telepath.colony_attribute_modifiers).to eq_resource_modifier({ crime: { additive: -40 } })
-    end
-  end
 end

@@ -46,33 +46,7 @@ RSpec.describe ColonyDecision::AntiCrimeCampaign do
       let(:colony_modifiers) { [described_class] }
     end
 
-    let(:enforcer) { Pop.new(species: species, colony: colony, job: Job::Enforcer) }
-    let(:telepath) { Pop.new(species: species, colony: colony, job: Job::Telepath) }
     let(:overseer) { Pop.new(species: species, colony: colony, job: Job::Overseer) }
-
-    it 'increases the crime reduction for Enforcers to 35' do
-      colony.add_pop(enforcer)
-
-      expect(enforcer.colony_attribute_modifiers[:crime]).to eq({ additive: -35 })
-    end
-
-    it 'increases the upkeep of Enforcers to 2 Energy' do
-      colony.add_pop(enforcer)
-
-      expect(enforcer.job_upkeep).to eq_resources({ energy: 2 })
-    end
-
-    it 'increases the crime reduction for Telepaths to 45' do
-      colony.add_pop(telepath)
-
-      expect(telepath.colony_attribute_modifiers[:crime]).to eq({ additive: -45 })
-    end
-
-    it 'increases the upkeep for Telepaths to 3 Energy' do
-      colony.add_pop(telepath)
-
-      expect(telepath.job_upkeep).to eq_resources({ energy: 3 })
-    end
 
     it 'increases the upkeep for Overseers to 2 Energy' do
       colony.add_pop(overseer)

@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require_relative '../../lib/job'
+require_relative '../../lib/pop'
+require_relative '../../lib/species_trait'
 
 RSpec.describe Job::Colonist do
   subject(:job) { described_class }
@@ -24,4 +26,16 @@ RSpec.describe Job::Colonist do
   end
 
   it { is_expected.to be_specialist }
+
+  context 'when species is Lithoid' do
+    include_context 'with species' do
+      let(:traits) { [SpeciesTrait::Lithoid] }
+    end
+
+    it 'produces 1 Minerals' do
+      pop = Pop.new(species: species, colony: nil, job: described_class)
+
+      expect(pop.job_output).to eq_resources({ minerals: 1 })
+    end
+  end
 end

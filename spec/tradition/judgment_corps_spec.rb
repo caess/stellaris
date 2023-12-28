@@ -23,24 +23,4 @@ RSpec.describe Tradition::JudgmentCorps do
     expect(tradition.job_output_modifiers(telepath))
       .to eq_resource_modifier({ unity: { additive: 1 } })
   end
-
-  context 'when applied to an empire' do
-    include_context 'with empire' do
-      let(:traditions) { [described_class] }
-    end
-
-    it 'increases Enforcer Unity output to 1' do
-      enforcer = Pop.new(species: species, colony: colony, job: Job::Enforcer)
-      colony.add_pop(enforcer)
-
-      expect(enforcer.job_output[:unity]).to eq(1)
-    end
-
-    it 'increases Telepath Unity output to 7 (before Telepath 5% resource increase)' do
-      telepath = Pop.new(species: species, colony: colony, job: Job::Telepath)
-      colony.add_pop(telepath)
-
-      expect(telepath.job_output[:unity]).to be_within(0.01).of(7.35)
-    end
-  end
 end

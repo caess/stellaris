@@ -7,8 +7,15 @@ require_relative '../../lib/pop_job'
 RSpec.describe Civic::CorporateHedonism do
   subject(:civic) { described_class }
 
+  let(:entertainer) { PopJob.new(worker: nil, job: Job::Entertainer) }
+
   it 'has the correct name' do
     expect(civic.name).to eq('Corporate Hedonism')
+  end
+
+  it 'adds 1% pop growth speed to Entertainers' do
+    expect(civic.job_colony_attribute_modifiers(entertainer))
+      .to eq_resource_modifier({ pop_growth_speed_percent: { additive: 1 } })
   end
 
   context 'when chosen for empire' do

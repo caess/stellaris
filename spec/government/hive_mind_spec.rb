@@ -26,29 +26,4 @@ RSpec.describe Government::HiveMind do
     expect(government.job_upkeep_modifiers(necrophyte))
       .to eq_resource_modifier(expected_necrophyte_upkeep_modifier)
   end
-
-  context 'when empire government' do
-    include_context 'with empire' do
-      let(:government) { described_class }
-    end
-
-    it 'changes the upkeep of Necrophytes to 2 Food' do
-      necrophyte = Pop.new(species: species, colony: colony, job: Job::Necrophyte)
-
-      expect(necrophyte.job_upkeep).to eq_resources({ food: 2 })
-    end
-
-    context 'with lithoid species' do
-      include_context 'with empire' do
-        let(:government) { described_class }
-        let(:species_traits) { [SpeciesTrait::Lithoid] }
-      end
-
-      it 'changes the upkeep of Necrophytes to 2 Minerals' do
-        necrophyte = Pop.new(species: species, colony: colony, job: Job::Necrophyte)
-
-        expect(necrophyte.job_upkeep).to eq_resources({ minerals: 2 })
-      end
-    end
-  end
 end

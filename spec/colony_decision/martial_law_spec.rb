@@ -30,14 +30,7 @@ RSpec.describe ColonyDecision::MartialLaw do
       let(:colony_modifiers) { [described_class] }
     end
 
-    let(:necromancer) { Pop.new(species: species, colony: colony, job: Job::Necromancer) }
     let(:soldier) { Pop.new(species: species, colony: colony, job: Job::Soldier) }
-
-    it 'increases the defense armies provided by Necromancers to 5' do
-      colony.add_pop(necromancer)
-
-      expect(necromancer.colony_attribute_modifiers[:defense_armies]).to eq({ additive: 5 })
-    end
 
     it 'increases the stability provided by Soldiers to 5' do
       colony.add_pop(soldier)

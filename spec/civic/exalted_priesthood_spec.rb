@@ -19,32 +19,4 @@ RSpec.describe Civic::ExaltedPriesthood do
 
     expect(civic.job_output_modifiers(priest)).to eq_resource_modifier({ unity: { additive: 1 } })
   end
-
-  context 'when chosen for empire' do
-    include_context 'with empire' do
-      let(:civics) { [described_class] }
-    end
-
-    let(:high_priest) { Pop.new(species: species, colony: colony, job: Job::HighPriest) }
-    let(:priest) { Pop.new(species: species, colony: colony, job: Job::Priest) }
-    let(:death_priest) { Pop.new(species: species, colony: colony, job: Job::DeathPriest) }
-
-    it 'increases the Unity output of High Priests to 7' do
-      colony.add_pop(high_priest)
-
-      expect(high_priest.job_output[:unity]).to eq(7)
-    end
-
-    it 'increases the Unity output of Priests to 5' do
-      colony.add_pop(priest)
-
-      expect(priest.job_output[:unity]).to eq(5)
-    end
-
-    it 'increases the Unity output of Death Priests to 4' do
-      colony.add_pop(death_priest)
-
-      expect(death_priest.job_output[:unity]).to eq(4)
-    end
-  end
 end

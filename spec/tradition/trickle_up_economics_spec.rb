@@ -16,16 +16,4 @@ RSpec.describe Tradition::TrickleUpEconomics do
   it 'adds trade to Clerk output' do
     expect(tradition.job_output_modifiers(clerk)).to eq_resource_modifier({ trade: { additive: 1 } })
   end
-
-  context 'when applied to an empire' do
-    include_context 'with empire' do
-      let(:traditions) { [described_class] }
-    end
-
-    it 'modifies the output of Clerks' do
-      clerk = Pop.new(species: species, colony: colony, job: Job::Clerk)
-
-      expect(clerk.job_output[:trade]).to eq(5)
-    end
-  end
 end

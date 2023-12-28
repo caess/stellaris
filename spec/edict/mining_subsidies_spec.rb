@@ -26,16 +26,6 @@ RSpec.describe Edict::MiningSubsidies do
       let(:edicts) { [described_class] }
     end
 
-    it 'adds 0.5 Energy to the upkeep of Miners' do
-      miner = Pop.new(species: species, colony: colony, job: Job::Miner)
-      expect(miner.job_upkeep).to eq_resources({ energy: 0.5 })
-    end
-
-    it 'adds 0.5 Energy to the upkeep of Scrap Miners' do
-      scrap_miner = Pop.new(species: species, colony: colony, job: Job::ScrapMiner)
-      expect(scrap_miner.job_upkeep).to eq_resources({ energy: 0.5 })
-    end
-
     it 'adds 0.5 Energy to the upkeep of Crystal Miners' do
       crystal_miner = Pop.new(species: species, colony: colony, job: Job::CrystalMiner)
       expect(crystal_miner.job_upkeep).to eq_resources({ energy: 0.5 })

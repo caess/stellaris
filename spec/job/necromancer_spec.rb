@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
+require_relative '../../lib/colony_decision'
 require_relative '../../lib/job'
+require_relative '../../lib/pop'
+require_relative '../../lib/technology'
 
 RSpec.describe Job::Necromancer do
   subject(:job) { described_class }
@@ -34,4 +37,30 @@ RSpec.describe Job::Necromancer do
 
   it { is_expected.to be_specialist }
   it { is_expected.to be_researcher }
+
+  context 'when empire has Ground Defense Planning technology' do
+    include_context 'with empire' do
+      let(:technologies) { [Technology::GroundDefensePlanning] }
+    end
+
+    let(:necromancer) { Pop.new(species: species, colony: colony, job: described_class) }
+
+    it 'provides 4 naval capacity to the empire' do
+      expect(necromancer.empire_attribute_modifiers).to eq_resource_modifier(
+        { naval_capacity: { additive: 4 } }
+      )
+    end
+  end
+
+  context 'when colony has Martial Law modifier' do
+    include_context 'with empire' do
+      let(:colony_modifiers) { [ColonyDecision::MartialLaw] }
+    end
+
+    let(:necromancer) { Pop.new(species: species, colony: colony, job: described_class) }
+
+    it 'provides 5 defense armies' do
+      expect(necromancer.colony_attribute_modifiers).to eq_resource_modifier({ defense_armies: { additive: 5 } })
+    end
+  end
 end

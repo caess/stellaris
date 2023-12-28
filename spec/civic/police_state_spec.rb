@@ -24,21 +24,4 @@ RSpec.describe Civic::PoliceState do
     expect(civic.job_output_modifiers(telepath))
       .to eq_resource_modifier({ unity: { additive: 1 } })
   end
-
-  context 'when chosen for empire' do
-    include_context 'with empire' do
-      let(:civics) { [described_class] }
-    end
-
-    let(:enforcer) { Pop.new(species: species, colony: colony, job: Job::Enforcer) }
-    let(:telepath) { Pop.new(species: species, colony: colony, job: Job::Telepath) }
-
-    it 'adds 1 Unity to the output of Enforcers' do
-      expect(enforcer.job_output[:unity]).to eq(1)
-    end
-
-    it 'increases the base Unity output of Telepaths to 7' do
-      expect(telepath.job_output[:unity]).to eq(7)
-    end
-  end
 end

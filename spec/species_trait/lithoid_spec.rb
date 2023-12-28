@@ -69,24 +69,6 @@ RSpec.describe SpeciesTrait::Lithoid do
       )
     end
 
-    it 'changes the output of Colonist jobs to 1 Minerals' do
-      colonist = Pop.new(species: species, colony: nil, job: Job::Colonist)
-
-      expect(colonist.job_output).to eq_resources({ minerals: 1 })
-    end
-
-    it 'changes the upkeep of Reassigner jobs to 2 Consumer Goods and 2 Minerals' do
-      reassigner = Pop.new(species: species, colony: nil, job: Job::Reassigner)
-
-      expect(reassigner.job_upkeep).to eq_resources({ consumer_goods: 2, minerals: 2 })
-    end
-
-    it 'changes the upkeep of Necrophyte jobs to 1 Consumer Good and 1 Minerals' do
-      necrophyte = Pop.new(species: species, colony: nil, job: Job::Necrophyte)
-
-      expect(necrophyte.job_upkeep).to eq_resources({ consumer_goods: 1, minerals: 1 })
-    end
-
     it 'changes the output of Livestock jobs to 2 Minerals' do
       livestock = Pop.new(species: species, colony: nil, job: Job::Livestock)
 

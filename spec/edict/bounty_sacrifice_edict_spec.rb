@@ -17,16 +17,4 @@ RSpec.describe Edict::BountySacrificeEdict do
     expect(edict.job_output_modifiers(death_priest))
       .to eq_resource_modifier({ unity: { additive: 3 } })
   end
-
-  context 'when enacted' do
-    include_context 'with empire' do
-      let(:edicts) { [described_class] }
-    end
-
-    let(:death_priest) { Pop.new(species: species, colony: colony, job: Job::DeathPriest) }
-
-    it 'increases the output of Death Priests to 6 Unity and 1 Society Research' do
-      expect(death_priest.job_output).to eq_resources({ unity: 6, society_research: 1 })
-    end
-  end
 end

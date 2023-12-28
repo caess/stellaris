@@ -51,7 +51,7 @@ RSpec.describe SpeciesTrait::Mechanical do
 
     context 'when the founding species for an empire' do
       include_context 'with empire' do
-        let(:species_traits) { [described_class] }
+        let(:founder_species_traits) { [described_class] }
       end
 
       it 'increases the output of Technician jobs to 8 Energy' do

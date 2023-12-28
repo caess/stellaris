@@ -30,25 +30,4 @@ RSpec.describe Civic::MiningGuilds do
 
     expect(civic.job_output_modifiers(strategic_resource_miner)).to be_empty
   end
-
-  context 'when chosen for empire' do
-    include_context 'with empire' do
-      let(:civics) { [described_class] }
-    end
-
-    let(:miner) { Pop.new(species: species, colony: colony, job: Job::Miner) }
-    let(:scrap_miner) { Pop.new(species: species, colony: colony, job: Job::ScrapMiner) }
-
-    it 'increases the Minerals output of Miners to 5' do
-      colony.add_pop(miner)
-
-      expect(miner.job_output[:minerals]).to eq(5)
-    end
-
-    it 'increases the Minerals output of Scrap Miners to 3' do
-      colony.add_pop(scrap_miner)
-
-      expect(scrap_miner.job_output[:minerals]).to eq(3)
-    end
-  end
 end

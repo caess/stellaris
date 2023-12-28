@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require_relative '../../lib/job'
+require_relative '../../lib/pop'
+require_relative '../../lib/species_trait'
 
 RSpec.describe Job::Reassigner do
   subject(:job) { described_class }
@@ -18,4 +20,16 @@ RSpec.describe Job::Reassigner do
   end
 
   it { is_expected.to be_specialist }
+
+  context 'when species is Lithoid' do
+    include_context 'with species' do
+      let(:traits) { [SpeciesTrait::Lithoid] }
+    end
+
+    let(:reassigner) { Pop.new(species: species, colony: nil, job: described_class) }
+
+    it 'requires 2 Consumer Goods and 2 Minerals' do
+      expect(reassigner.job_upkeep).to eq_resources({ consumer_goods: 2, minerals: 2 })
+    end
+  end
 end

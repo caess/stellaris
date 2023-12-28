@@ -37,13 +37,6 @@ RSpec.describe Technology::GroundDefensePlanning do
       let(:technologies) { [described_class] }
     end
 
-    it 'increases the naval capacity provided by Necromancers to 4' do
-      necromancer = Pop.new(species: species, colony: colony, job: Job::Necromancer)
-      colony.add_pop(necromancer)
-
-      expect(empire.naval_capacity).to eq(24)
-    end
-
     it 'increases the naval capacity provided by Soldiers to 6' do
       soldier = Pop.new(species: species, colony: colony, job: Job::Soldier)
       colony.add_pop(soldier)

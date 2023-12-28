@@ -30,13 +30,7 @@ RSpec.describe Edict::CapacitySubsidies do
       let(:edicts) { [described_class] }
     end
 
-    let(:technician) { Pop.new(species: species, colony: colony, job: Job::Technician) }
     let(:tech_drone) { Pop.new(species: species, colony: colony, job: Job::TechDrone) }
-
-    it 'adds 0.5 Energy to the upkeep of Technicians' do
-      colony.add_pop(technician)
-      expect(technician.job_upkeep).to eq_resources({ energy: 0.5 })
-    end
 
     it 'adds 0.5 Energy to the upkeep of Tech-Drones' do
       colony.add_pop(tech_drone)

@@ -17,16 +17,4 @@ RSpec.describe Edict::ResearchSubsidies do
     expect(edict.job_upkeep_modifiers(researcher))
       .to eq_resource_modifier({ energy: { additive: 1 } })
   end
-
-  context 'when enacted' do
-    include_context 'with empire' do
-      let(:edicts) { [described_class] }
-    end
-
-    let(:researcher) { Pop.new(species: species, colony: colony, job: Job::Researcher) }
-
-    it 'adds 1 Energy to the upkeep for Researchers' do
-      expect(researcher.job_upkeep).to eq_resources({ consumer_goods: 2, energy: 1 })
-    end
-  end
 end
